@@ -35,16 +35,16 @@ const styles = theme => ({
     flex: 1
   },
   button: { marginTop: 15 },
-  buttonNegative: {
-    marginTop: 15,
-    [theme.breakpoints.down('sm')]: {
-      fontSize: 12,
-      width: '80%'
-    }
-  },
-  span: {
-    fontSize: 13
-  },
+  // buttonNegative: {
+  //   marginTop: 15,
+  //   [theme.breakpoints.down('sm')]: {
+  //     fontSize: 12,
+  //     width: '80%'
+  //   }
+  // },
+  // span: {
+  //   fontSize: 13
+  // },
   logo: {
     width: '100%',
     height: '100%',
@@ -102,11 +102,11 @@ const styles = theme => ({
     paddingTop: 15,
     textAlign: 'right'
   },
-  preLink: {
-    fontSize: 13,
-    color: '#333',
-    marginRight: '10px'
-  },
+  // preLink: {
+  //   fontSize: 13,
+  //   color: '#333',
+  //   marginRight: '10px'
+  // },
   link: {
     textDecoration: 'none',
     color: theme.palette.secondary.main,
@@ -137,32 +137,32 @@ const styles = theme => ({
       borderRadius: 0
     }
   },
-  footerBar: {
-    position: 'fixed',
-    right: 0,
-    left: 0,
-    bottom: 0,
-    display: 'flex',
-    flex: 1,
-    justifyContent: 'flex-end',
-    paddingLeft: 5,
-    paddingRight: 5,
-    paddingBottom: 4,
-    paddingTop: 5,
-    // backgroundColor: theme.palette.primary.dark
-    backgroundColor: 'rgba(0,0,0,0.35)'
-  },
-  footerLabel: {
-    marginLeft: 5,
-    marginRight: 5,
-    color: theme.palette.common.white,
-    fontSize: 12,
-    fontWeight: 400
-  },
-  footerLink: {
-    color: theme.palette.common.white,
-    textDecoration: 'none'
-  },
+  // footerBar: {
+  //   position: 'fixed',
+  //   right: 0,
+  //   left: 0,
+  //   bottom: 0,
+  //   display: 'flex',
+  //   flex: 1,
+  //   justifyContent: 'flex-end',
+  //   paddingLeft: 5,
+  //   paddingRight: 5,
+  //   paddingBottom: 4,
+  //   paddingTop: 5,
+  //   // backgroundColor: theme.palette.primary.dark
+  //   backgroundColor: 'rgba(0,0,0,0.35)'
+  // },
+  // footerLabel: {
+  //   marginLeft: 5,
+  //   marginRight: 5,
+  //   color: theme.palette.common.white,
+  //   fontSize: 12,
+  //   fontWeight: 400
+  // },
+  // footerLink: {
+  //   color: theme.palette.common.white,
+  //   textDecoration: 'none'
+  // },
   emailSuccess: {
     marginRight: 10,
     color: '#11aa11'

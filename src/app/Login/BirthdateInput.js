@@ -5,12 +5,12 @@ import MaskedInput from 'react-text-mask'
 import createAutoCorrectedDatePipe from 'text-mask-addons/dist/createAutoCorrectedDatePipe'
 
 const styles = theme => ({
-  root: {
-    marginTop: 15
-  },
-  red: {
-    color: 'red'
-  }
+  // root: {
+  //   marginTop: 15
+  // },
+  // red: {
+  //   color: 'red'
+  // }
 })
 
 const autoCorrectedDatePipe = createAutoCorrectedDatePipe('dd/mm/yyyy')

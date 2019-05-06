@@ -2877,10 +2877,10 @@ eslint-module-utils@^2.3.0:
     debug "^2.6.8"
     pkg-dir "^2.0.0"
 
-eslint-plugin-faicon@1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-faicon/-/eslint-plugin-faicon-1.0.2.tgz#2ca08ca076f959aa8d859ef1b885c6962f7b2831"
-  integrity sha512-txmTnI0/5iL0/yhZTSbRgfrDpQEffFxOOFb9bGm7DoMqrDgggfBmVnARTJaEoXGQLuJQ+3CDagZpDuycG3kLPg==
+eslint-plugin-faicon@1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-faicon/-/eslint-plugin-faicon-1.0.3.tgz#e4301a0c331fb7df688eed200fa51fea0115353c"
+  integrity sha512-00+ZNjB+6qvMHmAWVIh9myxtEwtaUrhxIO1LWgnenzcxDXjHmyd3ILCnKmL1UVp7mliZNdAO9hQJlEM14Ineqg==
 
 eslint-plugin-import@2.16.0:
   version "2.16.0"

@@ -30,9 +30,9 @@ var styles = theme => ({
   label2: {
     fontWeight: 300
   },
-  drawerDiv: { marginLeft: -10 },
-  wrapperInner: { paddingLeft: 20 },
-  button: { background: 'transparent' },
+  // drawerDiv: { marginLeft: -10 },
+  // wrapperInner: { paddingLeft: 20 },
+  // button: { background: 'transparent' },
   item: {
     overflow: 'hidden',
     textDecoration: 'none',

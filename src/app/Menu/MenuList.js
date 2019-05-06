@@ -10,10 +10,10 @@ const styles = theme => ({
     backgroundColor: 'transparent',
     overflow: 'auto'
   },
-  padding: {
-    paddingTop: 0,
-    paddingBottom: 0
-  },
+  // padding: {
+  //   paddingTop: 0,
+  //   paddingBottom: 0
+  // },
   marginRoot: {
     marginBottom: 160
   }

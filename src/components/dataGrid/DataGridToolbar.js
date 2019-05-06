@@ -1,6 +1,6 @@
 import React from 'react'
 import { Typography, Paper, withStyles, LinearProgress } from '@material-ui/core'
-import { lighten } from '@material-ui/core/styles/colorManipulator'
+// import { lighten } from '@material-ui/core/styles/colorManipulator'
 import { Divider } from 'components'
 
 const styles = theme => ({
@@ -22,11 +22,11 @@ const styles = theme => ({
   progress: {
     height: 2
   },
-  highlight: {
-    color: theme.palette.secondary.main,
-    backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-    borderRadius: 6
-  },
+  // highlight: {
+  //   color: theme.palette.secondary.main,
+  //   backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+  //   borderRadius: 6
+  // },
   spacer: {
     flex: '1 1 100%'
   },

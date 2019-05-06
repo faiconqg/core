@@ -7,7 +7,7 @@ import GetApp from '@material-ui/icons/GetApp'
 import Clear from '@material-ui/icons/Clear'
 
 const styles = theme => ({
-  root: {},
+  // root: {},
   tollbars: {
     display: 'flex',
     alignItems: 'center'

@@ -3,12 +3,12 @@ import FieldsBase from './FieldsBase'
 import { withStyles, TextField } from '@material-ui/core'
 
 const styles = theme => ({
-  root: {
-    marginTop: 15
-  },
-  red: {
-    color: 'red'
-  }
+  // root: {
+  //   marginTop: 15
+  // },
+  // red: {
+  //   color: 'red'
+  // }
 })
 
 export default
@@ -20,10 +20,7 @@ class MotherNameInput extends FieldsBase {
 
   handleValidation = value => {
     if (value.length === 0) {
-      this.onChangeValidation(
-        false,
-        'Você precisa informar o nome da sua mãe para confirmarmos sua identidade'
-      )
+      this.onChangeValidation(false, 'Você precisa informar o nome da sua mãe para confirmarmos sua identidade')
     } else {
       this.onChangeValidation(true)
     }
@@ -35,11 +32,7 @@ class MotherNameInput extends FieldsBase {
 
     return (
       <TextField
-        label={
-          window.screen.width < 360
-            ? 'Primeiro nome da mãe'
-            : 'Qual o primeiro nome da sua mãe?'
-        }
+        label={window.screen.width < 360 ? 'Primeiro nome da mãe' : 'Qual o primeiro nome da sua mãe?'}
         error={!!error && (typeof error === 'string' || !!message)}
         value={value}
         onChange={this.handleChange}

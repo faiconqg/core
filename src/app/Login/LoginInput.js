@@ -4,12 +4,12 @@ import { withStyles, TextField } from '@material-ui/core'
 import MaskedInput from 'react-text-mask'
 
 const styles = theme => ({
-  root: {
-    marginTop: 15
-  },
-  red: {
-    color: 'red'
-  }
+  // root: {
+  //   marginTop: 15
+  // },
+  // red: {
+  //   color: 'red'
+  // }
 })
 
 export default
@@ -29,22 +29,7 @@ class PasswordInput extends FieldsBase {
           inputRef(ref ? ref.inputElement : null)
         }}
         guide={false}
-        mask={[
-          /\d/,
-          /\d/,
-          /\d/,
-          '.',
-          /\d/,
-          /\d/,
-          /\d/,
-          '.',
-          /\d/,
-          /\d/,
-          /\d/,
-          '-',
-          /\d/,
-          /\d/
-        ]}
+        mask={[/\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/, /\d/]}
       />
     )
   }
@@ -57,16 +42,14 @@ class PasswordInput extends FieldsBase {
     if (strCPF.substring(0, 6) === '999999') return true
     if (strCPF === '00000000000') return false
 
-    for (let i = 1; i <= 9; i++)
-      soma = soma + parseInt(strCPF.substring(i - 1, i), 10) * (11 - i)
+    for (let i = 1; i <= 9; i++) soma = soma + parseInt(strCPF.substring(i - 1, i), 10) * (11 - i)
     resto = (soma * 10) % 11
 
     if (resto === 10 || resto === 11) resto = 0
     if (resto !== parseInt(strCPF.substring(9, 10), 10)) return false
 
     soma = 0
-    for (let i = 1; i <= 10; i++)
-      soma = soma + parseInt(strCPF.substring(i - 1, i), 10) * (12 - i)
+    for (let i = 1; i <= 10; i++) soma = soma + parseInt(strCPF.substring(i - 1, i), 10) * (12 - i)
     resto = (soma * 10) % 11
 
     if (resto === 10 || resto === 11) resto = 0
@@ -82,26 +65,15 @@ class PasswordInput extends FieldsBase {
       .trim()
 
     if (value.length === 0) {
-      this.onChangeValidation(
-        false,
-        'O campo ' + this.props.loginLabel + ' é obrigatório'
-      )
+      this.onChangeValidation(false, 'O campo ' + this.props.loginLabel + ' é obrigatório')
     } else if (value.length >= 11) {
       if (this.checkCPF(value)) {
         this.onChangeValidation(true)
       } else {
-        this.onChangeValidation(
-          false,
-          'CPF inválido, verifique o valor digitado'
-        )
+        this.onChangeValidation(false, 'CPF inválido, verifique o valor digitado')
       }
     } else {
-      this.onChangeValidation(
-        false,
-        'Preencha o campo ' +
-          this.props.loginLabel +
-          ' corretamente com 11 digitos'
-      )
+      this.onChangeValidation(false, 'Preencha o campo ' + this.props.loginLabel + ' corretamente com 11 digitos')
     }
   }
 

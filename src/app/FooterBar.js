@@ -6,24 +6,24 @@ const styles = theme => ({
   flex: {
     flex: 1
   },
-  appName: {
-    color: theme.palette.primary.dark,
-    fontWeight: 400,
-    fontSize: 22
-  },
-  card: {
-    flexDirection: 'column',
-    maxWidth: 412,
-    width: '100%',
-    display: 'flex',
-    flex: 'none',
-    justifyContent: 'center',
-    [theme.breakpoints.down('sm')]: {
-      flex: 1,
-      alignItems: 'center',
-      borderRadius: 0
-    }
-  },
+  // appName: {
+  //   color: theme.palette.primary.dark,
+  //   fontWeight: 400,
+  //   fontSize: 22
+  // },
+  // card: {
+  //   flexDirection: 'column',
+  //   maxWidth: 412,
+  //   width: '100%',
+  //   display: 'flex',
+  //   flex: 'none',
+  //   justifyContent: 'center',
+  //   [theme.breakpoints.down('sm')]: {
+  //     flex: 1,
+  //     alignItems: 'center',
+  //     borderRadius: 0
+  //   }
+  // },
   footerBar: {
     position: 'fixed',
     right: 0,

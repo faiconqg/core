@@ -7,8 +7,6 @@ import { withStyles, SwipeableDrawer, withWidth, CircularProgress } from '@mater
 import Page from './../Page'
 import MenuList from './MenuList'
 
-const image = 2
-
 const styles = theme => ({
   progress: {
     color: theme.palette.common.white

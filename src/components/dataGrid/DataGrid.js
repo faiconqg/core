@@ -42,18 +42,18 @@ const styles = theme => ({
     display: 'flex',
     alignItems: 'center'
   },
-  table: {
-    // minWidth: 1020
-  },
+  // table: {
+  //   // minWidth: 1020
+  // },
   tableWrapper: {
     display: 'flex',
     flexDirection: 'column',
     flex: 1
-  },
-  summary: {
-    background: theme.palette.grey[200],
-    fontWeight: 700
   }
+  // summary: {
+  //   background: theme.palette.grey[200],
+  //   fontWeight: 700
+  // }
 })
 
 export default

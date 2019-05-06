@@ -65,20 +65,20 @@ const styles = theme => ({
   toolBar: {
     height: 82
   },
-  list: {
-    margin: 0,
-    padding: '0 10px 0 0',
-    display: 'flex',
-    justifyContent: 'flex-end'
-  },
-  image: {
-    div: { display: 'flex', justifyContent: 'flex-start', flex: 1 },
-    img: { maxHeight: 50, padding: 3 }
-  },
-  avatar: {
-    image: { backgroundColor: theme.palette.primary.contrastText },
-    text: { color: theme.palette.primary.dark }
-  },
+  // list: {
+  //   margin: 0,
+  //   padding: '0 10px 0 0',
+  //   display: 'flex',
+  //   justifyContent: 'flex-end'
+  // },
+  // image: {
+  //   div: { display: 'flex', justifyContent: 'flex-start', flex: 1 },
+  //   img: { maxHeight: 50, padding: 3 }
+  // },
+  // avatar: {
+  //   image: { backgroundColor: theme.palette.primary.contrastText },
+  //   text: { color: theme.palette.primary.dark }
+  // },
   sidebarMenuIcon: {
     color: theme.palette.primary.main,
     width: 28,

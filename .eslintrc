@@ -31,7 +31,7 @@
     "react/no-find-dom-node": 0,
     "eact/prop-types": 0,
     "react/prop-types": [1, { "ignore": "children", "skipUndeclared": true }],
-    "max-len": [2, 160, 4, { "ignoreUrls": true }]
-    // "faicon/no-unused-styles": 2
+    "max-len": [2, 160, 4, { "ignoreUrls": true }],
+    "faicon/no-unused-styles": 2
   }
 }

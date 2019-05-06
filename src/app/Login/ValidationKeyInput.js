@@ -3,10 +3,10 @@ import FieldsBase from './FieldsBase'
 import { withStyles, TextField } from '@material-ui/core'
 
 const styles = theme => ({
-  root: { marginTop: 15 },
-  red: {
-    color: 'red'
-  }
+  // root: { marginTop: 15 },
+  // red: {
+  //   color: 'red'
+  // }
 })
 
 export default
@@ -18,10 +18,7 @@ class ValidationKeyInput extends FieldsBase {
 
   handleValidation = value => {
     if (value.length === 0) {
-      this.onChangeValidation(
-        false,
-        'A chave de verificação é um campo obrigatório'
-      )
+      this.onChangeValidation(false, 'A chave de verificação é um campo obrigatório')
     } else {
       this.onChangeValidation(true)
     }
@@ -38,11 +35,7 @@ class ValidationKeyInput extends FieldsBase {
         onChange={this.handleChange}
         margin="normal"
         fullWidth
-        helperText={
-          error
-            ? message
-            : 'A chave de verificação, é uma palavra informada por quem lhe convidou para usar o sistema.'
-        }
+        helperText={error ? message : 'A chave de verificação, é uma palavra informada por quem lhe convidou para usar o sistema.'}
       />
     )
   }

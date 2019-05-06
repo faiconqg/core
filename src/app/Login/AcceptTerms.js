@@ -8,16 +8,16 @@ import CheckBoxIcon from '@material-ui/icons/CheckBox'
 const styles = theme => ({
   root: {
     marginTop: 15
-  },
-  input: {
-    width: '100%'
-  },
-  red: {
-    color: 'red'
-  },
-  adornment: {
-    whiteSpace: 'nowrap'
   }
+  // input: {
+  //   width: '100%'
+  // },
+  // red: {
+  //   color: 'red'
+  // },
+  // adornment: {
+  //   whiteSpace: 'nowrap'
+  // }
 })
 
 export default

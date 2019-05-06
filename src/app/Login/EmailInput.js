@@ -3,15 +3,15 @@ import FieldsBase from './FieldsBase'
 import { withStyles, TextField, InputAdornment } from '@material-ui/core'
 
 const styles = theme => ({
-  root: {
-    marginTop: 15
-  },
+  // root: {
+  //   marginTop: 15
+  // },
   input: {
     width: '100%'
   },
-  red: {
-    color: 'red'
-  },
+  // red: {
+  //   color: 'red'
+  // },
   adornment: {
     whiteSpace: 'nowrap'
   }

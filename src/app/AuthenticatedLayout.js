@@ -9,7 +9,7 @@ import Menu from './Menu'
 import { withRouter } from 'react-router-dom'
 
 const styles = theme => ({
-  master: { marginLeft: AppStore.menuFixed ? 250 : 69 },
+  // master: { marginLeft: AppStore.menuFixed ? 250 : 69 },
   body: {
     paddingBottom: 6,
     paddingRight: 20,
