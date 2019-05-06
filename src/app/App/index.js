@@ -10,7 +10,6 @@ import { I18n } from 'react-i18nify'
 import MasterLayout from './../MasterLayout'
 import { Router, Route, Switch, Redirect } from 'react-router-dom'
 // import { Provider } from 'mobx-react'
-import createBrowserHistory from 'history/createBrowserHistory'
 import Login from './../Login'
 // import Register from './../Register'
 import { Snackbar, Button } from '@material-ui/core'
@@ -19,6 +18,7 @@ import Capacitor from './Capacitor'
 
 // import DevTools from 'mobx-react-devtools'
 
+const createBrowserHistory = require('history').createBrowserHistory
 const history = syncHistoryWithStore(createBrowserHistory(), RouterStore)
 
 export default
@@ -69,6 +69,7 @@ class App extends Foundation {
     RealmStore.appUrl = this.props.appUrl
     RealmStore.primaryColor = this.props.primaryColor
     RealmStore.secondaryColor = this.props.secondaryColor
+    RealmStore.menuBackground = this.props.menuBackground
   }
 
   render() {

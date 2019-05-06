@@ -24,6 +24,7 @@ class Realms extends Collection {
   @observable appbarColor = null
   @observable termsOfUse = null
   @observable useBankAccount = null
+  @observable menuBackground = null
 
   completeLoad = callback => {
     if (this.currentRealm) {

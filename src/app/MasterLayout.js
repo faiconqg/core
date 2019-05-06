@@ -16,6 +16,9 @@ class MasterLayout extends React.Component {
       typography: {
         useNextVariants: true
       },
+      background: {
+        menu: RealmStore.menuBackground
+      },
       palette: {
         primary: {
           main: RealmStore.primaryColor || '#F6DA4A',

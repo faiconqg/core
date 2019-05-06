@@ -1,5 +1,6 @@
 import React from 'react'
-import Page from './../../app/Page'
+import Page from 'app/Page'
+import { RealmStore } from 'stores'
 import ErrorOutline from '@material-ui/icons/ErrorOutline'
 import LinearLayout from './LinearLayout'
 import { Button } from '@material-ui/core'
@@ -8,7 +9,7 @@ export default class PageError extends Page {
   render() {
     return (
       <LinearLayout gravity="center" cover height="100%">
-        {/* <img src={require('resources/images/incentiveme.png')} width="140" alt="Logo" /> */}
+        {RealmStore.remoteLogo && <img src={RealmStore.remoteLogo} width="140" alt="Logo" />}
         <br />
         <ErrorOutline />
         <br />

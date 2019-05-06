@@ -1,7 +1,7 @@
 {
   "parser": "babel-eslint",
   "extends": ["eslint:recommended", "plugin:react/recommended"],
-  "plugins": [],
+  "plugins": ["faicon"],
   "env": {
     "browser": true,
     "node": true,
@@ -32,5 +32,6 @@
     "eact/prop-types": 0,
     "react/prop-types": [1, { "ignore": "children", "skipUndeclared": true }],
     "max-len": [2, 160, 4, { "ignoreUrls": true }]
+    // "faicon/no-unused-styles": 2
   }
 }
