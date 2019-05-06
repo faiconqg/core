@@ -55,7 +55,7 @@ const styles = theme => ({
   },
   divFora: {
     zIndex: 9999,
-    // background: `linear-gradient(rgba(0,0,0,.8), rgba(0,0,0,.8)), url('${require(`resources/images/sidebar-${image}.jpg`)}')`,
+    background: `linear-gradient(rgba(0,0,0,.8), rgba(0,0,0,.8)), url('${RealmStore.menuBackground}')`,
     overflow: 'hidden',
     height: '100%',
     transition: theme.transitions.create('width', {
