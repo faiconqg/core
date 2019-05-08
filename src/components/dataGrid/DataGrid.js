@@ -4,8 +4,8 @@ import { observer, Model } from './../../api'
 import { withStyles, CircularProgress, TablePagination, Paper } from '@material-ui/core'
 import { AgGridReact } from 'ag-grid-react'
 import agGridTranslation from './../../resources/agGridTranslation.json'
-import 'ag-grid/dist/styles/ag-grid.css'
-import 'ag-grid/dist/styles/ag-theme-material.css'
+import 'ag-grid-community/dist/styles/ag-grid.css'
+import 'ag-grid-community/dist/styles/ag-theme-material.css'
 import cs from 'classnames'
 
 const styles = theme => ({
@@ -198,7 +198,7 @@ class DataGrid extends React.Component {
   }
 
   autosizeColumnsIfNeeded = () => {
-    let availableWidth = this.api['gridPanel'].getWidthForSizeColsToFit()
+    let availableWidth = this.api['gridPanel'].getBodyClientRect().width
     let columns = this.api['gridPanel']['columnController'].getAllDisplayedColumns()
     let usedWidth = this.api['gridPanel']['columnController'].getWidthOfColsInList(columns)
 
@@ -298,18 +298,21 @@ class DataGrid extends React.Component {
         >
           <AgGridReact
             // listening for events
+            reactNext={true}
             onRowClicked={params => this.handleClick(params.data.id, params.data)}
             onGridReady={this.onGridReady}
             rowData={rows.toJS()}
             pinnedBottomRowData={disableSummary ? null : this.resolveSummary()}
             rowSelection="multiple"
-            enableColResize
-            enableSorting
             enableRangeSelection
-            enableFilter={clientSide}
             columnDefs={this.getColumns(children)}
             localeText={agGridTranslation}
             getRowClass={this.getRowClass}
+            defaultColDef={{
+              filter: clientSide,
+              sortable: true,
+              resizable: true
+            }}
             //pagination={!clientSide}
             // dateComponentFramework={DateComponent}
             // defaultColDef={{
