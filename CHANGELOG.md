@@ -1,3 +1,7 @@
+## [0.0.29](https://github.com/faiconqg/core/compare/v0.0.27...v0.0.29) (2019-05-09)
+
+
+
 ## [0.0.28](https://github.com/faiconqg/core/compare/v0.0.27...v0.0.28) (2019-05-08)
 
 
