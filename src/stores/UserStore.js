@@ -116,6 +116,11 @@ class Users extends Collection {
       AppStore.resetAppicationState()
     })
   }
+
+  can = role => {
+    let roles = this.loggedInstance.g('roles')
+    return roles.filter(r => r.name === role).length > 0
+  }
 }
 
 export default Users
