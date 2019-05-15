@@ -34,6 +34,7 @@ class AppStore {
   platform = 'web'
   onReset = null
   onLogin = null
+  onPushNotificationReceived = null
 
   @computed
   get shouldMenuBeVisible() {

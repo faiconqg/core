@@ -73,7 +73,7 @@ class App extends Foundation {
   }
 
   render() {
-    const { renderer, pt, en, es, lang, api, children, prefix, multitenant, onLogout, onLogin, loginLabel } = this.props
+    const { renderer, pt, en, es, lang, api, children, prefix, multitenant, onLogout, onLogin, onPushNotificationReceived, loginLabel } = this.props
 
     RendererManager.renderer = renderer
 
@@ -91,6 +91,7 @@ class App extends Foundation {
 
     AppStore.onReset = onLogout
     AppStore.onLogin = onLogin
+    AppStore.onPushNotificationReceived = onPushNotificationReceived
 
     apiSetup(api, AppStore.token, { platform: AppStore.platform })
 

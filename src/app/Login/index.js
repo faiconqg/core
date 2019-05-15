@@ -469,7 +469,7 @@ class Login extends React.Component {
             <form className={classes.flex} onSubmit={this.resolveSubmit()} noValidate>
               <LinearLayout visible={!UserStore.busy() || !!UserStore.error} flex={1}>
                 {RealmStore.remoteLogo ? (
-                  <div className={cs(classes.logoContainer, AppStore.device.isIos ? classes.logoContainerIos : classes.logoContainerDefault)}>
+                  <div className={cs(classes.logoContainer, AppStore.device.hasNotch ? classes.logoContainerIos : classes.logoContainerDefault)}>
                     <img src={RealmStore.remoteLogo} alt="Logo" className={classes.logo} />
                   </div>
                 ) : (

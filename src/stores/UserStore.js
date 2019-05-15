@@ -39,6 +39,8 @@ class Users extends Collection {
   @observable
   dataConfirmed = false
 
+  notificationToken = null
+
   url = () => 'users'
   model = () => User
 
@@ -51,6 +53,11 @@ class Users extends Collection {
     this.rpcGet('current', { details: platform })
       .then(res => {
         this.loggedInstance = this.build(res)
+        if (this.notificationToken) {
+          if (res.userDetail.notificationToken != this.notificationToken) {
+            this.updateToken(this.notificationToken)
+          }
+        }
         // this.loggedUserInstance = this.build(res)
         if (memorizeName) {
           AppStore.setUser({ name: res.name, username: memorizeName })
@@ -79,6 +86,11 @@ class Users extends Collection {
     this.rpc('check', {
       realm: this.realm,
       username
+    })
+
+  updateToken = notificationToken =>
+    this.rpc('updateToken', {
+      notificationToken
     })
 
   completeValidation = password => this.rpc('complete-validation', { password })
