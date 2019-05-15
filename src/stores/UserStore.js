@@ -54,7 +54,7 @@ class Users extends Collection {
       .then(res => {
         this.loggedInstance = this.build(res)
         if (this.notificationToken) {
-          if (res.userDetail.notificationToken != this.notificationToken) {
+          if (res.userDetail.notificationToken !== this.notificationToken) {
             this.updateToken(this.notificationToken)
           }
         }
@@ -89,7 +89,7 @@ class Users extends Collection {
     })
 
   updateToken = notificationToken =>
-    this.rpc('updateToken', {
+    this.rpc('update-token', {
       notificationToken
     })
 
