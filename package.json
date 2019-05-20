@@ -71,8 +71,8 @@
     "react-custom-scrollbars": "4.2.1",
     "react-helmet": "5.2.1",
     "react-i18nify": "1.11.14",
-    "react-router": "5.0.0",
-    "react-router-dom": "5.0.0",
+    "react-router": "^4.0.0",
+    "react-router-dom": "^4.0.0",
     "react-text-mask": "5.4.3",
     "text-mask-addons": "3.8.0"
   }
