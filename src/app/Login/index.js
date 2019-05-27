@@ -671,11 +671,12 @@ class Login extends React.Component {
   }
 }
 
-const LoginPage = ({ error, username, loginLabel, onChange, onChangeValidation }) => (
+const LoginPage = ({ error, username, loginLabel, loginType, onChange, onChangeValidation }) => (
   <LoginInput
     error={error}
     value={username}
     loginLabel={loginLabel}
+    loginType={loginType}
     onChange={value => onChange(value, 'username')}
     onChangeValidation={value => onChangeValidation(value, 'username')}
   />
