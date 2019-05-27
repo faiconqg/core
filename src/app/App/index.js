@@ -73,7 +73,24 @@ class App extends Foundation {
   }
 
   render() {
-    const { renderer, pt, en, es, lang, api, children, prefix, multitenant, onLogout, onLogin, onPushNotificationReceived, loginLabel } = this.props
+    const {
+      renderer,
+      pt,
+      en,
+      es,
+      lang,
+      api,
+      children,
+      prefix,
+      multitenant,
+      onLogout,
+      onLogin,
+      onPushNotificationReceived,
+      acceptMessage,
+      appEmail,
+      loginType = 'email',
+      canRegister = true
+    } = this.props
 
     RendererManager.renderer = renderer
 
@@ -99,7 +116,9 @@ class App extends Foundation {
       <Provider router={RouterStore}>
         <Router history={history}>
           <MasterLayout>
-            {RealmStore.realmResolved && <Helmet color={RealmStore.primaryColor} realm={UserStore.realm} appName={RealmStore.appName} />}
+            {RealmStore.realmResolved && (
+              <Helmet color={RealmStore.primaryColor} multitenant={multitenant} realm={UserStore.realm} appName={RealmStore.appName} />
+            )}
             <Snackbar
               anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
               open={AppStore.hasUpdate}
@@ -121,7 +140,20 @@ class App extends Foundation {
               }
             />
             <Switch>
-              <Route path="/login" render={props => <Login {...props} loginLabel={loginLabel || 'Login'} multitenant={multitenant} />} />
+              <Route
+                path="/login"
+                render={props => (
+                  <Login
+                    {...props}
+                    acceptMessage={acceptMessage}
+                    loginType={loginType}
+                    loginLabel={loginType === 'cpf' ? 'CPF' : 'e-mail'}
+                    multitenant={multitenant}
+                    canRegister={canRegister}
+                    appEmail={appEmail}
+                  />
+                )}
+              />
               {/*<Route
                 path="/register"
                 render={props => (

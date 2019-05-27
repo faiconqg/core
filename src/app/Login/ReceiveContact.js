@@ -32,7 +32,7 @@ class AcceptTerms extends FieldsBase {
   }
 
   render() {
-    const { classes, error, value } = this.props
+    const { classes, error, value, acceptMessage } = this.props
     const { message } = this.state
     return (
       <FormControl fullWidth className={classes.root} error={!!error && (typeof error === 'string' || !!message)}>
@@ -46,7 +46,7 @@ class AcceptTerms extends FieldsBase {
               checkedIcon={<CheckBoxIcon fontSize="small" />}
             />
           }
-          label={`Desejo receber e-mails com informações importantes sobre campanhas de prêmios do ${RealmStore.appName}`}
+          label={acceptMessage || `Desejo receber e-mails com informações importantes sobre o ${RealmStore.appName}`}
         />
         {!!error && <FormHelperText>{typeof error === 'string' ? error : message}</FormHelperText>}
       </FormControl>

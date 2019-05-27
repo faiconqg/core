@@ -31,7 +31,7 @@ class Users extends Collection {
   loggedInstance = null
 
   @observable
-  realm = 'incentiveme'
+  realm = 'app'
 
   @observable
   loggingOut = false
@@ -95,12 +95,13 @@ class Users extends Collection {
 
   completeValidation = password => this.rpc('complete-validation', { password })
 
-  testify = (username, motherName, birthdate, allowSendEmail, validationKey) =>
+  testify = (username, motherName, birthdate, phone, allowSendEmail, validationKey) =>
     this.rpc('testify', {
       realm: this.realm,
       username,
       motherName,
       birthdate,
+      phone,
       allowSendEmail,
       validationKey
     })

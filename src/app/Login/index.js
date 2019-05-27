@@ -10,6 +10,7 @@ import PasswordInput from './PasswordInput'
 import LoginInput from './LoginInput'
 import MotherNameInput from './MotherNameInput'
 import BirthdateInput from './BirthdateInput'
+import PhoneInput from './PhoneInput'
 import EmailInput from './EmailInput'
 import UserIndicator from './UserIndicator'
 import ValidationKeyInput from './ValidationKeyInput'
@@ -214,6 +215,8 @@ class Login extends React.Component {
     motherNameValid: false,
     validationKey: '',
     validationKeyValid: false,
+    phoneKey: '',
+    phoneValid: false,
     newPassword: '',
     newPasswordValid: false,
     newPasswordConfirm: '',
@@ -230,7 +233,11 @@ class Login extends React.Component {
 
   login = e => {
     UserStore.error = null
-    UserStore.login(this.state.username.replace(/\./g, '').replace(/-/g, ''), this.state.password, this.state.username)
+    UserStore.login(
+      this.props.loginType === 'cpf' ? this.state.username.replace(/\./g, '').replace(/-/g, '') : this.state.username,
+      this.state.password,
+      this.state.username
+    )
   }
 
   requestReset = e => {
@@ -253,7 +260,7 @@ class Login extends React.Component {
 
   check = e => {
     UserStore.error = null
-    UserStore.check(this.state.username.replace(/\./g, '').replace(/-/g, '')).then(result => {
+    UserStore.check(this.props.loginType === 'cpf' ? this.state.username.replace(/\./g, '').replace(/-/g, '') : this.state.username).then(result => {
       if (result) {
         AppStore.setEmail(result.email)
         if (result.code === 1) {
@@ -264,7 +271,7 @@ class Login extends React.Component {
           this.setState({ requireValidationKey: true }, () => this.go('FirstLoginPage'))
         }
       } else {
-        if (RealmStore.currentRealm && RealmStore.currentRealm.registerEnabled) {
+        if (RealmStore.currentRealm ? RealmStore.currentRealm.registerEnabled : this.props.canRegister) {
           this.setState({ newUser: true }, () => this.go('FirstLoginPage'))
         } else {
           alert('Usuário não encontrado') // TODO: Criar mensagem de usuário não encontrado
@@ -276,9 +283,10 @@ class Login extends React.Component {
   testify = e => {
     UserStore.error = null
     UserStore.testify(
-      this.state.username.replace(/\./g, '').replace(/-/g, ''),
+      this.props.loginType === 'cpf' ? this.state.username.replace(/\./g, '').replace(/-/g, '') : this.state.username,
       this.state.motherName,
       this.state.birthdate,
+      this.state.phone,
       this.state.allowSendEmail,
       this.state.requireValidationKey ? this.state.validationKey : 'icv'
     )
@@ -367,8 +375,7 @@ class Login extends React.Component {
   handleSubmitFirstLoginPage = e => {
     e.preventDefault()
     if (
-      this.state.birthdateValid &&
-      this.state.motherNameValid &&
+      ((this.props.loginType === 'cpf' && this.state.birthdateValid && this.state.motherNameValid) || (this.state.birthdateValid && this.state.phoneValid)) &&
       (this.state.termsValid || !RealmStore.termsOfUse) &&
       (this.state.validationKeyValid || !this.state.requireValidationKey)
     ) {
@@ -425,7 +432,7 @@ class Login extends React.Component {
   }
 
   render() {
-    const { classes, location, loginLabel } = this.props
+    const { classes, location, loginLabel, loginType, appEmail } = this.props
     const {
       page,
       username,
@@ -433,12 +440,14 @@ class Login extends React.Component {
       requireValidationKey,
       birthdate,
       motherName,
+      phone,
       newPassword,
       emailConfirm,
       newPasswordConfirm,
       validationKey,
       tokenExpired,
       allowSendEmail,
+      acceptMessage,
       terms,
       newUser
     } = this.state
@@ -485,6 +494,7 @@ class Login extends React.Component {
                               error={this.resolveError()}
                               username={username}
                               loginLabel={loginLabel}
+                              loginType={loginType}
                               onChangeValidation={this.handleChangeValidation}
                               onChange={this.handleChange}
                             />
@@ -508,11 +518,13 @@ class Login extends React.Component {
                               newUser={newUser}
                               birthdate={birthdate}
                               motherName={motherName}
+                              phone={phone}
                               validationKey={validationKey}
                               requireValidationKey={requireValidationKey}
                               error={this.resolveError()}
                               onBack={() => this.go('LoginPage')}
                               onChangeValidation={this.handleChangeValidation}
+                              loginType={loginType}
                               onChange={this.handleChange}
                             />
                           )
@@ -565,6 +577,7 @@ class Login extends React.Component {
                         <ReceiveContact
                           value={allowSendEmail}
                           error={this.resolveError()}
+                          acceptMessage={acceptMessage}
                           onChangeValidation={value => this.handleChangeValidation(value, 'receiveContact')}
                           onChange={value => this.handleChange(value, 'allowSendEmail')}
                         />
@@ -590,11 +603,11 @@ class Login extends React.Component {
                       </button>
                     </div>
                       )*/}
-                    {page === 'RecoverPasswordPage' && (
+                    {page === 'RecoverPasswordPage' && appEmail && (
                       <div className={classes.emailInfo}>
                         <span>Se o seu e-mail for diferente do e-mail cadastrado, envie um e-mail para </span>
-                        <b>contato@incentive.me</b>
-                        <span> com o novo endereço de e-mail e um documento de identificação com foto e cpf.</span>
+                        <b>{appEmail}</b>
+                        {loginType === 'cpf' && <span> com o novo endereço de e-mail e um documento de identificação com foto e cpf.</span>}
                       </div>
                     )}
 
@@ -615,8 +628,14 @@ class Login extends React.Component {
                 ) : (
                   <div className={classes.formWrapper}>
                     <div className={classes.enabledFalse}>
-                      <span>Sua conta está desabilitada, em caso de dúvidas, envie um e-mail para </span>
-                      <b>contato@incentive.me</b>.
+                      {appEmail ? (
+                        <>
+                          <span>Sua conta está desabilitada, em caso de dúvidas, envie um e-mail para </span>
+                          <b>{appEmail}</b>.
+                        </>
+                      ) : (
+                        <span>Sua conta está desabilitada, em caso de dúvidas, entre em contato. </span>
+                      )}
                     </div>
                     <Button className={classes.button} onClick={this.logout} color="secondary" variant="contained" fullWidth>
                       Continuar
@@ -674,7 +693,21 @@ const PasswordPage = withStyles(styles)(({ classes, error, username, password, o
 ))
 
 const FirstLoginPage = withStyles(styles)(
-  ({ classes, error, birthdate, motherName, validationKey, username, onChange, onBack, onChangeValidation, requireValidationKey, newUser }) => (
+  ({
+    classes,
+    error,
+    birthdate,
+    motherName,
+    validationKey,
+    username,
+    phone,
+    onChange,
+    onBack,
+    onChangeValidation,
+    loginType,
+    requireValidationKey,
+    newUser
+  }) => (
     <React.Fragment>
       <UserIndicator username={username} onBack={onBack} />
       {!newUser && <span className={classes.wellcome}>Parabéns! Você foi convidado para fazer parte da maior plataforma de incentivos do Brasil!</span>}
@@ -682,15 +715,20 @@ const FirstLoginPage = withStyles(styles)(
       <BirthdateInput
         error={error}
         value={birthdate}
+        loginType={loginType}
         onChange={value => onChange(value, 'birthdate')}
         onChangeValidation={value => onChangeValidation(value, 'birthdate')}
       />
-      <MotherNameInput
-        error={error}
-        value={motherName}
-        onChange={value => onChange(value, 'motherName')}
-        onChangeValidation={value => onChangeValidation(value, 'motherName')}
-      />
+      {loginType === 'cpf' ? (
+        <MotherNameInput
+          error={error}
+          value={motherName}
+          onChange={value => onChange(value, 'motherName')}
+          onChangeValidation={value => onChangeValidation(value, 'motherName')}
+        />
+      ) : (
+        <PhoneInput error={error} value={phone} onChange={value => onChange(value, 'phone')} onChangeValidation={value => onChangeValidation(value, 'phone')} />
+      )}
       {requireValidationKey && (
         <ValidationKeyInput
           error={error}
