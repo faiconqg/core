@@ -85,6 +85,7 @@ class App extends Foundation {
       multitenant,
       onLogout,
       onLogin,
+      wellcomeMessage,
       onPushNotificationReceived,
       acceptMessage,
       appEmail,
@@ -146,6 +147,7 @@ class App extends Foundation {
                   <Login
                     {...props}
                     acceptMessage={acceptMessage}
+                    wellcomeMessage={wellcomeMessage}
                     loginType={loginType}
                     loginLabel={loginType === 'cpf' ? 'CPF' : 'e-mail'}
                     multitenant={multitenant}

@@ -432,7 +432,7 @@ class Login extends React.Component {
   }
 
   render() {
-    const { classes, location, loginLabel, loginType, appEmail } = this.props
+    const { classes, location, loginLabel, loginType, appEmail, wellcomeMessage } = this.props
     const {
       page,
       username,
@@ -554,6 +554,7 @@ class Login extends React.Component {
                               newPasswordConfirm={newPasswordConfirm}
                               error={this.resolveError()}
                               onBack={() => this.go('LoginPage')}
+                              wellcomeMessage={wellcomeMessage}
                               onChangeValidation={this.handleChangeValidation}
                               onChange={this.handleChange}
                             />
@@ -761,32 +762,34 @@ const RecoverPasswordPage = withStyles(styles)(({ classes, error, username, emai
   </React.Fragment>
 ))
 
-const SetPasswordPage = withStyles(styles)(({ classes, error, username, newPassword, newPasswordConfirm, onChange, onChangeValidation, onBack }) => (
-  <React.Fragment>
-    <UserIndicator username={username} onBack={onBack} />
-    <span className={classes.wellcome}>Tudo certo! Confirmamos seus dados.</span>
-    <span>Agora é só escolher uma senha e já pode começar acompanhar suas vendas.</span>
-    <PasswordInput
-      label="Escolha uma senha"
-      error={error}
-      value={newPassword}
-      errorMessage="Você precisa escolher uma senha"
-      onChange={value => onChange(value, 'newPassword')}
-      onChangeValidation={value => onChangeValidation(value, 'newPassword')}
-    />
-    <PasswordInput
-      label="Confirme a senha"
-      autoFocus={false}
-      error={error}
-      value={newPasswordConfirm}
-      assert
-      assertValue={newPassword}
-      errorMessage="Essa senha não é igual a anterior"
-      onChange={value => onChange(value, 'newPasswordConfirm')}
-      onChangeValidation={value => onChangeValidation(value, 'newPasswordConfirm')}
-    />
-  </React.Fragment>
-))
+const SetPasswordPage = withStyles(styles)(
+  ({ classes, error, username, newPassword, newPasswordConfirm, onChange, onChangeValidation, wellcomeMessage, onBack }) => (
+    <React.Fragment>
+      <UserIndicator username={username} onBack={onBack} />
+      <span className={classes.wellcome}>Tudo certo! Confirmamos seus dados.</span>
+      {wellcomeMessage && <span>{wellcomeMessage}</span>}
+      <PasswordInput
+        label="Escolha uma senha"
+        error={error}
+        value={newPassword}
+        errorMessage="Você precisa escolher uma senha"
+        onChange={value => onChange(value, 'newPassword')}
+        onChangeValidation={value => onChangeValidation(value, 'newPassword')}
+      />
+      <PasswordInput
+        label="Confirme a senha"
+        autoFocus={false}
+        error={error}
+        value={newPasswordConfirm}
+        assert
+        assertValue={newPassword}
+        errorMessage="Essa senha não é igual a anterior"
+        onChange={value => onChange(value, 'newPasswordConfirm')}
+        onChangeValidation={value => onChangeValidation(value, 'newPasswordConfirm')}
+      />
+    </React.Fragment>
+  )
+)
 
 const ConfirmSetPasswordPage = withStyles(styles)(({ classes }) => (
   <React.Fragment>
