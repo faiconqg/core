@@ -5,9 +5,9 @@ const { SplashScreen, Device, PushNotifications } = Plugins
 const defaultError = err => {
   console.log('Disponível apenas de forma nativa')
 
-  // if (!AppStore.device.isMobile && window.screen.width < 600) {
-  //   AppStore.device.isMobile = true
-  // }
+  if (!AppStore.device.isMobile && window.screen.width === 360) {
+    AppStore.device.isMobile = true
+  }
 }
 
 let initialized = false

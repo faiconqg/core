@@ -21,6 +21,7 @@ const styles = theme => ({
     }
   },
   header: {
+    color: theme.palette.text.primary,
     fontSize: 18,
     fontWeight: 300,
     paddingLeft: 20,
