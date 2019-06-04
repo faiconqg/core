@@ -111,7 +111,7 @@ class App extends Foundation {
     AppStore.onLogin = onLogin
     AppStore.onPushNotificationReceived = onPushNotificationReceived
 
-    apiSetup(api, AppStore.token, { platform: AppStore.platform })
+    apiSetup(api, AppStore.token, { platform: AppStore.platform, version: process.env.REACT_APP_VERSION })
 
     return (
       <Provider router={RouterStore}>
