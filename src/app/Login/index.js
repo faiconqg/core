@@ -1,7 +1,7 @@
 import React from 'react'
 import { Redirect } from 'react-router'
 import { UserStore, AppStore, RealmStore } from 'stores'
-import { Background, LinearLayout, PageLoading, PageError } from 'components'
+import { Background, LinearLayout, PageLoading, PageError, UpgradeNeeded } from 'components'
 import { observer, inject } from './../../api'
 import { withStyles, Button, Card, CircularProgress, Hidden } from '@material-ui/core'
 import Warning from '@material-ui/icons/Warning'
@@ -459,6 +459,10 @@ class Login extends React.Component {
       // Se o usuário não estiver logado e o "AppStore.redirect" estiver false, significa que o botão "Token expirado"
       // foi clicado, como já estamos na página de login, esse redirect vai fazer a página ser re-renderizada
       return <Redirect to="/" />
+    }
+
+    if (UserStore.error && UserStore.error.code === 'UPGRADE_NEEDED') {
+      return <UpgradeNeeded />
     }
 
     if (RealmStore.error) {

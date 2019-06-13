@@ -76,7 +76,7 @@ class AppStore {
 
   @action
   update() {
-    this.worker.postMessage('skipWaiting')
+    this.worker ? this.worker.postMessage('skipWaiting') : window.location.reload()
   }
 
   @action
