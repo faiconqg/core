@@ -33,7 +33,8 @@ const styles = theme => ({
     }
   },
   flex: {
-    flex: 1
+    flex: 1,
+    width: '100%'
   },
   button: { marginTop: 15 },
   // buttonNegative: {

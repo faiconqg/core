@@ -1,6 +1,6 @@
 import React from 'react'
 import './../../basis/Polyfill'
-import { syncHistoryWithStore } from 'components'
+import { syncHistoryWithStore, PageLoading } from 'components'
 import { Provider } from 'mobx-react'
 import { apiSetup, observer } from './../../api'
 import { RouterStore, AppStore, UserStore, RealmStore } from 'stores'
@@ -15,6 +15,7 @@ import Login from './../Login'
 import { Snackbar, Button } from '@material-ui/core'
 import Helmet from './Helmet'
 import Capacitor from './Capacitor'
+import moment from 'moment'
 
 // import DevTools from 'mobx-react-devtools'
 
@@ -70,6 +71,7 @@ class App extends Foundation {
     RealmStore.primaryColor = this.props.primaryColor
     RealmStore.secondaryColor = this.props.secondaryColor
     RealmStore.menuBackground = this.props.menuBackground
+    AppStore.menuFixed = !!this.props.menuFixed
   }
 
   render() {
@@ -104,7 +106,16 @@ class App extends Foundation {
         langs.es = es
       }
       I18n.setTranslations(langs)
-      I18n.setLocale(lang || 'pt')
+      let language = lang || 'pt'
+      I18n.setLocale(language)
+
+      if (language.indexOf('en') === 0) {
+        moment.locale('en-us')
+      } else if (language.indexOf('es') === 0) {
+        moment.locale('es')
+      } else {
+        moment.locale('pt-br')
+      }
     }
 
     AppStore.onReset = onLogout

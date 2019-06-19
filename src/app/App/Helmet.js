@@ -26,6 +26,8 @@ export default class PwaIcons extends React.Component {
         <link rel="apple-touch-icon" sizes="144x144" href={`${process.env.PUBLIC_URL}/pwa/${realm}/apple-icon-144x144.png`} />
         <link rel="apple-touch-icon" sizes="152x152" href={`${process.env.PUBLIC_URL}/pwa/${realm}/apple-icon-152x152.png`} />
         <link rel="apple-touch-icon" sizes="180x180" href={`${process.env.PUBLIC_URL}/pwa/${realm}/apple-icon-180x180.png`} />
+        <link rel="icon" type="image/png" sizes="1024x1024" href={`${process.env.PUBLIC_URL}/pwa/${realm}/android-icon-1024x1024.png`} />
+        <link rel="icon" type="image/png" sizes="512x512" href={`${process.env.PUBLIC_URL}/pwa/${realm}/android-icon-512x512.png`} />
         <link rel="icon" type="image/png" sizes="192x192" href={`${process.env.PUBLIC_URL}/pwa/${realm}/android-icon-192x192.png`} />
         <link rel="icon" type="image/png" sizes="32x32" href={`${process.env.PUBLIC_URL}/pwa/${realm}/favicon-32x32.png`} />
         <link rel="icon" type="image/png" sizes="96x96" href={`${process.env.PUBLIC_URL}/pwa/${realm}/favicon-96x96.png`} />
