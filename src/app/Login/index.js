@@ -288,8 +288,8 @@ class Login extends React.Component {
     UserStore.error = null
     UserStore.testify(
       this.props.loginType === 'cpf' ? this.state.username.replace(/\./g, '').replace(/-/g, '') : this.state.username,
-      this.state.motherName,
-      this.state.birthdate,
+      this.state.noTestify ? 'noTestify' : this.state.motherName,
+      this.state.noTestify ? new Date() : this.state.birthdate,
       this.state.phone,
       this.state.allowSendEmail,
       this.state.requireValidationKey ? this.state.validationKey : 'icv',
