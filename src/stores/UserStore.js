@@ -95,7 +95,7 @@ class Users extends Collection {
 
   completeValidation = password => this.rpc('complete-validation', { password })
 
-  testify = (username, motherName, birthdate, phone, allowSendEmail, validationKey) =>
+  testify = (username, motherName, birthdate, phone, allowSendEmail, validationKey, noTestify) =>
     this.rpc('testify', {
       realm: this.realm,
       username,
@@ -103,7 +103,8 @@ class Users extends Collection {
       birthdate,
       phone,
       allowSendEmail,
-      validationKey
+      validationKey,
+      noTestify
     })
 
   changePassword = (oldPassword, newPassword) =>

@@ -227,7 +227,8 @@ class Login extends React.Component {
     terms: false,
     termsValid: false,
     newUser: false,
-    allowSendEmail: true
+    allowSendEmail: true,
+    noTestify: false
   }
 
   componentDidMount() {}
@@ -270,6 +271,8 @@ class Login extends React.Component {
           this.go('FirstLoginPage')
         } else if (result.code === 3) {
           this.setState({ requireValidationKey: true }, () => this.go('FirstLoginPage'))
+        } else if (result.code === 4) {
+          this.setState({ noTestify: true, newUser: true }, () => this.go('FirstLoginPage'))
         }
       } else {
         if (RealmStore.currentRealm ? RealmStore.currentRealm.registerEnabled : this.props.canRegister) {
@@ -289,7 +292,8 @@ class Login extends React.Component {
       this.state.birthdate,
       this.state.phone,
       this.state.allowSendEmail,
-      this.state.requireValidationKey ? this.state.validationKey : 'icv'
+      this.state.requireValidationKey ? this.state.validationKey : 'icv',
+      this.state.noTestify
     )
       .then(res => {
         AppStore.setToken(res.id)
@@ -375,8 +379,11 @@ class Login extends React.Component {
 
   handleSubmitFirstLoginPage = e => {
     e.preventDefault()
+
     if (
-      ((this.props.loginType === 'cpf' && this.state.birthdateValid && this.state.motherNameValid) || (this.state.birthdateValid && this.state.phoneValid)) &&
+      ((this.props.loginType === 'cpf' && this.state.birthdateValid && this.state.motherNameValid) ||
+        (this.state.birthdateValid && this.state.phoneValid) ||
+        this.state.noTestify) &&
       (this.state.termsValid || !RealmStore.termsOfUse) &&
       (this.state.validationKeyValid || !this.state.requireValidationKey)
     ) {
@@ -450,7 +457,8 @@ class Login extends React.Component {
       allowSendEmail,
       acceptMessage,
       terms,
-      newUser
+      newUser,
+      noTestify
     } = this.state
     const { full, solid } = RealmStore.logos || {}
 
@@ -531,6 +539,7 @@ class Login extends React.Component {
                               onChangeValidation={this.handleChangeValidation}
                               loginType={loginType}
                               onChange={this.handleChange}
+                              noTestify={noTestify}
                             />
                           )
                         case 'TestifyErrorPage':
@@ -713,28 +722,38 @@ const FirstLoginPage = withStyles(styles)(
     onChangeValidation,
     loginType,
     requireValidationKey,
-    newUser
+    newUser,
+    noTestify
   }) => (
-    <React.Fragment>
+    <>
       <UserIndicator username={username} onBack={onBack} />
       {!newUser && <span className={classes.wellcome}>Parabéns! Você foi convidado para fazer parte da maior plataforma de incentivos do Brasil!</span>}
       <span>Verificamos que esse é seu primeiro acesso, confirme seus dados para configurarmos seu ambiente.</span>
-      <BirthdateInput
-        error={error}
-        value={birthdate}
-        loginType={loginType}
-        onChange={value => onChange(value, 'birthdate')}
-        onChangeValidation={value => onChangeValidation(value, 'birthdate')}
-      />
-      {loginType === 'cpf' ? (
-        <MotherNameInput
-          error={error}
-          value={motherName}
-          onChange={value => onChange(value, 'motherName')}
-          onChangeValidation={value => onChangeValidation(value, 'motherName')}
-        />
-      ) : (
-        <PhoneInput error={error} value={phone} onChange={value => onChange(value, 'phone')} onChangeValidation={value => onChangeValidation(value, 'phone')} />
+      {!noTestify && (
+        <>
+          <BirthdateInput
+            error={error}
+            value={birthdate}
+            loginType={loginType}
+            onChange={value => onChange(value, 'birthdate')}
+            onChangeValidation={value => onChangeValidation(value, 'birthdate')}
+          />
+          {loginType === 'cpf' ? (
+            <MotherNameInput
+              error={error}
+              value={motherName}
+              onChange={value => onChange(value, 'motherName')}
+              onChangeValidation={value => onChangeValidation(value, 'motherName')}
+            />
+          ) : (
+            <PhoneInput
+              error={error}
+              value={phone}
+              onChange={value => onChange(value, 'phone')}
+              onChangeValidation={value => onChangeValidation(value, 'phone')}
+            />
+          )}
+        </>
       )}
       {requireValidationKey && (
         <ValidationKeyInput
@@ -744,7 +763,7 @@ const FirstLoginPage = withStyles(styles)(
           onChangeValidation={value => onChangeValidation(value, 'validationKey')}
         />
       )}
-    </React.Fragment>
+    </>
   )
 )
 
