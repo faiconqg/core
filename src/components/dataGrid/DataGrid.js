@@ -22,9 +22,11 @@ const styles = theme => ({
     paddingRight: 4,
     borderTopColor: theme.palette.grey[300],
     borderTopStyle: 'solid',
+    fontSize: 12,
     borderTopWidth: 1
   },
   rowCount: {
+    paddingTop: 3,
     marginLeft: 3
   },
   statusBar: {
@@ -322,7 +324,8 @@ class DataGrid extends React.Component {
             //     }
             // }}
           />
-          {/*}
+        </div>
+        {/*}
             <Table className={classes.table}>
               <DataGridHeader
                 fixedColumn={fixedColumn}
@@ -353,37 +356,36 @@ class DataGrid extends React.Component {
                   </TableRow>
                 )
               })}*/}
-          {clientSide ? (
-            <div className={cs(classes.wrap, classes.statusBar)}>
-              <div className={classes.statusBarInner}>{statusLeft}</div>
-              <div className={cs(classes.statusBarInner, classes.right)}>
-                {statusRight}
-                {`${rows.length} ${rows.length === 1 ? 'linha' : 'linhas'}`}
-              </div>
+        {clientSide ? (
+          <div className={cs(classes.wrap, classes.statusBar)}>
+            <div className={classes.statusBarInner}>{statusLeft}</div>
+            <div className={cs(classes.statusBarInner, classes.right)}>
+              {statusRight}
+              {`${rows.length} ${rows.length === 1 ? 'linha' : 'linhas'}`}
             </div>
-          ) : (
-            <TablePagination
-              classes={{ toolbar: classes.wrap }}
-              component="div"
-              count={rowCount}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onChangePage={this.handleChangePage}
-              onChangeRowsPerPage={this.handleChangeRowsPerPage}
-              labelRowsPerPage="Linhas por página"
-              labelDisplayedRows={({ from, to, count }) => {
-                return (
-                  <div className={classes.paginationInfo}>
-                    <span>{`${from}-${to} de`}</span>
-                    <span className={classes.rowCount}>
-                      {busyCount || (busy && rowCount === 0) ? <CircularProgress size={14} className={classes.progress} /> : count}
-                    </span>
-                  </div>
-                )
-              }}
-            />
-          )}
-        </div>
+          </div>
+        ) : (
+          <TablePagination
+            classes={{ toolbar: classes.wrap }}
+            component="div"
+            count={rowCount}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onChangePage={this.handleChangePage}
+            onChangeRowsPerPage={this.handleChangeRowsPerPage}
+            labelRowsPerPage="Linhas por página"
+            labelDisplayedRows={({ from, to, count }) => {
+              return (
+                <div className={classes.paginationInfo}>
+                  <span>{`${from}-${to} de`}</span>
+                  <span className={classes.rowCount}>
+                    {busyCount || (busy && rowCount === 0) ? <CircularProgress size={14} className={classes.progress} /> : count}
+                  </span>
+                </div>
+              )
+            }}
+          />
+        )}
       </Container>
     )
   }
