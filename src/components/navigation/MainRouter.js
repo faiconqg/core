@@ -93,7 +93,11 @@ class MainRouter extends React.Component {
     }
 
     if (window.location.pathname === '/') {
-      return <Redirect to={'/' + AccessRoutesStore.models.get(0).get('path')} />
+      if (AccessRoutesStore.models.get(0).has('accessRoutes')) {
+        return <Redirect to={'/' + AccessRoutesStore.models.get(0).get('path') + '/' + AccessRoutesStore.models.get(0).get('accessRoutes')[0].path} />
+      } else {
+        return <Redirect to={'/' + AccessRoutesStore.models.get(0).get('path')} />
+      }
     }
 
     return (
