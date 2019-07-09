@@ -8,7 +8,8 @@ const styles = theme => ({
     backgroundColor: '#f8f8f8',
     display: 'flex',
     flexDirection: 'column',
-    flexShrink: 0
+    flexShrink: 0,
+    borderRadius: 6
   },
   flex: {
     display: 'flex',

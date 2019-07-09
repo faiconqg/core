@@ -53,6 +53,12 @@ var styles = theme => ({
       backgroundColor: 'rgba(200, 200, 200, 0.2)'
     }
   },
+  borderList: {
+    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+    borderBottomStyle: 'solid',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(200, 200, 200, 0.1)'
+  },
   itemActive: {
     backgroundColor: theme.palette.secondary.light
   },
@@ -119,7 +125,7 @@ class Item extends Page {
             </div>
           </Fade>
         </ListItem>
-        <Collapse in={this.state.open} timeout="auto" unmountOnExit>
+        <Collapse in={this.state.open} timeout="auto" unmountOnExit className={classes.borderList}>
           <MenuList parent={this.props} items={accessRoute.accessRoutes} level={this.props.level + 1} onItemClick={this.props.onItemClick} />
         </Collapse>
       </LinearLayout>

@@ -25,6 +25,7 @@ class Realms extends Collection {
   @observable termsOfUse = null
   @observable useBankAccount = null
   @observable menuBackground = null
+  @observable useScore = false
 
   completeLoad = callback => {
     if (this.currentRealm) {
@@ -51,6 +52,9 @@ class Realms extends Collection {
       }
       if (this.currentRealm.appName) {
         this.appName = this.currentRealm.appName
+      }
+      if (this.currentRealm.useScore) {
+        this.useScore = this.currentRealm.useScore
       }
       this.useBankAccount = this.currentRealm.useBankAccount
     }
