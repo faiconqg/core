@@ -32,7 +32,7 @@ class AuthenticatedLayout extends React.Component {
   isSmall = () => this.props.width === 'xs' || this.props.width === 'sm'
 
   render() {
-    const { classes, toolbar } = this.props
+    const { classes, toolbar, title } = this.props
     return (
       <LinearLayout cover orientation="row">
         <Menu />
@@ -50,7 +50,7 @@ class AuthenticatedLayout extends React.Component {
                 : 69
             }}
           >
-            <Header toolbar={toolbar} />
+            <Header toolbar={toolbar} title={title} />
             <div className={classes.body}>{this.props.children}</div>
             <Footer />
           </LinearLayout>

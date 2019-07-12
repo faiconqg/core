@@ -8,10 +8,10 @@ export default
 @observer
 class WebLayout extends Foundation {
   render() {
-    const { prefix, toolbar } = this.props
+    const { prefix, toolbar, title } = this.props
 
     return (
-      <AuthenticatedLayout toolbar={toolbar}>
+      <AuthenticatedLayout toolbar={toolbar} title={title}>
         <MainRouter prefix={prefix} />
       </AuthenticatedLayout>
     )

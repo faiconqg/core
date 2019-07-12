@@ -8,6 +8,7 @@ import MenuList from './MenuList'
 import ExpandLess from '@material-ui/icons/ExpandLess'
 import ExpandMore from '@material-ui/icons/ExpandMore'
 import cs from 'classnames'
+import { AppStore } from 'stores'
 
 var styles = theme => ({
   drawerIcons: {
@@ -84,8 +85,9 @@ class Item extends Page {
   startOpened() {
     return (
       this.hasChildren() &&
-      this.props.accessRoute.accessRoutes.filter(item => this.props.router.location.pathname.indexOf(`/${this.props.accessRoute.path}/${item.path}`) === 0)
-        .length > 0
+      (AppStore.startExpanded ||
+        this.props.accessRoute.accessRoutes.filter(item => this.props.router.location.pathname.indexOf(`/${this.props.accessRoute.path}/${item.path}`) === 0)
+          .length > 0)
     )
   }
 

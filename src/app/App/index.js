@@ -72,6 +72,7 @@ class App extends Foundation {
     RealmStore.secondaryColor = this.props.secondaryColor
     RealmStore.menuBackground = this.props.menuBackground
     AppStore.menuFixed = !!this.props.menuFixed
+    AppStore.startExpanded = !!this.props.startExpanded
   }
 
   render() {

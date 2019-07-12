@@ -21,6 +21,8 @@ class AppStore {
   @observable
   menuFixed = false
   @observable
+  startExpanded = false
+  @observable
   menuOver = false
   @observable
   smallToggled = false

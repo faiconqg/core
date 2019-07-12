@@ -111,13 +111,14 @@ class Header extends Page {
   }
 
   render() {
-    const { classes, router, toolbar } = this.props
+    const { classes, router, toolbar, title } = this.props
     return (
       <AppBar position="static" className={classes.appBar}>
         <Toolbar className={classes.toolBar}>
           <Fab className={classes.sidebarButton} size="small" disableRipple disableFocusRipple onClick={this.toggleMenu}>
             {AppStore.inSubPage ? <ArrowBack className={classes.sidebarMenuIcon} /> : <Menu className={classes.sidebarMenuIcon} />}
           </Fab>
+          {title}
           {AccessRoutesStore.busy() ? (
             <LinearLayout padding={20}>
               <CircularProgress size={20} className={classes.progress} />
