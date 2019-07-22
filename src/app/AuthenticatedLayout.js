@@ -14,11 +14,12 @@ const styles = theme => ({
     paddingBottom: 6,
     paddingRight: 20,
     paddingLeft: 20,
+    paddingTop: 20,
+    marginTop: 80,
     [theme.breakpoints.down('sm')]: {
       paddingRight: 5,
-      paddingLeft: 5,
       paddingTop: 10,
-      marginTop: 80
+      paddingLeft: 5
     }
   }
 })
@@ -29,10 +30,9 @@ export default
 @withRouter
 @observer
 class AuthenticatedLayout extends React.Component {
-  isSmall = () => this.props.width === 'xs' || this.props.width === 'sm'
-
   render() {
     const { classes, toolbar, title } = this.props
+
     return (
       <LinearLayout cover orientation="row">
         <Menu />
@@ -42,12 +42,7 @@ class AuthenticatedLayout extends React.Component {
             cover
             height="100%"
             style={{
-              marginLeft: this.isSmall()
-                ? 0
-                : // : AppStore.menuFixed && !AppStore.inSubPage
-                AppStore.menuFixed
-                ? 250
-                : 69
+              marginLeft: AppStore.menuWidth
             }}
           >
             <Header toolbar={toolbar} title={title} />

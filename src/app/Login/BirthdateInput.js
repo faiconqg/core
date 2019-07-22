@@ -3,6 +3,7 @@ import FieldsBase from './FieldsBase'
 import { withStyles, TextField } from '@material-ui/core'
 import MaskedInput from 'react-text-mask'
 import createAutoCorrectedDatePipe from 'text-mask-addons/dist/createAutoCorrectedDatePipe'
+import { AppStore } from './../../stores'
 
 const styles = theme => ({
   // root: {
@@ -42,7 +43,7 @@ class BirthdateInput extends FieldsBase {
       <TextField
         autoFocus
         placeholder="dd/mm/aaaa"
-        label={window.screen.width < 360 ? 'Data do seu nascimento?' : 'Qual a data do seu nascimento?'}
+        label={AppStore.windowWidth < 360 ? 'Data do seu nascimento?' : 'Qual a data do seu nascimento?'}
         InputProps={{
           inputComponent: MaskDate
         }}

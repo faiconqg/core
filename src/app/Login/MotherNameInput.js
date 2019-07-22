@@ -1,6 +1,7 @@
 import React from 'react'
 import FieldsBase from './FieldsBase'
 import { withStyles, TextField } from '@material-ui/core'
+import { AppStore } from './../../stores'
 
 const styles = theme => ({
   // root: {
@@ -32,7 +33,7 @@ class MotherNameInput extends FieldsBase {
 
     return (
       <TextField
-        label={window.screen.width < 360 ? 'Primeiro nome da mãe' : 'Qual o primeiro nome da sua mãe?'}
+        label={AppStore.windowWidth < 360 ? 'Primeiro nome da mãe' : 'Qual o primeiro nome da sua mãe?'}
         error={!!error && (typeof error === 'string' || !!message)}
         value={value}
         onChange={this.handleChange}

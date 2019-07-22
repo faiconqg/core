@@ -50,18 +50,18 @@ const styles = theme => ({
   },
   appBar: {
     height: 82,
-    backgroundColor: 'transparent',
+    // backgroundColor: 'transparent',
     boxShadow: 'none',
     zIndex: 100,
     color: theme.palette.text.secondary,
-    [theme.breakpoints.down('sm')]: {
-      position: 'fixed',
-      backgroundColor: theme.palette.grey[200],
-      color: theme.palette.primary.contrastText,
-      borderBottomColor: theme.palette.primary.main,
-      borderBottomWidth: 2,
-      borderBottomStyle: 'solid'
-    }
+    // [theme.breakpoints.down('sm')]: {0
+    position: 'fixed',
+    backgroundColor: theme.palette.grey[200],
+    // color: theme.palette.primary.contrastText,
+    borderBottomColor: theme.palette.primary.main,
+    borderBottomWidth: 2,
+    borderBottomStyle: 'solid'
+    // }
   },
   toolBar: {
     height: 82
@@ -113,7 +113,7 @@ class Header extends Page {
   render() {
     const { classes, router, toolbar, title } = this.props
     return (
-      <AppBar position="static" className={classes.appBar}>
+      <AppBar position="static" className={classes.appBar} style={{ width: `calc(100% - ${AppStore.menuWidth}px)` }}>
         <Toolbar className={classes.toolBar}>
           <Fab className={classes.sidebarButton} size="small" disableRipple disableFocusRipple onClick={this.toggleMenu}>
             {AppStore.inSubPage ? <ArrowBack className={classes.sidebarMenuIcon} /> : <Menu className={classes.sidebarMenuIcon} />}

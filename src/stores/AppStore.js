@@ -1,5 +1,6 @@
 import { observable, action, computed } from './../api'
 import { AccessRoutesStore, UserStore } from './../'
+import debounce from 'lodash/debounce'
 
 class AppStore {
   @observable
@@ -37,11 +38,28 @@ class AppStore {
   onReset = null
   onLogin = null
   onPushNotificationReceived = null
+  @observable
+  windowWidth = 0
+
+  constructor() {
+    this.windowWidth = window.screen.width
+    window.addEventListener('resize', this.handleWindowWidthChange)
+  }
+
+  handleWindowWidthChange = debounce(() => {
+    this.windowWidth = window.screen.width
+  }, 100)
 
   @computed
   get shouldMenuBeVisible() {
     // return !this.inSubPage && (this.menuFixed || this.menuOver)
     return this.menuFixed || this.menuOver
+  }
+
+  @computed
+  get menuWidth() {
+    // return !this.inSubPage && (this.menuFixed || this.menuOver)
+    return this.windowWidth < 960 ? 0 : this.menuFixed ? 250 : 69
   }
 
   @action

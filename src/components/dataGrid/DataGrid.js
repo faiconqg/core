@@ -1,6 +1,7 @@
 import React from 'react'
 import DataGridToolbar from './DataGridToolbar'
 import { observer, Model } from './../../api'
+import { AppStore } from './../../stores'
 import { withStyles, CircularProgress, TablePagination, Paper } from '@material-ui/core'
 import { AgGridReact } from 'ag-grid-react'
 import agGridTranslation from './../../resources/agGridTranslation.json'
@@ -26,7 +27,6 @@ const styles = theme => ({
     borderTopWidth: 1
   },
   rowCount: {
-    paddingTop: 3,
     marginLeft: 3
   },
   statusBar: {
@@ -373,7 +373,7 @@ class DataGrid extends React.Component {
             page={page}
             onChangePage={this.handleChangePage}
             onChangeRowsPerPage={this.handleChangeRowsPerPage}
-            labelRowsPerPage="Linhas por página"
+            labelRowsPerPage={AppStore.windowWidth > 360 ? 'Linhas por página' : null}
             labelDisplayedRows={({ from, to, count }) => {
               return (
                 <div className={classes.paginationInfo}>

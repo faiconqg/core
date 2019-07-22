@@ -1,5 +1,6 @@
 export { default as apiClient } from './mobxRest/apiClient'
 export { default as Collection } from './Collection'
+export { default as Listener } from './Listener'
 export { default as ResourceLoader } from './ResourceLoader'
 export { default as Model } from './Model'
 export { default as apiSetup } from './Setup'
