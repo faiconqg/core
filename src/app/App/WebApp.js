@@ -12,6 +12,6 @@ class WebApp extends Foundation {
   render() {
     const { ...props } = this.props
 
-    return <App {...props}>{UserStore.busy() || RealmStore.busy() ? <PageLoading /> : <WebLayout />}</App>
+    return <App {...props}>{!UserStore.logged || RealmStore.busy() ? <PageLoading /> : <WebLayout />}</App>
   }
 }

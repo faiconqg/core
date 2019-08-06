@@ -1,6 +1,6 @@
 import React from 'react'
 import './../../basis/Polyfill'
-import { syncHistoryWithStore, PageLoading } from 'components'
+import { syncHistoryWithStore } from 'components'
 import { Provider } from 'mobx-react'
 import { apiSetup, observer } from './../../api'
 import { RouterStore, AppStore, UserStore, RealmStore } from 'stores'
@@ -11,6 +11,7 @@ import MasterLayout from './../MasterLayout'
 import { Router, Route, Switch, Redirect } from 'react-router-dom'
 // import { Provider } from 'mobx-react'
 import Login from './../Login'
+import MyAccount from './../MyAccount'
 // import Register from './../Register'
 import { Snackbar, Button } from '@material-ui/core'
 import Helmet from './Helmet'
@@ -58,6 +59,7 @@ class App extends Foundation {
       })
     } else {
       RealmStore.realmResolved = true
+      Capacitor.init()
       if (AppStore.token) {
         UserStore.current()
       }
@@ -68,6 +70,7 @@ class App extends Foundation {
     RealmStore.backgroundColor = this.props.backgroundColor
     RealmStore.appName = this.props.appName
     RealmStore.appUrl = this.props.appUrl
+    RealmStore.privacyUrl = this.props.privacyUrl
     RealmStore.primaryColor = this.props.primaryColor
     RealmStore.secondaryColor = this.props.secondaryColor
     RealmStore.menuBackground = this.props.menuBackground
@@ -92,6 +95,7 @@ class App extends Foundation {
       onPushNotificationReceived,
       acceptMessage,
       appEmail,
+      configurations,
       loginType = 'email',
       canRegister = true
     } = this.props
@@ -107,7 +111,7 @@ class App extends Foundation {
         langs.es = es
       }
       I18n.setTranslations(langs)
-      let language = lang || 'pt'
+      let language = lang || (UserStore.logged && UserStore.logged.locale) || 'pt'
       I18n.setLocale(language)
 
       if (language.indexOf('en') === 0) {
@@ -122,6 +126,7 @@ class App extends Foundation {
     AppStore.onReset = onLogout
     AppStore.onLogin = onLogin
     AppStore.onPushNotificationReceived = onPushNotificationReceived
+    AppStore.configurations = configurations
 
     apiSetup(api, AppStore.token, { platform: AppStore.platform, version: process.env.REACT_APP_VERSION })
 
@@ -182,6 +187,7 @@ class App extends Foundation {
                   }}
                 />
               )}
+              <Route path="/account-settings" render={props => <MyAccount {...props} loginType={loginType} />} />
               {children
                 ? React.Children.map(children, child =>
                     React.cloneElement(child, {

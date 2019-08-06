@@ -143,7 +143,7 @@ class Menu extends Page {
                     width: width > 0 ? 'auto' : 0
                   }}
                   src={sidebar}
-                  alt="Incentive.me"
+                  alt={RealmStore.appName}
                 />
               ) : (
                 <span className={classes.appName}>

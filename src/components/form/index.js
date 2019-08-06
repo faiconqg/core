@@ -1,4 +1,7 @@
 export { default as Form } from './Form'
 export { default as Label } from './Label'
 export { default as Button } from './Button'
+export { default as ConfigSection } from './ConfigSection'
+export { default as ConfigItem } from './ConfigItem'
+export { default as TextField } from './TextField'
 export { default as setupForm } from './fields'

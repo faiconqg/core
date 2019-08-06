@@ -16,7 +16,7 @@ class Realms extends Collection {
   @observable remoteLogo = null
   @observable appName = null
   @observable appUrl = null
-  @observable appUrl = null
+  @observable privacyUrl = null
   @observable background = null
   @observable backgroundColor = null
   @observable primaryColor = null

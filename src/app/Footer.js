@@ -2,7 +2,6 @@ import React from 'react'
 import Page from './Page'
 import { RealmStore } from 'stores'
 import { withStyles } from '@material-ui/core'
-import { LinearLayout } from 'components'
 
 const styles = theme => ({
   container: {
@@ -10,8 +9,11 @@ const styles = theme => ({
     // backgroundColor: theme.palette.grey[500],
     // borderTopWidth: 1,
     // borderTopStyle: 'solid',
-    paddingRight: 30,
-    paddingBottom: 5
+    display: 'flex',
+    paddingLeft: 10,
+    paddingBottom: 6,
+    flex: 1,
+    alignItems: 'flex-end'
   },
   label: {
     color: theme.palette.text.secondary,
@@ -30,14 +32,14 @@ class Footer extends Page {
   render() {
     const { classes } = this.props
     return (
-      <LinearLayout gravity="right" className={classes.container}>
+      <div className={classes.container}>
         <span className={classes.label}>
           © 2019{' '}
           <a href={RealmStore.appUrl || 'https://www.faicon.com'} target="blank" className={classes.link}>
             {RealmStore.appName || 'faicon.com'}
           </a>
         </span>
-      </LinearLayout>
+      </div>
     )
   }
 }

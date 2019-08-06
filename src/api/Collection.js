@@ -80,6 +80,13 @@ export default class Collection extends BaseCollection {
   }
 
   init = props => {
+    const ModelClass = this.model()
+    this.workingModel = new ModelClass()
+    this.workingModel.collection = this
+    this.workingModel.set(props)
+  }
+
+  edit = props => {
     this.workingModel = this.build(props)
   }
 

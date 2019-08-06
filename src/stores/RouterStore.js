@@ -1,5 +1,6 @@
 import { observable, action, computed } from './../api'
 import { AccessRoutesStore, AppStore } from 'stores'
+import RealmStore from './RealmStore'
 
 class RouterStore {
   @observable
@@ -36,7 +37,7 @@ class RouterStore {
         }
         return false
       })
-      return accessRoutes ? accessRoutes.title || accessRoutes.label : 'Incentive.me'
+      return accessRoutes ? accessRoutes.title || accessRoutes.label : RealmStore.appName
     } else {
       return ''
     }
@@ -57,7 +58,15 @@ class RouterStore {
   @action
   _updateLocation(newState) {
     let splited = newState.pathname.split('/')
-    this.checkSubPage(splited.length >= 4)
+    let size = 3
+
+    const mainRouter = AccessRoutesStore.models.find(item => (item.path || item.get('path')) === splited[0])
+
+    if (mainRouter && mainRouter.has('accessRoutes') && mainRouter.get('accessRoutes').length > 0) {
+      size = 4
+    }
+
+    this.checkSubPage(splited.length >= size)
     this.location = newState
   }
 

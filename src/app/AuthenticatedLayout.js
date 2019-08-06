@@ -15,7 +15,7 @@ const styles = theme => ({
     paddingRight: 20,
     paddingLeft: 20,
     paddingTop: 20,
-    marginTop: 80,
+    marginTop: AppStore.device.hasNotch ? 120 : 80,
     [theme.breakpoints.down('sm')]: {
       paddingRight: 5,
       paddingTop: 10,

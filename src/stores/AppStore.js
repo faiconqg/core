@@ -40,6 +40,7 @@ class AppStore {
   onPushNotificationReceived = null
   @observable
   windowWidth = 0
+  configurations = null
 
   constructor() {
     this.windowWidth = window.screen.width

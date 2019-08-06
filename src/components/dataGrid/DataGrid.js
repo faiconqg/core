@@ -5,6 +5,7 @@ import { AppStore } from './../../stores'
 import { withStyles, CircularProgress, TablePagination, Paper } from '@material-ui/core'
 import { AgGridReact } from 'ag-grid-react'
 import agGridTranslation from './../../resources/agGridTranslation.json'
+import BooleanRenderer from './renderers/BooleanRenderer'
 import 'ag-grid-community/dist/styles/ag-grid.css'
 import 'ag-grid-community/dist/styles/ag-theme-material.css'
 import cs from 'classnames'
@@ -153,7 +154,7 @@ class DataGrid extends React.Component {
     }
   }
 
-  resolveRender = (render, props) => {
+  resolveRender = (render, renderer) => {
     if (render) {
       return params => {
         // TODO: Verificar se serve para todos os casos
@@ -168,6 +169,18 @@ class DataGrid extends React.Component {
           params.column.colDef.field,
           params.data
         )
+      }
+    } else if (renderer) {
+      return params => {
+        if (params.node.rowPinned === 'bottom' && String(params.value).length === 0) {
+          return ''
+        }
+        switch (renderer) {
+          case 'boolean':
+            return <BooleanRenderer {...params} />
+          default:
+            return null
+        }
       }
     }
   }
@@ -186,13 +199,13 @@ class DataGrid extends React.Component {
         return visible
       })
       .map(column => {
-        const { title, field, visible, formatter, numeric, render, children, ...props } = column.props
+        const { title, field, visible, formatter, numeric, render, children, renderer, ...props } = column.props
         return {
           headerName: title,
           field: field || '',
           tooltipField: field || '',
           children: children && this.getColumns(children),
-          cellRendererFramework: this.resolveRender(render),
+          cellRendererFramework: this.resolveRender(render, renderer),
           valueGetter: this.resolveLabel(formatter, numeric),
           ...props
         }
