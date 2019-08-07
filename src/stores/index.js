@@ -3,6 +3,7 @@ import BaseAccessRoutesStore from './AccessRoutesStore'
 import BaseRealmStore from './RealmStore'
 import BaseAccountStore from './AccountStore'
 import BaseUserDetailStore from './UserDetailStore'
+import BaseContactDataStore from './ContactDataStore'
 
 export { default as AppStore } from './AppStore'
 export { default as RouterStore } from './RouterStore'
@@ -15,3 +16,4 @@ export const AccessRoutesStore = new BaseAccessRoutesStore({
 export const AccountStore = new BaseAccountStore()
 export const UserDetailStore = new BaseUserDetailStore()
 export const RealmStore = new BaseRealmStore()
+export const ContactDataStore = new BaseContactDataStore({ include: { city: 'state' } })

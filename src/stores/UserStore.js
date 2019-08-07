@@ -1,8 +1,9 @@
 import { Collection, observable, computed, Model } from './../api'
-import { AccountStore, AppStore, UserDetailStore, RealmStore } from 'stores'
+import { AccountStore, AppStore, UserDetailStore, RealmStore, ContactDataStore } from 'stores'
 import platform from 'platform'
 
 class User extends Model {
+  @computed
   get account() {
     const accountId = this.g('accountId')
     let account = AccountStore.get(accountId)
@@ -11,6 +12,18 @@ class User extends Model {
     } else {
       AccountStore.current()
       return AccountStore.build()
+    }
+  }
+
+  @computed
+  get contactData() {
+    const contactDataId = this.g('contactDataId')
+    let contactData = ContactDataStore.get(contactDataId)
+    if (contactData) {
+      return contactData
+    } else {
+      ContactDataStore.current()
+      return ContactDataStore.build()
     }
   }
 
