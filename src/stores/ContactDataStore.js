@@ -4,7 +4,11 @@ import { UserStore } from 'stores'
 class ContactData extends Collection {
   url = () => 'contact-data'
 
-  current = () => this.where({ id: UserStore.logged.contactDataId }).all()
+  current = () => {
+    if (UserStore.logged.contactDataId) {
+      this.where({ id: UserStore.logged.contactDataId }).all()
+    }
+  }
 }
 
 export default ContactData

@@ -17,13 +17,14 @@ class User extends Model {
 
   @computed
   get contactData() {
-    const contactDataId = this.g('contactDataId')
+    const contactDataId = this.g('contactDataId') || 0
     let contactData = ContactDataStore.get(contactDataId)
     if (contactData) {
       return contactData
     } else {
       ContactDataStore.current()
-      return ContactDataStore.build()
+      ContactDataStore.add({ id: contactDataId })
+      return ContactDataStore.get(contactDataId)
     }
   }
 
