@@ -165,6 +165,11 @@ export default class Collection extends BaseCollection {
     return this
   }
 
+  select = fields => {
+    Object.assign(this._query.data.filter, { fields })
+    return this
+  }
+
   order = orderObject => {
     Object.assign(this._query.data.filter, { order: orderObject })
     return this

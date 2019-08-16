@@ -64,7 +64,6 @@ export default
 @observer
 class DataGrid extends React.Component {
   state = {
-    order: 'asc',
     orderBy: this.props.orderBy,
     page: this.props.page || 0,
     rowsPerPage: this.props.rowsPerPage || 10
@@ -272,6 +271,16 @@ class DataGrid extends React.Component {
     this.api = params.api
     this.columnApi = params.columnApi
     this.autosizeColumnsIfNeeded()
+    // if (this.props.orderBy) {
+    //   const splitedSort = this.props.orderBy ? this.props.orderBy.split(' ') : null
+    //   if (splitedSort) {
+    //     if (splitedSort.length > 1) {
+    //       this.api.setSortModel([{ colId: splitedSort[0], sort: splitedSort[1] }])
+    //     } else {
+    //       this.api.setSortModel([{ colId: splitedSort[0] }])
+    //     }
+    //   }
+    // }
     // this.api.updateRowData()
   }
 
@@ -291,6 +300,7 @@ class DataGrid extends React.Component {
       busyCount,
       disablePaper,
       disableSummary,
+      onSortChanged,
       minHeight = 'auto'
     } = this.props
     const { rowsPerPage, page } = this.state /* Fiz isso pra tirar os warnings... Espero não ferir ninguém */
@@ -314,6 +324,7 @@ class DataGrid extends React.Component {
           <AgGridReact
             // listening for events
             reactNext={true}
+            onSortChanged={onSortChanged}
             onRowClicked={params => this.handleClick(params.data.id, params.data)}
             onGridReady={this.onGridReady}
             rowData={rows.toJS()}

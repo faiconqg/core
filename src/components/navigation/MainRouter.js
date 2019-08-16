@@ -2,7 +2,8 @@ import React from 'react'
 import ScrollToTop from './ScrollToTop'
 import { withRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { observer } from './../../api'
-import { AccessRoutesStore } from 'stores'
+import { CircularProgress } from '@material-ui/core'
+import { AccessRoutesStore, RouterStore } from 'stores'
 import NoMatch from './NoMatch'
 
 let requires = {}
@@ -32,7 +33,16 @@ class LazyComp extends React.Component {
     const Component = requires[this.props.component]
 
     if (!Component) {
-      return <div>...</div>
+      return (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center'
+          }}
+        >
+          <CircularProgress />
+        </div>
+      )
     }
     return <Component />
   }
@@ -68,7 +78,10 @@ export default
 @observer
 class MainRouter extends React.Component {
   componentDidMount() {
-    AccessRoutesStore.isEmpty && AccessRoutesStore.scope().all()
+    AccessRoutesStore.isEmpty &&
+      AccessRoutesStore.scope()
+        .all()
+        .then(() => RouterStore._updateLocation(window.location))
   }
 
   render() {
@@ -76,7 +89,16 @@ class MainRouter extends React.Component {
     // console.log(this.props)
 
     if (AccessRoutesStore.busy()) {
-      return <div>...</div>
+      return (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center'
+          }}
+        >
+          <CircularProgress />
+        </div>
+      )
     }
 
     if (AccessRoutesStore.error) {

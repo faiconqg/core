@@ -4,6 +4,7 @@ import { observer } from './../../api'
 import DataGrid from './DataGrid'
 import Search from '@material-ui/icons/Search'
 import GetApp from '@material-ui/icons/GetApp'
+import Sync from '@material-ui/icons/Sync'
 import Clear from '@material-ui/icons/Clear'
 
 const styles = theme => ({
@@ -32,9 +33,6 @@ class DataGridFetch extends React.Component {
     if (!this.props.store.pagination.orderBy) {
       this.props.store.pagination.orderBy = this.props.orderBy
     }
-    if (!this.props.store.pagination.order) {
-      this.props.store.pagination.order = this.props.order || 'asc'
-    }
     if (!this.props.store.pagination.rowsPerPage) {
       this.props.store.pagination.rowsPerPage = this.props.rowsPerPage || 10
     }
@@ -51,6 +49,10 @@ class DataGridFetch extends React.Component {
 
   componentDidMount() {
     this.refresh()
+  }
+
+  handleRefresh = event => {
+    this.refresh(true)
   }
 
   handleExport = event => {
@@ -80,6 +82,12 @@ class DataGridFetch extends React.Component {
         .map(item => item.props),
       this.props.exportFile
     )
+  }
+
+  handleSort = e => {
+    const sortModel = e.api.getSortModel()
+    this.props.store.pagination.orderBy = sortModel.map(col => col.colId + ' ' + col.sort)
+    this.refresh(true)
   }
 
   handleSearch = value => {
@@ -130,12 +138,13 @@ class DataGridFetch extends React.Component {
       let query = this.props.store
         .where(this.resolveSearch(), true)
         .scope()
+        .select(this.props.select)
         .where(this.props.filter)
       if (!this.props.clientSide) {
         query.limit(this.props.store.pagination.rowsPerPage).offset(this.props.store.pagination.page * this.props.store.pagination.rowsPerPage)
       }
       if (this.props.store.pagination.orderBy) {
-        query.order(this.props.store.pagination.orderBy + ' ' + this.props.store.pagination.order)
+        query.order(this.props.store.pagination.orderBy)
       }
       if (this.props.store.request) {
         this.props.store.request.abort()
@@ -155,6 +164,7 @@ class DataGridFetch extends React.Component {
       <DataGrid
         {...props}
         page={page}
+        // onSortChanged={this.handleSort}
         onItemClick={onItemClick}
         rowCount={store.count}
         rowsPerPage={rowsPerPage}
@@ -163,7 +173,6 @@ class DataGridFetch extends React.Component {
         rows={store.models}
         onChangePage={this.handleChangePage}
         onChangeRowsPerPage={this.handleChangeRowsPerPage}
-        onRequestSort={this.handleRequestSort}
         busy={this.props.store.busy()}
         busyCount={this.props.store.busyCount()}
         titleBar={
@@ -178,7 +187,7 @@ class DataGridFetch extends React.Component {
                 endAdornment={
                   search && (
                     <InputAdornment position="end">
-                      <IconButton onClick={() => this.handleSearch('')} alt="Criar campanha">
+                      <IconButton onClick={() => this.handleSearch('')} alt="Limpar busca">
                         <Clear />
                       </IconButton>
                     </InputAdornment>
@@ -198,9 +207,14 @@ class DataGridFetch extends React.Component {
                   <CircularProgress size={24} className={classes.progress} />
                 </div>
               ) : (
-                <IconButton onClick={this.handleExport} alt="Exportar para XLS">
-                  <GetApp />
-                </IconButton>
+                <>
+                  <IconButton onClick={this.handleExport} alt="Exportar para XLS">
+                    <GetApp />
+                  </IconButton>
+                  <IconButton onClick={this.handleRefresh} alt="Atualizar">
+                    <Sync />
+                  </IconButton>
+                </>
               ))}
             {controlBar}
           </div>

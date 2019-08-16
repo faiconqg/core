@@ -60,7 +60,7 @@ class RouterStore {
     let splited = newState.pathname.split('/')
     let size = 3
 
-    const mainRouter = AccessRoutesStore.models.find(item => (item.path || item.get('path')) === splited[0])
+    const mainRouter = AccessRoutesStore.models.find(item => (item.path || item.get('path')) === splited[1])
 
     if (mainRouter && mainRouter.has('accessRoutes') && mainRouter.get('accessRoutes').length > 0) {
       size = 4
