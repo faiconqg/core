@@ -1,6 +1,6 @@
 {
   "name": "@faicon/core",
-  "version": "0.0.52",
+  "version": "0.0.53",
   "description": "Faicon core API for react. https://github.com/faiconqg/core",
   "main": "dist/index.js",
   "files": [
@@ -52,10 +52,12 @@
     "lint-staged": "8.1.5",
     "opn-cli": "4.0.0",
     "prettier": "1.16.4",
+    "rimraf": "2.6.3",
+    "standard-changelog": "2.0.13"
+  },
+  "peerDependencies": {
     "react": "16.8.6",
-    "react-dom": "16.8.6",
-    "standard-changelog": "2.0.13",
-    "rimraf": "2.6.3"
+    "react-dom": "16.8.6"
   },
   "dependencies": {
     "@capacitor/core": "1.0.0-beta.22",
