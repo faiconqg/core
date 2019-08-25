@@ -153,6 +153,11 @@ export default class Collection extends BaseCollection {
     return data.count
   }
 
+  clean = () => {
+    this._query = { data: { filter: {} } }
+    return this
+  }
+
   where = (filterObject, reset = false) => {
     Object.assign(this._query.data.filter, {
       where: Object.assign({}, reset ? {} : this._query.data.filter.where, filterObject)

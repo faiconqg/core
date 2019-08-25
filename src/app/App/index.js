@@ -17,6 +17,8 @@ import { Snackbar, Button } from '@material-ui/core'
 import Helmet from './Helmet'
 import Capacitor from './Capacitor'
 import moment from 'moment'
+import firebase from 'firebase/app'
+import 'firebase/auth'
 
 // import DevTools from 'mobx-react-devtools'
 
@@ -96,8 +98,10 @@ class App extends Foundation {
       acceptMessage,
       appEmail,
       configurations,
+      useMobileVerification,
       loginType = 'email',
-      canRegister = true
+      canRegister = true,
+      firebaseConfig
     } = this.props
 
     RendererManager.renderer = renderer
@@ -127,6 +131,9 @@ class App extends Foundation {
     AppStore.onLogin = onLogin
     AppStore.onPushNotificationReceived = onPushNotificationReceived
     AppStore.configurations = configurations
+    if (firebaseConfig && !AppStore.firebase) {
+      AppStore.firebase = firebase.initializeApp(firebaseConfig)
+    }
 
     apiSetup(api, AppStore.token, { platform: AppStore.platform, version: process.env.REACT_APP_VERSION })
 
@@ -163,6 +170,24 @@ class App extends Foundation {
                 render={props => (
                   <Login
                     {...props}
+                    useMobileVerification={useMobileVerification}
+                    acceptMessage={acceptMessage}
+                    wellcomeMessage={wellcomeMessage}
+                    loginType={loginType}
+                    loginLabel={loginType === 'cpf' ? 'CPF' : 'e-mail'}
+                    multitenant={multitenant}
+                    canRegister={canRegister}
+                    appEmail={appEmail}
+                  />
+                )}
+              />
+              <Route
+                path="/confirm-phone"
+                render={props => (
+                  <Login
+                    {...props}
+                    confirmPhone
+                    useMobileVerification={useMobileVerification}
                     acceptMessage={acceptMessage}
                     wellcomeMessage={wellcomeMessage}
                     loginType={loginType}
@@ -183,6 +208,14 @@ class App extends Foundation {
                 <Redirect
                   to={{
                     pathname: '/login',
+                    state: { from: history.location }
+                  }}
+                />
+              )}
+              {useMobileVerification && UserStore.logged && !UserStore.logged.mobileVerified && (
+                <Redirect
+                  to={{
+                    pathname: '/confirm-phone',
                     state: { from: history.location }
                   }}
                 />

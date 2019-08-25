@@ -38,7 +38,7 @@ export default class Background extends React.Component {
     return (
       <div style={Object.assign({}, styles.base, style)} {...other}>
         <Hidden smDown>
-          <img onLoad={this.onBackgroundLoad} src={RealmStore.background && RealmStore.background[1]} style={{ display: 'none' }} alt="background" />
+          <img onLoad={this.onBackgroundLoad} src={RealmStore.background && RealmStore.background.length > 1 && RealmStore.background[1]} style={{ display: 'none' }} alt="background" />
           <div
             style={Object.assign({}, styles.base, styles.background, {
               backgroundImage: 'url(\'' + this.state.currentBackground + '\')'

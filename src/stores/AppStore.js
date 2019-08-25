@@ -41,6 +41,7 @@ class AppStore {
   @observable
   windowWidth = 0
   configurations = null
+  firebase = null
 
   constructor() {
     this.windowWidth = window.screen.width

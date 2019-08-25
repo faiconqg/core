@@ -17,6 +17,7 @@ import ValidationKeyInput from './ValidationKeyInput'
 import FooterBar from '../FooterBar'
 import AcceptTerms from './AcceptTerms'
 import ReceiveContact from './ReceiveContact'
+import ConfirmPhone from './ConfirmPhone'
 import cs from 'classnames'
 
 const styles = theme => ({
@@ -202,7 +203,7 @@ export default
 class Login extends React.Component {
   state = {
     // page: 'FirstLoginPage',
-    page: AppStore.user ? 'PasswordPage' : 'LoginPage',
+    page: this.props.confirmPhone ? 'ConfirmPhonePage' : AppStore.user ? 'PasswordPage' : 'LoginPage',
     error: false,
     tokenExpired: false,
     requireValidationKey: false,
@@ -458,11 +459,12 @@ class Login extends React.Component {
       acceptMessage,
       terms,
       newUser,
+      useMobileVerification,
       noTestify
     } = this.state
     const { full, solid } = RealmStore.logos || {}
 
-    if (UserStore.logged && UserStore.logged.enabled) {
+    if (UserStore.logged && UserStore.logged.enabled && (!useMobileVerification || UserStore.logged.mobileVerified)) {
       return <Redirect to={(AppStore.redirect && location.state && location.state.from) || '/'} />
     } else if (!AppStore.redirect && tokenExpired) {
       // Se o usuário não estiver logado e o "AppStore.redirect" estiver false, significa que o botão "Token expirado"
@@ -542,6 +544,8 @@ class Login extends React.Component {
                               noTestify={noTestify}
                             />
                           )
+                        case 'ConfirmPhonePage':
+                          return <ConfirmPhone />
                         case 'TestifyErrorPage':
                           return <TestifyErrorPage />
                         case 'RecoverPasswordPage':
@@ -598,7 +602,7 @@ class Login extends React.Component {
                         />
                       </React.Fragment>
                     )}
-                    <Button className={classes.button} type="submit" color="secondary" variant="contained" fullWidth>
+                    <Button id="sign-in-button" className={classes.button} type="submit" color="secondary" variant="contained" fullWidth>
                       Continuar
                     </Button>
 
