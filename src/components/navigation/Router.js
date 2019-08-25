@@ -11,14 +11,7 @@ class Router extends React.Component {
     return (
       <Switch>
         {routes.map((prop, key) => {
-          return (
-            <Route
-              key={key}
-              {...props}
-              path={match.path + prop.path}
-              component={prop.component}
-            />
-          )
+          return <Route key={key} {...props} path={match.path + prop.path} component={props => <prop.component {...props} />} />
         })}
         <NoMatch />
       </Switch>
