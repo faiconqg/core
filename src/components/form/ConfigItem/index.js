@@ -28,6 +28,7 @@ import { I18n } from 'react-i18nify'
 
 const styles = theme => ({
   label: {
+    padding: '4px 56px 4px 24px',
     paddingRight: 5,
     fontSize: 15,
     fontWeight: 500,
@@ -35,6 +36,7 @@ const styles = theme => ({
     '&:last-child': {}
   },
   value: {
+    padding: '4px 56px 4px 24px',
     whiteSpace: 'nowrap',
     paddingRight: 5,
     color: theme.palette.grey[700],

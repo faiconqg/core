@@ -1033,10 +1033,10 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@capacitor/core@1.0.0-beta.22":
-  version "1.0.0-beta.22"
-  resolved "https://registry.yarnpkg.com/@capacitor/core/-/core-1.0.0-beta.22.tgz#55017a4454c4d40e7d33a37727d73f042849bbc7"
-  integrity sha512-IkWPdhcU7YofkU55z/K3mUh3Kf1djRBExMmA+wWKHxH3N+/Hd2nOMfJJvjt7Etdve1xcKAZpyoIyEcm1r3WR6g==
+"@capacitor/core@1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@capacitor/core/-/core-1.1.1.tgz#8e32270d2aa7a843c40b14e4d10c76c62e451d49"
+  integrity sha512-7jnPMy9rGt5VB2QS/1xYEhHspnh2J8i9j0JA6uUtwCUBQs5bmNCqiQ8MYjHTW5NE+1jl2rnX8CU4d8sUT3/esg==
   dependencies:
     tslib "^1.9.0"
 
