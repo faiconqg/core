@@ -18,7 +18,7 @@ import Helmet from './Helmet'
 import Capacitor from './Capacitor'
 import moment from 'moment'
 import firebase from 'firebase/app'
-import { Helmet, HelmetProvider } from 'react-helmet-async'
+import { HelmetProvider } from 'react-helmet-async'
 import 'firebase/auth'
 
 // import DevTools from 'mobx-react-devtools'
