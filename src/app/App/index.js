@@ -18,6 +18,7 @@ import Helmet from './Helmet'
 import Capacitor from './Capacitor'
 import moment from 'moment'
 import firebase from 'firebase/app'
+import { Helmet, HelmetProvider } from 'react-helmet-async'
 import 'firebase/auth'
 
 // import DevTools from 'mobx-react-devtools'
@@ -138,101 +139,103 @@ class App extends Foundation {
     apiSetup(api, AppStore.token, { platform: AppStore.platform, version: process.env.REACT_APP_VERSION })
 
     return (
-      <Provider router={RouterStore}>
-        <Router history={history}>
-          <MasterLayout>
-            {RealmStore.realmResolved && (
-              <Helmet color={RealmStore.primaryColor} multitenant={multitenant} realm={UserStore.realm} appName={RealmStore.appName} />
-            )}
-            <Snackbar
-              anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-              open={AppStore.hasUpdate}
-              message={<span id="message-id">Atualização disponível</span>}
-              action={
-                <Button color="secondary" size="small" onClick={() => AppStore.update()}>
-                  Atualizar Agora
-                </Button>
-              }
-            />
-            <Snackbar
-              anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-              open={AppStore.tokenExpired}
-              message={<span id="message-id">Seu token expirou</span>}
-              action={
-                <Button color="secondary" size="small" onClick={() => AppStore.resetAppicationState()}>
-                  Entrar Novamente
-                </Button>
-              }
-            />
-            <Switch>
-              <Route
-                path="/login"
-                render={props => (
-                  <Login
-                    {...props}
-                    useMobileVerification={useMobileVerification}
-                    acceptMessage={acceptMessage}
-                    wellcomeMessage={wellcomeMessage}
-                    loginType={loginType}
-                    loginLabel={loginType === 'cpf' ? 'CPF' : 'e-mail'}
-                    multitenant={multitenant}
-                    canRegister={canRegister}
-                    appEmail={appEmail}
-                  />
-                )}
+      <HelmetProvider>
+        <Provider router={RouterStore}>
+          <Router history={history}>
+            <MasterLayout>
+              {RealmStore.realmResolved && (
+                <Helmet color={RealmStore.primaryColor} multitenant={multitenant} realm={UserStore.realm} appName={RealmStore.appName} />
+              )}
+              <Snackbar
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                open={AppStore.hasUpdate}
+                message={<span id="message-id">Atualização disponível</span>}
+                action={
+                  <Button color="secondary" size="small" onClick={() => AppStore.update()}>
+                    Atualizar Agora
+                  </Button>
+                }
               />
-              <Route
-                path="/confirm-phone"
-                render={props => (
-                  <Login
-                    {...props}
-                    confirmPhone
-                    useMobileVerification={useMobileVerification}
-                    acceptMessage={acceptMessage}
-                    wellcomeMessage={wellcomeMessage}
-                    loginType={loginType}
-                    loginLabel={loginType === 'cpf' ? 'CPF' : 'e-mail'}
-                    multitenant={multitenant}
-                    canRegister={canRegister}
-                    appEmail={appEmail}
-                  />
-                )}
+              <Snackbar
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                open={AppStore.tokenExpired}
+                message={<span id="message-id">Seu token expirou</span>}
+                action={
+                  <Button color="secondary" size="small" onClick={() => AppStore.resetAppicationState()}>
+                    Entrar Novamente
+                  </Button>
+                }
               />
-              {/*<Route
+              <Switch>
+                <Route
+                  path="/login"
+                  render={props => (
+                    <Login
+                      {...props}
+                      useMobileVerification={useMobileVerification}
+                      acceptMessage={acceptMessage}
+                      wellcomeMessage={wellcomeMessage}
+                      loginType={loginType}
+                      loginLabel={loginType === 'cpf' ? 'CPF' : 'e-mail'}
+                      multitenant={multitenant}
+                      canRegister={canRegister}
+                      appEmail={appEmail}
+                    />
+                  )}
+                />
+                <Route
+                  path="/confirm-phone"
+                  render={props => (
+                    <Login
+                      {...props}
+                      confirmPhone
+                      useMobileVerification={useMobileVerification}
+                      acceptMessage={acceptMessage}
+                      wellcomeMessage={wellcomeMessage}
+                      loginType={loginType}
+                      loginLabel={loginType === 'cpf' ? 'CPF' : 'e-mail'}
+                      multitenant={multitenant}
+                      canRegister={canRegister}
+                      appEmail={appEmail}
+                    />
+                  )}
+                />
+                {/*<Route
                 path="/register"
                 render={props => (
                   <Register {...props} multitenant={multitenant} />
                 )}
                 />*/}
-              {(!AppStore.token || (UserStore.logged && !UserStore.logged.enabled)) && (
-                <Redirect
-                  to={{
-                    pathname: '/login',
-                    state: { from: history.location }
-                  }}
+                {(!AppStore.token || (UserStore.logged && !UserStore.logged.enabled)) && (
+                  <Redirect
+                    to={{
+                      pathname: '/login',
+                      state: { from: history.location }
+                    }}
+                  />
+                )}
+                {useMobileVerification && UserStore.logged && !UserStore.logged.mobileVerified && (
+                  <Redirect
+                    to={{
+                      pathname: '/confirm-phone',
+                      state: { from: history.location }
+                    }}
+                  />
+                )}
+                <Route path="/account-settings" render={props => <MyAccount {...props} loginType={loginType} />} />
+                {children
+                  ? React.Children.map(children, child =>
+                      React.cloneElement(child, {
+                        prefix
+                      })
+                    )
+                  : 'Propriedade children é obrigatória para o App'}
                 />
-              )}
-              {useMobileVerification && UserStore.logged && !UserStore.logged.mobileVerified && (
-                <Redirect
-                  to={{
-                    pathname: '/confirm-phone',
-                    state: { from: history.location }
-                  }}
-                />
-              )}
-              <Route path="/account-settings" render={props => <MyAccount {...props} loginType={loginType} />} />
-              {children
-                ? React.Children.map(children, child =>
-                    React.cloneElement(child, {
-                      prefix
-                    })
-                  )
-                : 'Propriedade children é obrigatória para o App'}
-              />
-            </Switch>
-          </MasterLayout>
-        </Router>
-      </Provider>
+              </Switch>
+            </MasterLayout>
+          </Router>
+        </Provider>
+      </HelmetProvider>
     )
   }
 }
