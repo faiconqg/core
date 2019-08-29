@@ -167,61 +167,63 @@ class App extends Foundation {
                 }
               />
               <Switch>
-                <Route
-                  path="/login"
-                  render={props => (
-                    <Login
-                      {...props}
-                      useMobileVerification={useMobileVerification}
-                      acceptMessage={acceptMessage}
-                      wellcomeMessage={wellcomeMessage}
-                      loginType={loginType}
-                      loginLabel={loginType === 'cpf' ? 'CPF' : 'e-mail'}
-                      multitenant={multitenant}
-                      canRegister={canRegister}
-                      appEmail={appEmail}
+                {!AppStore.token || (UserStore.logged && !UserStore.logged.enabled) ? (
+                  <>
+                    <Route
+                      path="/login"
+                      render={props => (
+                        <Login
+                          {...props}
+                          acceptMessage={acceptMessage}
+                          wellcomeMessage={wellcomeMessage}
+                          loginType={loginType}
+                          loginLabel={loginType === 'cpf' ? 'CPF' : 'e-mail'}
+                          multitenant={multitenant}
+                          canRegister={canRegister}
+                          appEmail={appEmail}
+                        />
+                      )}
                     />
-                  )}
-                />
-                <Route
-                  path="/confirm-phone"
-                  render={props => (
-                    <Login
-                      {...props}
-                      confirmPhone
-                      useMobileVerification={useMobileVerification}
-                      acceptMessage={acceptMessage}
-                      wellcomeMessage={wellcomeMessage}
-                      loginType={loginType}
-                      loginLabel={loginType === 'cpf' ? 'CPF' : 'e-mail'}
-                      multitenant={multitenant}
-                      canRegister={canRegister}
-                      appEmail={appEmail}
+                    <Redirect
+                      to={{
+                        pathname: '/login',
+                        state: { from: history.location }
+                      }}
                     />
-                  )}
-                />
+                  </>
+                ) : null}
+                {AppStore.token && useMobileVerification && UserStore.logged && !UserStore.logged.mobileVerified ? (
+                  <>
+                    <Route
+                      path="/confirm-phone"
+                      render={props => (
+                        <Login
+                          {...props}
+                          confirmPhone
+                          acceptMessage={acceptMessage}
+                          wellcomeMessage={wellcomeMessage}
+                          loginType={loginType}
+                          loginLabel={loginType === 'cpf' ? 'CPF' : 'e-mail'}
+                          multitenant={multitenant}
+                          canRegister={canRegister}
+                          appEmail={appEmail}
+                        />
+                      )}
+                    />
+                    <Redirect
+                      to={{
+                        pathname: '/confirm-phone',
+                        state: { from: history.location }
+                      }}
+                    />
+                  </>
+                ) : null}
                 {/*<Route
                 path="/register"
                 render={props => (
                   <Register {...props} multitenant={multitenant} />
                 )}
                 />*/}
-                {(!AppStore.token || (UserStore.logged && !UserStore.logged.enabled)) && (
-                  <Redirect
-                    to={{
-                      pathname: '/login',
-                      state: { from: history.location }
-                    }}
-                  />
-                )}
-                {useMobileVerification && UserStore.logged && !UserStore.logged.mobileVerified && (
-                  <Redirect
-                    to={{
-                      pathname: '/confirm-phone',
-                      state: { from: history.location }
-                    }}
-                  />
-                )}
                 <Route path="/account-settings" render={props => <MyAccount {...props} loginType={loginType} />} />
                 {children
                   ? React.Children.map(children, child =>

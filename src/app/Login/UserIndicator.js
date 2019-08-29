@@ -1,5 +1,6 @@
 import React from 'react'
 import { withStyles, IconButton, Menu, MenuItem, Tooltip } from '@material-ui/core'
+import { observer } from './../../api'
 import ArrowBack from '@material-ui/icons/ArrowBack'
 import AccountCircle from '@material-ui/icons/AccountCircle'
 import Close from '@material-ui/icons/Close'
@@ -50,6 +51,7 @@ const styles = theme => ({
 })
 export default
 @withStyles(styles)
+@observer
 class UserIndicator extends React.Component {
   state = {
     anchorEl: null

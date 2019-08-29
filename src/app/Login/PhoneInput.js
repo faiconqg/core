@@ -20,7 +20,7 @@ class PhoneInput extends FieldsBase {
   }
 
   handleValidation = value => {
-    if (value.length < 15) {
+    if (value.replace(/\D+/g, '').length < 11) {
       this.onChangeValidation(false, 'Você precisa informar seu telefone corretamente')
     } else {
       this.onChangeValidation(true)
@@ -39,7 +39,7 @@ class PhoneInput extends FieldsBase {
         }}
         error={!!error && (typeof error === 'string' || !!message)}
         value={value}
-        onChange={this.handleChangeDate}
+        onChange={this.handleChange}
         margin="normal"
         type="tel"
         fullWidth

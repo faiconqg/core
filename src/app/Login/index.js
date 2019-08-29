@@ -98,7 +98,8 @@ const styles = theme => ({
   },
   wellcome: {
     fontWeight: 500,
-    fontSize: 16
+    fontSize: 16,
+    paddingBottom: 10
   },
   forgotContainer: {
     width: '100%',
@@ -441,7 +442,7 @@ class Login extends React.Component {
   }
 
   render() {
-    const { classes, location, loginLabel, loginType, appEmail, wellcomeMessage } = this.props
+    const { classes, location, loginLabel, loginType, appEmail, wellcomeMessage, confirmPhone } = this.props
     const {
       page,
       username,
@@ -459,12 +460,11 @@ class Login extends React.Component {
       acceptMessage,
       terms,
       newUser,
-      useMobileVerification,
       noTestify
     } = this.state
     const { full, solid } = RealmStore.logos || {}
 
-    if (UserStore.logged && UserStore.logged.enabled && (!useMobileVerification || UserStore.logged.mobileVerified)) {
+    if (UserStore.logged && UserStore.logged.enabled && !confirmPhone) {
       return <Redirect to={(AppStore.redirect && location.state && location.state.from) || '/'} />
     } else if (!AppStore.redirect && tokenExpired) {
       // Se o usuário não estiver logado e o "AppStore.redirect" estiver false, significa que o botão "Token expirado"
@@ -578,7 +578,7 @@ class Login extends React.Component {
                             />
                           )
                         case 'ConfirmSetPasswordPage':
-                          return <ConfirmSetPasswordPage />
+                          return <ConfirmSetPasswordPage error={this.resolveError()} onChangeValidation={this.handleChangeValidation} />
                         case 'RegisterPage':
                           return <RegisterPage username={username} onRegister={() => this.props.router.push('/register')} />
                       }
@@ -602,9 +602,11 @@ class Login extends React.Component {
                         />
                       </React.Fragment>
                     )}
-                    <Button id="sign-in-button" className={classes.button} type="submit" color="secondary" variant="contained" fullWidth>
-                      Continuar
-                    </Button>
+                    {page !== 'ConfirmPhonePage' ? (
+                      <Button id="sign-in-button" className={classes.button} type="submit" color="secondary" variant="contained" fullWidth>
+                        Continuar
+                      </Button>
+                    ) : null}
 
                     {/*page === 'LoginPage' && (
                     <div className={classes.forgotContainer}>
