@@ -167,30 +167,28 @@ class App extends Foundation {
                 }
               />
               <Switch>
+                <Route
+                  path="/login"
+                  render={props => (
+                    <Login
+                      {...props}
+                      acceptMessage={acceptMessage}
+                      wellcomeMessage={wellcomeMessage}
+                      loginType={loginType}
+                      loginLabel={loginType === 'cpf' ? 'CPF' : 'e-mail'}
+                      multitenant={multitenant}
+                      canRegister={canRegister}
+                      appEmail={appEmail}
+                    />
+                  )}
+                />
                 {!AppStore.token || (UserStore.logged && !UserStore.logged.enabled) ? (
-                  <>
-                    <Route
-                      path="/login"
-                      render={props => (
-                        <Login
-                          {...props}
-                          acceptMessage={acceptMessage}
-                          wellcomeMessage={wellcomeMessage}
-                          loginType={loginType}
-                          loginLabel={loginType === 'cpf' ? 'CPF' : 'e-mail'}
-                          multitenant={multitenant}
-                          canRegister={canRegister}
-                          appEmail={appEmail}
-                        />
-                      )}
-                    />
-                    <Redirect
-                      to={{
-                        pathname: '/login',
-                        state: { from: history.location }
-                      }}
-                    />
-                  </>
+                  <Redirect
+                    to={{
+                      pathname: '/login',
+                      state: { from: history.location }
+                    }}
+                  />
                 ) : null}
                 {AppStore.token && useMobileVerification && UserStore.logged && !UserStore.logged.mobileVerified ? (
                   <>

@@ -129,7 +129,7 @@ class ConfirmPhone extends React.Component {
   }
 
   setMobile = value => {
-    const mobile = String(value).replace(/\D+/g, '')
+    const mobile = String(value || '').replace(/\D+/g, '')
     this.setState({ mobile }, () => {
       if (mobile.length === 11) {
         this.sendSms()
@@ -149,7 +149,7 @@ class ConfirmPhone extends React.Component {
 
     return (
       <>
-        <Listener value={UserStore.logged} onChange={() => this.setMobile(UserStore.logged.mobile)} />
+        <Listener value={UserStore.logged} onChange={() => this.setMobile(UserStore.logged && UserStore.logged.mobile)} />
 
         {mobile.length === 11 ? (
           <>
