@@ -82,6 +82,8 @@ class Users extends Collection {
         AppStore.onLogin && AppStore.onLogin()
         if (this.logged.email && this.logged.mobile) {
           this.dataConfirmed = true
+        } else {
+          this.dataConfirmed = false
         }
         if (res.realm === 'incentiveme' && (res.seller && res.seller.store && res.seller.store.merchant && res.seller.store.merchant.color)) {
           RealmStore.primaryColor = res.seller.store.merchant.color
