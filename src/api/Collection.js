@@ -40,7 +40,11 @@ export default class Collection extends BaseCollection {
   @action
   async export(columns, filename) {
     const label = 'fetching'
-    const { abort, promise } = apiClient().get(this.url() + '/export', { columns: columns, where: this._query.data.filter.where }, { responseType: 'blob' })
+    const { abort, promise } = apiClient().get(
+      this.url() + '/export',
+      { columns: columns, where: this._query.data.filter.where, include: this._query.data.filter.include, order: this._query.data.filter.order },
+      { responseType: 'blob' }
+    )
 
     this.requestExport = new Request(label, abort, 0)
 

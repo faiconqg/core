@@ -43,7 +43,7 @@ class App extends Foundation {
         } else if (['app', 'stg', 'dev'].indexOf(subdomain) > -1) {
           subdomain = 'incentiveme'
         }
-        let realmInstance = realms.find(item => hostname.indexOf(item.matchUrl) > -1)
+        let realmInstance = realms.find(item => hostname == item.matchUrl)
         if (!realmInstance) {
           realmInstance = realms.find(item => item.name === subdomain)
         }

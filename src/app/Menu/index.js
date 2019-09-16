@@ -99,7 +99,7 @@ class Menu extends Page {
   isSmall = () => this.props.width === 'xs' || this.props.width === 'sm'
 
   handleLogoClick = () => {
-    this.props.router.push('/dashboard')
+    this.props.router.push('/')
     this.props.router.go()
   }
 

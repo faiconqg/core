@@ -36,7 +36,7 @@ class Capacitor {
           AppStore.platform = result.platform
           AppStore.device.isIos = result.platform === 'ios'
           AppStore.device.isAndroid = result.platform === 'android'
-          AppStore.device.isMobile = result.platform === 'ios' || result.platform === 'android'
+          AppStore.device.isMobile = result.platform === 'ios' || result.platform === 'android' || window.screen.width === 360
           if (
             window.screen.height === 812 ||
             window.screen.height === 896 ||
