@@ -26,6 +26,7 @@ class Realms extends Collection {
   @observable useBankAccount = null
   @observable menuBackground = null
   @observable useScore = false
+  @observable customFlags = {}
 
   completeLoad = callback => {
     if (this.currentRealm) {
@@ -57,6 +58,7 @@ class Realms extends Collection {
         this.useScore = this.currentRealm.useScore
       }
       this.useBankAccount = this.currentRealm.useBankAccount
+      this.customFlags = this.currentRealm.customFlags
     }
     this.realmResolved = true
     callback && callback()
