@@ -158,15 +158,19 @@ class DataGrid extends React.Component {
       return params => {
         // TODO: Verificar se serve para todos os casos
         if (params.node.rowPinned === 'bottom' && String(params.value).length === 0) {
-          return ''
+          return <div>''</div>
         }
-        return render(
-          // params.column.colDef.field
-          //   ? params.data.g(params.column.colDef.field)
-          //   : null,
-          params.value,
-          params.column.colDef.field,
-          params.data
+        return (
+          <div>
+            {render(
+              // params.column.colDef.field
+              //   ? params.data.g(params.column.colDef.field)
+              //   : null,
+              params.value,
+              params.column.colDef.field,
+              params.data
+            )}
+          </div>
         )
       }
     } else if (renderer) {
