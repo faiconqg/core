@@ -6,9 +6,21 @@ import { withStyles, CircularProgress, TablePagination, Paper } from '@material-
 import { AgGridReact } from 'ag-grid-react'
 import agGridTranslation from './../../resources/agGridTranslation.json'
 import BooleanRenderer from './renderers/BooleanRenderer'
+import ImageRenderer from './renderers/ImageRenderer'
+import CurrencyFormatter from './formatters/CurrencyFormatter'
+import DateFormatter from './formatters/DateFormatter'
+import DateTimeFormatter from './formatters/DateTimeFormatter'
+import PercentageFormatter from './formatters/PercentageFormatter'
 import 'ag-grid-community/dist/styles/ag-grid.css'
 import 'ag-grid-community/dist/styles/ag-theme-material.css'
 import cs from 'classnames'
+
+const formatters = {
+  currency: CurrencyFormatter,
+  date: DateFormatter,
+  dateTime: DateTimeFormatter,
+  percentage: PercentageFormatter
+}
 
 const styles = theme => ({
   root: {
@@ -58,6 +70,8 @@ const styles = theme => ({
   //   fontWeight: 700
   // }
 })
+
+const rendererContainerStyle = { height: '100%', width: '100%', display: 'flex', alignItems: 'center' }
 
 export default
 @withStyles(styles)
@@ -128,13 +142,16 @@ class DataGrid extends React.Component {
     this.props.onChangeRowsPerPage && this.props.onChangeRowsPerPage(event.target.value)
   }
 
-  resolveLabel = (formatter, numeric) => params => {
-    let returnValue = this.itemToLabel(params)
+  resolveLabel = (formatter, numeric, replaceBlank) => params => {
+    let returnValue = this.itemToLabel(params) || replaceBlank
     if (numeric) {
-      returnValue = parseFloat(returnValue)
+      returnValue = parseFloat(returnValue || 0)
     }
     if (formatter) {
-      returnValue = formatter(this.itemToLabel(params))
+      if (typeof formatter === 'string') {
+        formatter = formatters[formatter]
+      }
+      returnValue = formatter(returnValue)
     }
     return returnValue
   }
@@ -161,7 +178,7 @@ class DataGrid extends React.Component {
           return <div>''</div>
         }
         return (
-          <div>
+          <div style={rendererContainerStyle}>
             {render(
               // params.column.colDef.field
               //   ? params.data.g(params.column.colDef.field)
@@ -180,7 +197,17 @@ class DataGrid extends React.Component {
         }
         switch (renderer) {
           case 'boolean':
-            return <BooleanRenderer {...params} />
+            return (
+              <div style={rendererContainerStyle}>
+                <BooleanRenderer {...params} />
+              </div>
+            )
+          case 'image':
+            return (
+              <div style={rendererContainerStyle}>
+                <ImageRenderer {...params} />
+              </div>
+            )
           default:
             return null
         }
@@ -202,14 +229,14 @@ class DataGrid extends React.Component {
         return visible
       })
       .map(column => {
-        const { title, field, visible, formatter, numeric, render, children, renderer, ...props } = column.props
+        const { title, field, visible, formatter, numeric, render, children, renderer, replaceBlank, formula, format, ...props } = column.props
         return {
           headerName: title,
           field: field || '',
           tooltipField: field || '',
           children: children && this.getColumns(children),
           cellRendererFramework: this.resolveRender(render, renderer),
-          valueGetter: this.resolveLabel(formatter, numeric),
+          valueGetter: this.resolveLabel(formatter, numeric, replaceBlank),
           ...props
         }
       })
@@ -331,7 +358,7 @@ class DataGrid extends React.Component {
             onSortChanged={onSortChanged}
             onRowClicked={params => this.handleClick(params.data.id, params.data)}
             onGridReady={this.onGridReady}
-            rowData={rows.toJS()}
+            rowData={rows.toJS ? rows.toJS() : rows}
             pinnedBottomRowData={disableSummary ? null : this.resolveSummary()}
             rowSelection="multiple"
             enableRangeSelection
