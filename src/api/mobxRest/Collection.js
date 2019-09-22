@@ -5,13 +5,7 @@ import { filter, isMatch, find, difference, map } from 'lodash'
 import apiClient from './apiClient'
 import Base from './Base'
 import Request from './Request'
-import type {
-  CreateOptions,
-  SetOptions,
-  GetOptions,
-  FindOptions,
-  Id
-} from './types'
+import type { CreateOptions, SetOptions, GetOptions, FindOptions, Id } from './types'
 
 export default class Collection extends Base {
   @observable models: IObservableArray<Model> = []
@@ -130,23 +124,16 @@ export default class Collection extends Base {
    */
   filter(query: { [key: string]: any } | (Model => boolean)): Array<Model> {
     return filter(this.models, model => {
-      return typeof query === 'function'
-        ? query(model)
-        : isMatch(model.toJS(), query)
+      return typeof query === 'function' ? query(model) : isMatch(model.toJS(), query)
     })
   }
 
   /**
    * Finds an element with the given matcher
    */
-  find(
-    query: { [key: string]: mixed } | (Model => boolean),
-    { required = false }: FindOptions = {}
-  ): ?Model {
+  find(query: { [key: string]: mixed } | (Model => boolean), { required = false }: FindOptions = {}): ?Model {
     const model = find(this.models, model => {
-      return typeof query === 'function'
-        ? query(model)
-        : isMatch(model.toJS(), query)
+      return typeof query === 'function' ? query(model) : isMatch(model.toJS(), query)
     })
 
     if (!model && required) {
@@ -160,9 +147,7 @@ export default class Collection extends Base {
    * Adds a model or collection of models.
    */
   @action
-  add(
-    data: Array<{ [key: string]: any } | Model> | { [key: string]: any } | Model
-  ): void {
+  add(data: Array<{ [key: string]: any } | Model> | { [key: string]: any } | Model): void {
     if (!Array.isArray(data)) {
       data = [data]
     }
@@ -209,10 +194,7 @@ export default class Collection extends Base {
    * You can disable adding, changing or removing.
    */
   @action
-  set(
-    resources: Array<{ [key: string]: any }>,
-    { add = true, change = true, remove = true }: SetOptions = {}
-  ): void {
+  set(resources: Array<{ [key: string]: any }>, { add = true, change = true, remove = true }: SetOptions = {}): void {
     if (remove) {
       const ids = resources.map(r => r.id)
       const toRemove = difference(this._ids(), ids)
@@ -250,10 +232,7 @@ export default class Collection extends Base {
    * can be tuned.
    */
   @action
-  create(
-    attributesOrModel: { [key: string]: any } | Model,
-    { optimistic = true }: CreateOptions = {}
-  ): Request {
+  create(attributesOrModel: { [key: string]: any } | Model, { optimistic = true }: CreateOptions = {}): Request {
     const model = this.build(attributesOrModel)
     const { abort, promise } = model.save()
 
