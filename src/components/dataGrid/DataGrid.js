@@ -143,7 +143,10 @@ class DataGrid extends React.Component {
   }
 
   resolveLabel = (formatter, numeric, replaceBlank) => params => {
-    let returnValue = this.itemToLabel(params) || replaceBlank
+    let returnValue = this.itemToLabel(params)
+    if (returnValue === null || returnValue === undefined) {
+      returnValue = replaceBlank
+    }
     if (numeric) {
       returnValue = parseFloat(returnValue || 0)
     }
