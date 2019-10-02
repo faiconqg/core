@@ -14,6 +14,7 @@ class Realms extends Collection {
 
   @observable logos = null
   @observable remoteLogo = null
+  @observable banner = null
   @observable appName = null
   @observable appUrl = null
   @observable privacyUrl = null
@@ -32,6 +33,9 @@ class Realms extends Collection {
     if (this.currentRealm) {
       if (this.currentRealm.picture) {
         this.remoteLogo = ResourceLoader.load(this.currentRealm.picture)
+      }
+      if (this.currentRealm.banner) {
+        this.banner = ResourceLoader.load(this.currentRealm.banner)
       }
       if (this.currentRealm.backgroundMicro && this.currentRealm.background) {
         this.background = [this.currentRealm.backgroundMicro, this.currentRealm.background]

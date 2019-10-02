@@ -42,6 +42,15 @@ class AppStore {
   windowWidth = 0
   configurations = null
   firebase = null
+  @observable messages = {
+    userBlocked: 'Sua conta está desabilitada, em caso de dúvidas, envie um e-mail para <b>${email}</b>.',
+    userBlockedWithoutEmail: 'Sua conta está desabilitada, em caso de dúvidas, entre em contato.',
+    recoverPasswordA: 'Se o seu e-mail for diferente do e-mail cadastrado, envie um e-mail para ',
+    recoverPasswordB: ' com o novo endereço de e-mail e um documento de identificação com foto e cpf.',
+    wellcome: 'Parabéns! Você foi convidado para fazer parte da maior plataforma de incentivos do Brasil!',
+    firstAccess: 'Verificamos que esse é seu primeiro acesso, confirme seus dados para configurarmos seu ambiente.',
+    emailConfirmation: 'Confirme seu email e clique em "Continuar" para receber o seu link de redefinição de senha.'
+  }
 
   constructor() {
     this.windowWidth = window.screen.width

@@ -626,9 +626,9 @@ class Login extends React.Component {
                       )*/}
                     {page === 'RecoverPasswordPage' && appEmail && (
                       <div className={classes.emailInfo}>
-                        <span>Se o seu e-mail for diferente do e-mail cadastrado, envie um e-mail para </span>
+                        <span>{AppStore.recoverPasswordA}</span>
                         <b>{appEmail}</b>
-                        {loginType === 'cpf' && <span> com o novo endereço de e-mail e um documento de identificação com foto e cpf.</span>}
+                        {loginType === 'cpf' && <span>{AppStore.recoverPasswordB}</span>}
                       </div>
                     )}
 
@@ -651,11 +651,10 @@ class Login extends React.Component {
                     <div className={classes.enabledFalse}>
                       {appEmail ? (
                         <>
-                          <span>Sua conta está desabilitada, em caso de dúvidas, envie um e-mail para </span>
-                          <b>{appEmail}</b>.
+                          <span>{AppStore.messages.userBlocked.replace('${email}', appEmail)}</span>
                         </>
                       ) : (
-                        <span>Sua conta está desabilitada, em caso de dúvidas, entre em contato. </span>
+                        <span>{AppStore.messages.userBlockedWithoutEmail}</span>
                       )}
                     </div>
                     <Button className={classes.button} onClick={this.logout} color="secondary" variant="contained" fullWidth>
@@ -733,8 +732,8 @@ const FirstLoginPage = withStyles(styles)(
   }) => (
     <>
       <UserIndicator username={username} onBack={onBack} />
-      {!newUser && <span className={classes.wellcome}>Parabéns! Você foi convidado para fazer parte da maior plataforma de incentivos do Brasil!</span>}
-      <span>Verificamos que esse é seu primeiro acesso, confirme seus dados para configurarmos seu ambiente.</span>
+      {!newUser && <span className={classes.wellcome}>{AppStore.messages.wellcome} </span>}
+      <span>{AppStore.messages.firstAccess}</span>
       {!noTestify && (
         <>
           <BirthdateInput
@@ -780,7 +779,7 @@ const RecoverPasswordPage = withStyles(styles)(({ classes, error, username, emai
       Vamos enviar um email para:
       <span className={classes.recoverTitle}> {email}</span>
     </p>
-    <span>{'Confirme seu email e clique em "Continuar" para receber o seu link de redefinição de senha.'}</span>
+    <span>{AppStore.messages.emailConfirmation}</span>
     <div className={classes.marginBottom}>
       <EmailInput
         emailDomain={'@' + email.split('@')[1]}

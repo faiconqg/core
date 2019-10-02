@@ -102,7 +102,8 @@ class App extends Foundation {
       useMobileVerification,
       loginType = 'email',
       canRegister = true,
-      firebaseConfig
+      firebaseConfig,
+      messages
     } = this.props
 
     RendererManager.renderer = renderer
@@ -128,6 +129,9 @@ class App extends Foundation {
       }
     }
 
+    if (messages) {
+      Object.assign(AppStore.messages, messages)
+    }
     AppStore.onReset = onLogout
     AppStore.onLogin = onLogin
     AppStore.onPushNotificationReceived = onPushNotificationReceived
