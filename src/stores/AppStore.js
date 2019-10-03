@@ -49,7 +49,11 @@ class AppStore {
     recoverPasswordB: ' com o novo endereço de e-mail e um documento de identificação com foto e cpf.',
     wellcome: 'Parabéns! Você foi convidado para fazer parte da maior plataforma de incentivos do Brasil!',
     firstAccess: 'Verificamos que esse é seu primeiro acesso, confirme seus dados para configurarmos seu ambiente.',
-    emailConfirmation: 'Confirme seu email e clique em "Continuar" para receber o seu link de redefinição de senha.'
+    emailConfirmation: 'Confirme seu email e clique em "Continuar" para receber o seu link de redefinição de senha.',
+    noEmailWithoutEmail:
+      '<p><b>E-mail não está cadastrado</b></p><p>Para cadastrar seu e-mail é preciso seguir um protocolo de segurança:</p><p>Entre em contato para mais informações.</p>',
+    noEmail:
+      '<p><b>E-mail não está cadastrado</b></p><p>Para cadastrar seu e-mail é preciso seguir um protocolo de segurança:</p><p>Envie um documento com foto para <b>${email}</b>, com isso, nós atualizaremos o e-mail com o mesmo endereço que nos enviou o documento.</p>'
   }
 
   constructor() {

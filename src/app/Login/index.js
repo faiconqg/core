@@ -553,6 +553,7 @@ class Login extends React.Component {
                             <RecoverPasswordPage
                               username={username}
                               email={AppStore.email}
+                              appEmail={appEmail}
                               emailConfirm={emailConfirm}
                               birthdate={birthdate}
                               motherName={motherName}
@@ -626,9 +627,9 @@ class Login extends React.Component {
                       )*/}
                     {page === 'RecoverPasswordPage' && appEmail && (
                       <div className={classes.emailInfo}>
-                        <span>{AppStore.recoverPasswordA}</span>
+                        <span>{AppStore.messages.recoverPasswordA}</span>
                         <b>{appEmail}</b>
-                        {loginType === 'cpf' && <span>{AppStore.recoverPasswordB}</span>}
+                        {loginType === 'cpf' && <span>{AppStore.messages.recoverPasswordB}</span>}
                       </div>
                     )}
 
@@ -651,7 +652,7 @@ class Login extends React.Component {
                     <div className={classes.enabledFalse}>
                       {appEmail ? (
                         <>
-                          <span>{AppStore.messages.userBlocked.replace('${email}', appEmail)}</span>
+                          <span dangerouslySetInnerHTML={{ __html: AppStore.messages.userBlocked.replace('${email}', appEmail) }}></span>
                         </>
                       ) : (
                         <span>{AppStore.messages.userBlockedWithoutEmail}</span>
@@ -772,23 +773,31 @@ const FirstLoginPage = withStyles(styles)(
   )
 )
 
-const RecoverPasswordPage = withStyles(styles)(({ classes, error, username, emailConfirm, email, onChange, onChangeValidation, onBack }) => (
+const RecoverPasswordPage = withStyles(styles)(({ classes, error, username, emailConfirm, email, appEmail, onChange, onChangeValidation, onBack }) => (
   <React.Fragment>
     <UserIndicator username={username} onBack={onBack} />
-    <p>
-      Vamos enviar um email para:
-      <span className={classes.recoverTitle}> {email}</span>
-    </p>
-    <span>{AppStore.messages.emailConfirmation}</span>
-    <div className={classes.marginBottom}>
-      <EmailInput
-        emailDomain={'@' + email.split('@')[1]}
-        error={error}
-        value={emailConfirm}
-        onChange={value => onChange(value, 'emailConfirm')}
-        onChangeValidation={value => onChangeValidation(value, 'emailConfirm')}
-      />
-    </div>
+    {email ? (
+      <>
+        <p>
+          Vamos enviar um email para:
+          <span className={classes.recoverTitle}> {email}</span>
+        </p>
+        <span>{AppStore.messages.emailConfirmation}</span>
+        <div className={classes.marginBottom}>
+          <EmailInput
+            emailDomain={'@' + email.split('@')[1]}
+            error={error}
+            value={emailConfirm}
+            onChange={value => onChange(value, 'emailConfirm')}
+            onChangeValidation={value => onChangeValidation(value, 'emailConfirm')}
+          />
+        </div>
+      </>
+    ) : appEmail ? (
+      <span dangerouslySetInnerHTML={{ __html: AppStore.messages.noEmail.replace('${email}', appEmail) }}></span>
+    ) : (
+      <span dangerouslySetInnerHTML={{ __html: AppStore.messages.noEmailWithoutEmail }}></span>
+    )}
   </React.Fragment>
 ))
 
