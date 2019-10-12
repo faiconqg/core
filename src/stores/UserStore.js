@@ -88,6 +88,9 @@ class Users extends Collection {
         if (res.realm === 'incentiveme' && (res.seller && res.seller.store && res.seller.store.merchant && res.seller.store.merchant.color)) {
           RealmStore.primaryColor = res.seller.store.merchant.color
         }
+        if (res.realm === 'incentiveme' && (res.seller && res.seller.store && res.seller.store.merchant && res.seller.store.merchant.appbarColor)) {
+          RealmStore.appbarColor = res.seller.store.merchant.appbarColor
+        }
         if (res.notifications) {
           this.notifications = res.notifications
         }
