@@ -62,6 +62,7 @@ class App extends Foundation {
       })
     } else {
       RealmStore.realmResolved = true
+      RealmStore.appName = this.props.appName
       Capacitor.init()
       if (AppStore.token) {
         UserStore.current()
@@ -71,7 +72,6 @@ class App extends Foundation {
     RealmStore.remoteLogo = RealmStore.logos && RealmStore.logos.full
     RealmStore.background = this.props.background
     RealmStore.backgroundColor = this.props.backgroundColor
-    RealmStore.appName = this.props.appName
     RealmStore.appUrl = this.props.appUrl
     RealmStore.privacyUrl = this.props.privacyUrl
     RealmStore.primaryColor = this.props.primaryColor
