@@ -27,15 +27,30 @@ class Realms extends Collection {
   @observable useBankAccount = null
   @observable menuBackground = null
   @observable useScore = false
+  @observable walletQuotation = 1
+  @observable walletConfig = { walletIcon: require('resources/vectors/incents.svg'), walletName: ['ic', 'ics', 'incent', 'incents'] }
   @observable customFlags = {}
+  // @observable passwordValidity = {}
+  // @observable passwordRule = {}
 
   completeLoad = callback => {
     if (this.currentRealm) {
       if (this.currentRealm.picture) {
         this.remoteLogo = ResourceLoader.load(this.currentRealm.picture)
       }
-      if (this.currentRealm.banner) {
-        this.banner = ResourceLoader.load(this.currentRealm.banner)
+      if (this.currentRealm.logos) {
+        let customLogo = {}
+        Object.keys(this.currentRealm.logos).map(key => (customLogo[key] = ResourceLoader.load(this.currentRealm.logos[key])))
+        this.logos = Object.assign({}, this.logos, customLogo)
+      }
+      if (this.currentRealm.appUrl) {
+        this.appUrl = this.currentRealm.appUrl
+      }
+      if (this.currentRealm.walletQuotation) {
+        this.walletQuotation = this.currentRealm.walletQuotation
+      }
+      if (this.currentRealm.walletConfig) {
+        this.walletConfig = Object.assign({}, this.walletConfig, this.currentRealm.walletConfig)
       }
       if (this.currentRealm.backgroundMicro && this.currentRealm.background) {
         this.background = [this.currentRealm.backgroundMicro, this.currentRealm.background]
