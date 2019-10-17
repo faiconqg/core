@@ -18,6 +18,7 @@ class Realms extends Collection {
   @observable appName = null
   @observable appUrl = null
   @observable privacyUrl = null
+  @observable faqUrl = null
   @observable background = null
   @observable backgroundColor = null
   @observable primaryColor = null
@@ -75,6 +76,12 @@ class Realms extends Collection {
       }
       if (this.currentRealm.useScore) {
         this.useScore = this.currentRealm.useScore
+      }
+      if (this.currentRealm.faqUrl) {
+        this.faqUrl = this.currentRealm.faqUrl
+      }
+      if (this.currentRealm.privacyUrl) {
+        this.privacyUrl = this.currentRealm.privacyUrl
       }
       this.useBankAccount = this.currentRealm.useBankAccount
       this.customFlags = this.currentRealm.customFlags

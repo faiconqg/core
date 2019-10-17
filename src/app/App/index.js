@@ -74,6 +74,7 @@ class App extends Foundation {
     RealmStore.backgroundColor = this.props.backgroundColor
     RealmStore.appUrl = this.props.appUrl
     RealmStore.privacyUrl = this.props.privacyUrl
+    RealmStore.faqUrl = this.props.faqUrl
     RealmStore.primaryColor = this.props.primaryColor
     RealmStore.secondaryColor = this.props.secondaryColor
     RealmStore.menuBackground = this.props.menuBackground
