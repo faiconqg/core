@@ -28,7 +28,7 @@ class Realms extends Collection {
   @observable menuBackground = null
   @observable useScore = false
   @observable walletQuotation = 1
-  @observable walletConfig = { walletIcon: require('resources/vectors/incents.svg'), walletName: ['ic', 'ics', 'incent', 'incents'] }
+  @observable walletConfig = { walletIcon: 'realms/incents.svg', walletName: ['ic', 'ics', 'incent', 'incents'] }
   @observable customFlags = {}
   // @observable passwordValidity = {}
   // @observable passwordRule = {}
