@@ -90,7 +90,9 @@ const styles = theme => ({
     opacity: 0.9,
     padding: 20,
     marginBottom: 20,
-    maxWidth: 160
+    maxWidth: 160,
+    alignSelf: 'flex-end',
+    objectFit: 'contain'
     // width: '50%'
   },
   recoverTitle: {
@@ -147,6 +149,7 @@ const styles = theme => ({
     }
   },
   footerLogo: {
+    flex: 1,
     marginTop: -40,
     display: 'flex',
     justifyContent: 'center'
