@@ -90,8 +90,8 @@ const styles = theme => ({
     opacity: 0.9,
     padding: 20,
     marginBottom: 20,
-    maxWidth: 160,
-    width: '50%'
+    maxWidth: 160
+    // width: '50%'
   },
   recoverTitle: {
     fontWeight: 400,
@@ -145,6 +145,11 @@ const styles = theme => ({
       alignItems: 'center',
       borderRadius: 0
     }
+  },
+  footerLogo: {
+    marginTop: -40,
+    display: 'flex',
+    justifyContent: 'center'
   },
   // footerBar: {
   //   position: 'fixed',
@@ -487,7 +492,7 @@ class Login extends React.Component {
       newUser,
       noTestify
     } = this.state
-    const { full, bottom, bottom_solid } = RealmStore.logos || {}
+    const { full, bottom } = RealmStore.logos || {}
 
     if (UserStore.logged && UserStore.logged.enabled && !confirmPhone) {
       return <Redirect to={(AppStore.redirect && location.state && location.state.from) || '/'} />
@@ -708,9 +713,10 @@ class Login extends React.Component {
                   </div>*/}
               </LinearLayout>
             </form>
-            <Hidden mdUp>{!mainTenant && bottom && <img src={bottom} alt="Logo" className={classes.bottomLogo} />}</Hidden>
+            <div className={classes.footerLogo}>{!mainTenant && bottom && <img src={bottom} alt="Logo" className={classes.bottomLogo} />}</div>
+            {/* <Hidden mdUp>{!mainTenant && bottom && <img src={bottom} alt="Logo" className={classes.bottomLogo} />}</Hidden> */}
           </Card>
-          <Hidden smDown>{!mainTenant && bottom_solid && <img src={bottom_solid} alt="Logo" className={classes.bottomLogo} />}</Hidden>
+          {/* <Hidden smDown>{!mainTenant && bottom_solid && <img src={bottom_solid} alt="Logo" className={classes.bottomLogo} />}</Hidden> */}
         </div>
         <FooterBar />
         {UserStore.busy() && !UserStore.error && (
