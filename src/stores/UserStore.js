@@ -80,7 +80,7 @@ class Users extends Collection {
           AppStore.setUser({ name: res.name, username: memorizeName })
         }
         AppStore.onLogin && AppStore.onLogin()
-        if (this.logged.email && this.logged.mobile) {
+        if (this.logged.emailVerified && this.logged.mobile) {
           this.dataConfirmed = true
         } else {
           this.dataConfirmed = false
@@ -113,6 +113,8 @@ class Users extends Collection {
       username
     })
 
+  sendVerification = () => this.rpc('send-verification')
+
   updateToken = notificationToken =>
     this.rpc('update-token', {
       notificationToken
@@ -120,16 +122,18 @@ class Users extends Collection {
 
   completeValidation = password => this.rpc('complete-validation', { password })
 
-  testify = (username, motherName, birthdate, phone, allowSendEmail, validationKey, noTestify) =>
+  testify = (username, motherName, birthdate, phone, emailConfirm, allowSendEmail, validationKey, noTestify, confirmationMethod) =>
     this.rpc('testify', {
       realm: this.realm,
       username,
       motherName,
-      birthdate,
+      birthdate: birthdate || new Date(),
       phone,
+      emailConfirm,
       allowSendEmail,
       validationKey,
-      noTestify
+      noTestify,
+      confirmationMethod
     })
 
   changePassword = (oldPassword, newPassword) =>

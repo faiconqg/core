@@ -148,9 +148,9 @@ class App extends Foundation {
         <Provider router={RouterStore}>
           <Router history={history}>
             <MasterLayout>
-              {RealmStore.realmResolved && (
+              {RealmStore.realmResolved ? (
                 <Helmet color={RealmStore.primaryColor} multitenant={multitenant} realm={UserStore.realm} appName={RealmStore.appName} />
-              )}
+              ) : null}
               <Snackbar
                 anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                 open={AppStore.hasUpdate}

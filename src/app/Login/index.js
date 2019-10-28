@@ -18,6 +18,7 @@ import FooterBar from '../FooterBar'
 import AcceptTerms from './AcceptTerms'
 import ReceiveContact from './ReceiveContact'
 import ConfirmPhone from './ConfirmPhone'
+import PasswordRule from './PasswordRule'
 import cs from 'classnames'
 
 const styles = theme => ({
@@ -80,7 +81,7 @@ const styles = theme => ({
     display: 'flex',
     flex: 1,
     flexDirection: 'column',
-    alignItems: 'center',
+    // alignItems: 'center',
     paddingBottom: 50,
     paddingRight: 50,
     paddingLeft: 50
@@ -100,6 +101,10 @@ const styles = theme => ({
     fontWeight: 500,
     fontSize: 16,
     paddingBottom: 10
+  },
+  errorTitle: {
+    fontWeight: 500,
+    fontSize: 16
   },
   forgotContainer: {
     width: '100%',
@@ -230,6 +235,7 @@ class Login extends React.Component {
     termsValid: false,
     newUser: false,
     allowSendEmail: true,
+    userInconsistent: false,
     noTestify: false
   }
 
@@ -270,7 +276,11 @@ class Login extends React.Component {
         if (result.code === 1) {
           this.go('PasswordPage')
         } else if (result.code === 2) {
-          this.go('FirstLoginPage')
+          if (AppStore.email || RealmStore.confirmationMethod === 'CPF') {
+            this.go('FirstLoginPage')
+          } else {
+            this.setState({ userInconsistent: true }, () => this.go('ErrorPage'))
+          }
         } else if (result.code === 3) {
           this.setState({ requireValidationKey: true }, () => this.go('FirstLoginPage'))
         } else if (result.code === 4) {
@@ -280,7 +290,7 @@ class Login extends React.Component {
         if (RealmStore.currentRealm ? RealmStore.currentRealm.registerEnabled : this.props.canRegister) {
           this.setState({ newUser: true }, () => this.go('FirstLoginPage'))
         } else {
-          alert('Usuário não encontrado') // TODO: Criar mensagem de usuário não encontrado
+          this.go('ErrorPage')
         }
       }
     })
@@ -290,12 +300,14 @@ class Login extends React.Component {
     UserStore.error = null
     UserStore.testify(
       this.props.loginType === 'cpf' ? this.state.username.replace(/\./g, '').replace(/-/g, '') : this.state.username,
-      this.state.noTestify ? 'noTestify' : this.state.motherName,
-      this.state.noTestify ? new Date() : this.state.birthdate,
-      this.state.phone,
+      this.state.motherName,
+      this.state.birthdate,
+      this.state.phone || '',
+      this.state.emailConfirm ? this.state.emailConfirm + '@' + AppStore.email.split('@')[1] : '',
       this.state.allowSendEmail,
       this.state.requireValidationKey ? this.state.validationKey : 'icv',
-      this.state.noTestify
+      this.state.noTestify,
+      RealmStore.confirmationMethod
     )
       .then(res => {
         AppStore.setToken(res.id)
@@ -332,6 +344,8 @@ class Login extends React.Component {
         return 'Sua senha está incorreta. Se você não lembra de sua senha, clique em "Esqueci minha senha"'
       } else if (UserStore.error && UserStore.error.code === 'EMAIL_NOT_FOUND') {
         return 'A confirmação de email está incorreta.'
+      } else if (UserStore.error && UserStore.error.code === 'PASSWORD_RULE') {
+        return ''
       } else {
         return 'Ops! Algo deu errado, tente novamente'
       }
@@ -358,6 +372,8 @@ class Login extends React.Component {
         return this.handleSubmitConfirmSetPasswordPage
       case 'RegisterPage':
         return this.handleSubmitRegisterPage
+      case 'ErrorPage':
+        return this.handleSubmitErrorPage
     }
   }
 
@@ -383,9 +399,10 @@ class Login extends React.Component {
     e.preventDefault()
 
     if (
-      ((this.props.loginType === 'cpf' && this.state.birthdateValid && this.state.motherNameValid) ||
-        (this.state.birthdateValid && this.state.phoneValid) ||
-        this.state.noTestify) &&
+      (this.state.noTestify ||
+        (RealmStore.confirmationMethod === 'EMAIL' && this.state.emailConfirmValid && this.state.phoneValid) ||
+        ((this.props.loginType === 'cpf' && this.state.birthdateValid && this.state.motherNameValid) ||
+          (this.state.birthdateValid && this.state.phoneValid))) &&
       (this.state.termsValid || !RealmStore.termsOfUse) &&
       (this.state.validationKeyValid || !this.state.requireValidationKey)
     ) {
@@ -399,6 +416,13 @@ class Login extends React.Component {
     e.preventDefault()
     UserStore.error = null
     this.go('FirstLoginPage')
+  }
+
+  handleSubmitErrorPage = e => {
+    e.preventDefault()
+    this.setState({ userInconsistent: false })
+    UserStore.error = null
+    this.go('LoginPage')
   }
 
   handleSubmitRecoverPasswordPage = e => {
@@ -459,10 +483,11 @@ class Login extends React.Component {
       allowSendEmail,
       acceptMessage,
       terms,
+      userInconsistent,
       newUser,
       noTestify
     } = this.state
-    const { full, solid } = RealmStore.logos || {}
+    const { full, bottom, bottom_solid } = RealmStore.logos || {}
 
     if (UserStore.logged && UserStore.logged.enabled && !confirmPhone) {
       return <Redirect to={(AppStore.redirect && location.state && location.state.from) || '/'} />
@@ -484,7 +509,7 @@ class Login extends React.Component {
       return <PageLoading />
     }
 
-    let mainTenant = true
+    let mainTenant = UserStore.realm === 'incentiveme'
 
     return (
       <Background>
@@ -492,9 +517,9 @@ class Login extends React.Component {
           <Card className={classes.card}>
             <form className={classes.flex} onSubmit={this.resolveSubmit()} noValidate>
               <LinearLayout visible={!UserStore.busy() || !!UserStore.error} flex={1}>
-                {RealmStore.remoteLogo ? (
+                {full ? (
                   <div className={cs(classes.logoContainer, AppStore.device.hasNotch ? classes.logoContainerIos : classes.logoContainerDefault)}>
-                    <img src={RealmStore.remoteLogo} alt="Logo" className={classes.logo} />
+                    <img src={full} alt="Logo" className={classes.logo} />
                   </div>
                 ) : (
                   <span className={classes.appName}>{RealmStore.appName || 'Nome do sistema'}</span>
@@ -534,6 +559,8 @@ class Login extends React.Component {
                               birthdate={birthdate}
                               motherName={motherName}
                               phone={phone}
+                              email={AppStore.email}
+                              emailConfirm={emailConfirm}
                               validationKey={validationKey}
                               requireValidationKey={requireValidationKey}
                               error={this.resolveError()}
@@ -548,6 +575,8 @@ class Login extends React.Component {
                           return <ConfirmPhone />
                         case 'TestifyErrorPage':
                           return <TestifyErrorPage />
+                        case 'ErrorPage':
+                          return <ErrorPage userInconsistent={userInconsistent} />
                         case 'RecoverPasswordPage':
                           return (
                             <RecoverPasswordPage
@@ -567,16 +596,19 @@ class Login extends React.Component {
                           )
                         case 'SetPasswordPage':
                           return (
-                            <SetPasswordPage
-                              username={username}
-                              newPassword={newPassword}
-                              newPasswordConfirm={newPasswordConfirm}
-                              error={this.resolveError()}
-                              onBack={() => this.go('LoginPage')}
-                              wellcomeMessage={wellcomeMessage}
-                              onChangeValidation={this.handleChangeValidation}
-                              onChange={this.handleChange}
-                            />
+                            <>
+                              <SetPasswordPage
+                                username={username}
+                                newPassword={newPassword}
+                                newPasswordConfirm={newPasswordConfirm}
+                                error={this.resolveError()}
+                                onBack={() => this.go('LoginPage')}
+                                wellcomeMessage={wellcomeMessage}
+                                onChangeValidation={this.handleChangeValidation}
+                                onChange={this.handleChange}
+                              />
+                              {UserStore.error && UserStore.error.code === 'PASSWORD_RULE' ? <PasswordRule rules={UserStore.error.detail} /> : null}
+                            </>
                           )
                         case 'ConfirmSetPasswordPage':
                           return <ConfirmSetPasswordPage error={this.resolveError()} onChangeValidation={this.handleChangeValidation} />
@@ -676,9 +708,9 @@ class Login extends React.Component {
                   </div>*/}
               </LinearLayout>
             </form>
-            <Hidden mdUp>{!mainTenant && full && <img src={full} alt="Logo" className={classes.bottomLogo} />}</Hidden>
+            <Hidden mdUp>{!mainTenant && bottom && <img src={bottom} alt="Logo" className={classes.bottomLogo} />}</Hidden>
           </Card>
-          <Hidden smDown>{!mainTenant && solid && <img src={solid} alt="Logo" className={classes.bottomLogo} />}</Hidden>
+          <Hidden smDown>{!mainTenant && bottom_solid && <img src={bottom_solid} alt="Logo" className={classes.bottomLogo} />}</Hidden>
         </div>
         <FooterBar />
         {UserStore.busy() && !UserStore.error && (
@@ -723,6 +755,8 @@ const FirstLoginPage = withStyles(styles)(
     validationKey,
     username,
     phone,
+    email,
+    emailConfirm,
     onChange,
     onBack,
     onChangeValidation,
@@ -735,32 +769,49 @@ const FirstLoginPage = withStyles(styles)(
       <UserIndicator username={username} onBack={onBack} />
       {!newUser && <span className={classes.wellcome}>{AppStore.messages.wellcome} </span>}
       <span>{AppStore.messages.firstAccess}</span>
-      {!noTestify && (
-        <>
-          <BirthdateInput
-            error={error}
-            value={birthdate}
-            loginType={loginType}
-            onChange={value => onChange(value, 'birthdate')}
-            onChangeValidation={value => onChangeValidation(value, 'birthdate')}
-          />
-          {loginType === 'cpf' ? (
-            <MotherNameInput
+      {!noTestify &&
+        (RealmStore.confirmationMethod === 'CPF' ? (
+          <>
+            <BirthdateInput
               error={error}
-              value={motherName}
-              onChange={value => onChange(value, 'motherName')}
-              onChangeValidation={value => onChangeValidation(value, 'motherName')}
+              value={birthdate}
+              loginType={loginType}
+              onChange={value => onChange(value, 'birthdate')}
+              onChangeValidation={value => onChangeValidation(value, 'birthdate')}
             />
-          ) : (
+            {loginType === 'cpf' ? (
+              <MotherNameInput
+                error={error}
+                value={motherName}
+                onChange={value => onChange(value, 'motherName')}
+                onChangeValidation={value => onChangeValidation(value, 'motherName')}
+              />
+            ) : (
+              <PhoneInput
+                error={error}
+                value={phone}
+                onChange={value => onChange(value, 'phone')}
+                onChangeValidation={value => onChangeValidation(value, 'phone')}
+              />
+            )}
+          </>
+        ) : RealmStore.confirmationMethod === 'EMAIL' ? (
+          <>
+            <EmailInput
+              emailDomain={'@' + email.split('@')[1]}
+              error={error}
+              value={emailConfirm}
+              onChange={value => onChange(value, 'emailConfirm')}
+              onChangeValidation={value => onChangeValidation(value, 'emailConfirm')}
+            />
             <PhoneInput
               error={error}
               value={phone}
               onChange={value => onChange(value, 'phone')}
               onChangeValidation={value => onChangeValidation(value, 'phone')}
             />
-          )}
-        </>
-      )}
+          </>
+        ) : null)}
       {requireValidationKey && (
         <ValidationKeyInput
           error={error}
@@ -860,15 +911,43 @@ const TestifyErrorPage = withStyles(styles)(({ classes }) => (
   <React.Fragment>
     <div className={classes.testifyError}>
       <Warning className={classes.testifyErrorIcon} />
-      <span className={classes.wellcome}>Os dados informados estão incorretos!</span>
+      <span className={classes.errorTitle}>Os dados informados estão incorretos!</span>
     </div>
-    <ul>
-      <li>Confira se o CPF informado está correto;</li>
-      <li>Confira se você digitou sua data de nascimento corretamente;</li>
-      <li>Você deve escrever apenas o primeiro nome da sua mãe, exatamente como consta em sua identidade;</li>
-    </ul>
+    {RealmStore.confirmationMethod === 'CPF' ? (
+      <ul>
+        <li>Confira se o CPF informado está correto;</li>
+        <li>Confira se você digitou sua data de nascimento corretamente;</li>
+        <li>Você deve escrever apenas o primeiro nome da sua mãe, exatamente como consta em sua identidade;</li>
+      </ul>
+    ) : (
+      <ul>
+        <li>Confira se o e-mail informado está correto;</li>
+        <li>Você precisa informar o e-mail utilizado no seu pré-cadastro;</li>
+      </ul>
+    )}
     <div className={classes.marginBottom}>
       <span>Clique em continuar para tentar novamente.</span>
+    </div>
+  </React.Fragment>
+))
+
+const ErrorPage = withStyles(styles)(({ classes, userInconsistent }) => (
+  <React.Fragment>
+    <div className={classes.testifyError}>
+      <Warning className={classes.testifyErrorIcon} />
+      {userInconsistent ? (
+        <span className={classes.errorTitle}>Usuário com cadastro incompleto!</span>
+      ) : (
+        <span className={classes.errorTitle}>Usuário não encontrado!</span>
+      )}
+    </div>
+    <ul>
+      <li>Confira se o login informado está correto;</li>
+      <li>Novos registros não estão habilitados;</li>
+      {userInconsistent && <li>Entre em contato para obter ajuda;</li>}
+    </ul>
+    <div className={classes.marginBottom}>
+      <span>Clique em continuar para tentar outro login.</span>
     </div>
   </React.Fragment>
 ))

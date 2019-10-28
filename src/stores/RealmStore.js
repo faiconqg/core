@@ -13,7 +13,6 @@ class Realms extends Collection {
   realmResolved = false
 
   @observable logos = null
-  @observable remoteLogo = null
   @observable banner = null
   @observable appName = null
   @observable appUrl = null
@@ -31,14 +30,12 @@ class Realms extends Collection {
   @observable walletQuotation = 1
   @observable walletConfig = { walletIcon: 'realms/incents.svg', walletName: ['ic', 'ics', 'incent', 'incents'] }
   @observable customFlags = {}
+  @observable confirmationMethod = 'CPF'
   // @observable passwordValidity = {}
   // @observable passwordRule = {}
 
   completeLoad = callback => {
     if (this.currentRealm) {
-      if (this.currentRealm.picture) {
-        this.remoteLogo = ResourceLoader.load(this.currentRealm.picture)
-      }
       if (this.currentRealm.logos) {
         let customLogo = {}
         Object.keys(this.currentRealm.logos).map(key => (customLogo[key] = ResourceLoader.load(this.currentRealm.logos[key])))
@@ -82,6 +79,9 @@ class Realms extends Collection {
       }
       if (this.currentRealm.privacyUrl) {
         this.privacyUrl = this.currentRealm.privacyUrl
+      }
+      if (this.currentRealm.confirmationMethod) {
+        this.confirmationMethod = this.currentRealm.confirmationMethod
       }
       this.useBankAccount = this.currentRealm.useBankAccount
       this.customFlags = this.currentRealm.customFlags

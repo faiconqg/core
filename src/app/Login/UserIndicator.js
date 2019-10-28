@@ -67,7 +67,7 @@ class UserIndicator extends React.Component {
             <AccountCircle className={classes.icon} />
             <div className={classes.vContainer}>
               <span className={classes.name}>{AppStore.user.name}</span>
-              <span className={classes.username}>{username}</span>
+              {username instanceof String ? <span className={classes.username}>{username}</span> : null}
             </div>
             <span className={classes.flex} />
             <Tooltip title="Esquecer usuário" placement="top-start">
