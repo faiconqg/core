@@ -3,7 +3,7 @@ import { Redirect } from 'react-router'
 import { UserStore, AppStore, RealmStore } from 'stores'
 import { Background, LinearLayout, PageLoading, PageError, UpgradeNeeded } from 'components'
 import { observer, inject } from './../../api'
-import { withStyles, Button, Card, CircularProgress, Hidden } from '@material-ui/core'
+import { withStyles, Button, Card, CircularProgress } from '@material-ui/core'
 import Warning from '@material-ui/icons/Warning'
 import CheckCircle from '@material-ui/icons/CheckCircle'
 import PasswordInput from './PasswordInput'
@@ -255,7 +255,13 @@ class Login extends React.Component {
       this.props.loginType === 'cpf' ? this.state.username.replace(/\./g, '').replace(/-/g, '') : this.state.username,
       this.state.password,
       this.state.username
-    )
+    ).catch(err => {
+      if (err.error.code === 'PASSWORD_BLOCK') {
+        this.go('PasswordBlock')
+      } else {
+        throw err
+      }
+    })
   }
 
   requestReset = e => {
@@ -382,6 +388,8 @@ class Login extends React.Component {
         return this.handleSubmitRegisterPage
       case 'ErrorPage':
         return this.handleSubmitErrorPage
+      case 'PasswordBlock':
+        return this.handleSubmitPasswordBlock
     }
   }
 
@@ -431,6 +439,12 @@ class Login extends React.Component {
     this.setState({ userInconsistent: false })
     UserStore.error = null
     this.go('LoginPage')
+  }
+
+  handleSubmitPasswordBlock = e => {
+    e.preventDefault()
+    UserStore.error = null
+    this.go('RecoverPasswordPage')
   }
 
   handleSubmitRecoverPasswordPage = e => {
@@ -585,6 +599,8 @@ class Login extends React.Component {
                           return <TestifyErrorPage />
                         case 'ErrorPage':
                           return <ErrorPage userInconsistent={userInconsistent} />
+                        case 'PasswordBlock':
+                          return <PasswordBlock />
                         case 'RecoverPasswordPage':
                           return (
                             <RecoverPasswordPage
@@ -716,7 +732,9 @@ class Login extends React.Component {
                   </div>*/}
               </LinearLayout>
             </form>
-            <div className={classes.footerLogo}>{!mainTenant && bottom && <img src={bottom} alt="Logo" className={classes.bottomLogo} />}</div>
+            {!mainTenant && bottom && (
+              <div className={classes.footerLogo}>{!mainTenant && bottom && <img src={bottom} alt="Logo" className={classes.bottomLogo} />}</div>
+            )}
             {/* <Hidden mdUp>{!mainTenant && bottom && <img src={bottom} alt="Logo" className={classes.bottomLogo} />}</Hidden> */}
           </Card>
           {/* <Hidden smDown>{!mainTenant && bottom_solid && <img src={bottom_solid} alt="Logo" className={classes.bottomLogo} />}</Hidden> */}
@@ -957,6 +975,22 @@ const ErrorPage = withStyles(styles)(({ classes, userInconsistent }) => (
     </ul>
     <div className={classes.marginBottom}>
       <span>Clique em continuar para tentar outro login.</span>
+    </div>
+  </React.Fragment>
+))
+
+const PasswordBlock = withStyles(styles)(({ classes }) => (
+  <React.Fragment>
+    <div className={classes.testifyError}>
+      <Warning className={classes.testifyErrorIcon} />
+      <span className={classes.errorTitle}>Conta bloqueada ou expirada</span>
+    </div>
+    <ul>
+      <li>Sua conta está expirada ou foi bloqueada devido ao número máximo de tentativas de senha incorreta;</li>
+      <li>Será necessário criar uma nova senha para acessar o sistema;</li>
+    </ul>
+    <div className={classes.marginBottom}>
+      <span>Clique em continuar para resetar sua senha.</span>
     </div>
   </React.Fragment>
 ))
