@@ -51,7 +51,7 @@ class Realms extends Collection {
         this.walletConfig = Object.assign({}, this.walletConfig, this.currentRealm.walletConfig)
       }
       if (this.currentRealm.backgroundMicro && this.currentRealm.background) {
-        this.background = [this.currentRealm.backgroundMicro, this.currentRealm.background]
+        this.background = [ResourceLoader.load(this.currentRealm.backgroundMicro), ResourceLoader.load(this.currentRealm.background)]
       }
       if (this.currentRealm.backgroundColor) {
         this.backgroundColor = this.currentRealm.backgroundColor
