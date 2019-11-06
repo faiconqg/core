@@ -22,15 +22,18 @@ class MasterLayout extends React.Component {
       palette: {
         primary: {
           main: RealmStore.primaryColor || '#F6DA4A',
+          custom: rate => lighten(RealmStore.primaryColor || '#F6DA4A', rate),
           transparency: lighten(RealmStore.primaryColor || '#F6DA4A', 0.95)
         },
         secondary: {
           main: RealmStore.secondaryColor || '#6D8345',
-          transparency: lighten(RealmStore.secondaryColor || '#6D8345', 0.95)
+          transparency: lighten(RealmStore.secondaryColor || '#6D8345', 0.95),
+          custom: rate => lighten(RealmStore.secondaryColor || '#6D8345', rate)
         },
         appbar: {
           light: lighten(defaultAppbar, 0.2),
           main: defaultAppbar,
+          custom: rate => lighten(defaultAppbar, rate),
           dark: darken(defaultAppbar, 0.3),
           // contrastText: 'black'
           contrastText: getContrastRatio(defaultAppbar, 'rgba(0, 0, 0, 0.87)') >= 10 ? 'rgba(0, 0, 0, 0.87)' : 'rgba(255, 255, 255, 0.97)'
