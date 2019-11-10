@@ -288,17 +288,22 @@ class Login extends React.Component {
       if (result) {
         AppStore.setEmail(result.email)
         if (result.code === 1) {
+          // Common valid user
           this.go('PasswordPage')
-        } else if (result.code === 2) {
+        } else if (result.code === 2 || result.code === 3) {
+          // User invalid
           if (AppStore.email || RealmStore.confirmationMethod === 'CPF') {
             this.go('FirstLoginPage')
+            this.setState({ requireValidationKey: result.code === 3 }, () => this.go('FirstLoginPage'))
           } else {
             this.setState({ userInconsistent: true }, () => this.go('ErrorPage'))
           }
-        } else if (result.code === 3) {
-          this.setState({ requireValidationKey: true }, () => this.go('FirstLoginPage'))
         } else if (result.code === 4) {
+          // Disable confirmation
           this.setState({ noTestify: true, newUser: true }, () => this.go('FirstLoginPage'))
+        } else if (result.code === 5) {
+          // Invited user
+          this.setState({ newUser: true }, () => this.go('FirstLoginPage'))
         }
       } else {
         if (RealmStore.currentRealm ? RealmStore.currentRealm.registerEnabled : this.props.canRegister) {

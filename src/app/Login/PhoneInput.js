@@ -21,7 +21,7 @@ class PhoneInput extends FieldsBase {
 
   handleValidation = value => {
     if (value.replace(/\D+/g, '').length < 11) {
-      this.onChangeValidation(false, 'Você precisa informar seu telefone corretamente')
+      this.onChangeValidation(false, 'Você precisa informar seu celular corretamente')
     } else {
       this.onChangeValidation(true)
     }
@@ -33,7 +33,7 @@ class PhoneInput extends FieldsBase {
     return (
       <TextField
         placeholder="(xx) xxxxx-xxxx"
-        label="Informe seu número de telefone"
+        label="Informe seu número de celular"
         InputProps={{
           inputComponent: MaskNumber
         }}

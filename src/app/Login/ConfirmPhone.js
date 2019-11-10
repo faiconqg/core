@@ -1,8 +1,7 @@
 import React from 'react'
-import { withStyles, TextField, Button } from '@material-ui/core'
+import { withStyles, TextField, Button, CircularProgress, Dialog, DialogContent } from '@material-ui/core'
 import MaskedInput from 'react-text-mask'
 import { AppStore } from 'stores'
-import firebase from 'firebase/app'
 import { UserStore } from 'stores'
 import { observer, Listener, inject } from './../../api'
 import PhoneInput from './PhoneInput'
@@ -26,7 +25,18 @@ const styles = theme => ({
     textDecoration: 'none',
     color: theme.palette.secondary.main
   },
-  button: { marginTop: 15 }
+  button: { marginTop: 15 },
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center'
+  },
+  label: {
+    paddingTop: 10,
+    paddingRight: 30,
+    paddingLeft: 30,
+    color: theme.palette.text.secondary
+  }
 })
 
 export default
@@ -43,7 +53,7 @@ class ConfirmPhone extends React.Component {
     errorCode: null,
     delay: 0,
     smsSent: false,
-    captchaOk: false
+    busy: false
   }
 
   showTime = () => {
@@ -55,37 +65,23 @@ class ConfirmPhone extends React.Component {
   }
 
   sendSms = () => {
+    clearInterval(this.timer)
     this.setState({ delay: 120 })
     this.timer = setInterval(this.showTime, 1000)
-
-    AppStore.firebase.auth().languageCode = 'pt-br'
-
-    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-button', {
-      size: 'invisible',
-      callback: response => {
-        // reCAPTCHA solved, allow signInWithPhoneNumber.
-        this.setState({ captchaOk: true })
-      }
-    })
-
-    var phoneNumber = '+55' + this.state.mobile.replace(/\D+/g, '')
-    var appVerifier = window.recaptchaVerifier
-    AppStore.firebase
-      .auth()
-      .signInWithPhoneNumber(phoneNumber, appVerifier)
-      .then(confirmationResult => {
-        // SMS sent. Prompt user to type the code from the message, then sign the
-        // user in with confirmationResult.confirm(code).
-        this.confirmationResult = confirmationResult
-        this.setState({ smsSent: true })
-      })
-      .catch(error => {
-        if (error.code === 'auth/too-many-requests') {
-          this.setState({ errorCode: 'Muitas tentativas, aguarde um pouco e tente novamente' })
+    const phoneNumber = '+55' + this.state.mobile.replace(/\D+/g, '')
+    AppStore.sendSms(
+      phoneNumber,
+      error => {
+        if (error) {
+          this.setState({ errorCode: error })
         } else {
-          console.log(error)
+          this.setState({ smsSent: true })
         }
-      })
+      },
+      code => {
+        this.setState({ code }, this.confirmCode)
+      }
+    )
   }
 
   changeCode = e => {
@@ -93,27 +89,21 @@ class ConfirmPhone extends React.Component {
   }
 
   confirmCode = () => {
+    this.setState({ busy: true })
     const code = this.state.code.replace(/\D+/g, '')
-    if (code.length === 6) {
-      this.confirmationResult
-        .confirm(code)
-        .then(result => {
-          UserStore.rpc('confirm-mobile').then(() => {
+    AppStore.confirmCode(code, error => {
+      if (error) {
+        this.setState({ busy: false })
+        this.setState({ errorCode: error })
+      } else {
+        UserStore.rpc('confirm-mobile').then(() => {
+          UserStore.current().then(() => {
             clearInterval(this.timer)
-            UserStore.current().then(() => this.props.router.push('/'))
+            this.props.router.push('/')
           })
         })
-        .catch(error => {
-          console.log(error)
-          if (error.code === 'auth/invalid-verification-code') {
-            this.setState({ errorCode: 'Código de verificação incorreto' })
-          } else {
-            this.setState({ errorCode: 'Algo deu errado, tente novamente mais tarde' })
-          }
-        })
-    } else {
-      this.setState({ errorCode: 'O código precisa ter 6 digitos' })
-    }
+      }
+    })
   }
 
   changeMobile = value => {
@@ -143,7 +133,7 @@ class ConfirmPhone extends React.Component {
 
   render() {
     const { classes, username } = this.props
-    let { mobile, code, mobileSet, error, errorCode, delay, smsSent, captchaOk } = this.state
+    let { mobile, code, mobileSet, error, errorCode, delay, smsSent, busy } = this.state
 
     mobile = String(mobile).replace(/\D+/g, '')
 
@@ -190,7 +180,7 @@ class ConfirmPhone extends React.Component {
               variant="contained"
               fullWidth
               onClick={this.confirmCode}
-              disabled={!smsSent || !captchaOk}
+              disabled={!smsSent}
             >
               Continuar
             </Button>
@@ -199,13 +189,21 @@ class ConfirmPhone extends React.Component {
           <>
             <UserIndicator username={username} onForgotUser={() => UserStore.logout()} />
             <span className={classes.wellcome}>Confirme seu número</span>
-            <span>Enviaremos um SMS para confirmar seu número. Insira o código DDD da sua cidade e o número do seu telefone.</span>
+            <span>Enviaremos um SMS para confirmar seu número. Insira o código DDD da sua cidade e o número do seu celular.</span>
             <PhoneInput error={error} value={mobileSet} onChange={this.changeMobile} onChangeValidation={this.handleChangeValidation} />
             <Button className={classes.button} color="secondary" variant="contained" fullWidth onClick={this.confirmPhone}>
               Continuar
             </Button>
           </>
         )}
+        <Dialog open={busy} fullScreen={false} maxWidth="lg">
+          <DialogContent>
+            <div className={classes.container}>
+              <CircularProgress />
+              <div className={classes.label}>Verificando...</div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </>
     )
   }

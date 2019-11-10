@@ -1,6 +1,8 @@
 import { observable, action, computed } from './../api'
 import { AccessRoutesStore, UserStore } from './../'
 import debounce from 'lodash/debounce'
+import firebase from 'firebase/app'
+import { cfaSignIn, cfaSignInPhoneOnCodeSent, cfaSignInPhoneOnCodeReceived } from 'capacitor-firebase-auth'
 
 class AppStore {
   @observable
@@ -143,6 +145,109 @@ class AppStore {
   @action
   setAppLoaded() {
     this.appLoaded = true
+  }
+
+  sendSms = (phoneNumber, callback, callbackCode) => {
+    if (this.device.isMobile) {
+      this.sendSmsApp(phoneNumber, callback, callbackCode)
+    } else {
+      this.sendSmsWeb(phoneNumber, callback)
+    }
+  }
+
+  sendSmsWeb = (phoneNumber, callback) => {
+    this.firebase.auth().languageCode = 'pt-br'
+
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-button', {
+      size: 'invisible',
+      callback: response => {
+        // reCAPTCHA solved, allow signInWithPhoneNumber.
+        callback()
+      },
+      'error-callback': error => {
+        console.log(error)
+      }
+    })
+
+    window.recaptchaVerifier.render().then(function(widgetId) {
+      window.recaptchaWidgetId = widgetId
+    })
+
+    var appVerifier = window.recaptchaVerifier
+    this.firebase
+      .auth()
+      .signInWithPhoneNumber(phoneNumber, appVerifier)
+      .then(confirmationResult => {
+        // SMS sent. Prompt user to type the code from the message, then sign the
+        // user in with confirmationResult.confirm(code).
+        this.confirmationResult = confirmationResult
+        callback()
+      })
+      .catch(error => {
+        window.grecaptcha.reset(window.recaptchaWidgetId)
+        console.log(error)
+        if (error.code === 'auth/too-many-requests') {
+          callback('Muitas tentativas, aguarde um pouco e tente novamente')
+        } else {
+          callback('Falha ao enviar SMS')
+        }
+      })
+  }
+
+  confirmCode = (code, callback) => {
+    if (code.length === 6) {
+      if (this.device.isMobile) {
+        this.confirmCodeApp(code, callback)
+      } else {
+        this.confirmCodeWeb(code, callback)
+      }
+    } else {
+      callback('O código precisa ter 6 digitos')
+    }
+  }
+
+  confirmCodeWeb = (code, callback) => {
+    this.confirmationResult
+      .confirm(code)
+      .then(result => {
+        callback()
+      })
+      .catch(error => {
+        console.log(error)
+        if (error.code === 'auth/invalid-verification-code') {
+          callback('Código de verificação incorreto')
+        } else {
+          callback('Algo deu errado, tente novamente mais tarde')
+        }
+      })
+  }
+
+  sendSmsApp = (phoneNumber, callback, callbackCode) => {
+    cfaSignInPhoneOnCodeReceived().subscribe((event: { verificationId: string, verificationCode: string }) => callbackCode(event.verificationCode))
+
+    cfaSignInPhoneOnCodeSent().subscribe(verificationId => {
+      this.verificationId = verificationId
+      callback()
+    })
+    cfaSignIn('phone', { phone: phoneNumber }).subscribe(user => {
+      callback()
+    })
+  }
+
+  confirmCodeApp = (code, callback) => {
+    const credential = firebase.auth.PhoneAuthProvider.credential(this.verificationId, code)
+    firebase
+      .auth()
+      .signInWithCredential(credential)
+      .then(result => callback())
+      .catch(error => {
+        console.log(error)
+        if (error.code === 'auth/invalid-verification-code') {
+          callback('Código de verificação incorreto')
+        } else {
+          callback('Algo deu errado, tente novamente mais tarde')
+        }
+      })
   }
 }
 

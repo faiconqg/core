@@ -34,7 +34,8 @@ class App extends Foundation {
       RealmStore.fetch().then(realms => {
         const hostname = window.location.hostname
         let subdomain = hostname.split('.')[0]
-        // let subdomain = 'incentiveme'
+        subdomain = 'incentiveme'
+        // subdomain = 'gndi'
         // let subdomain = 'positivo'
         // let subdomain = 'oi'
 
@@ -100,7 +101,7 @@ class App extends Foundation {
       acceptMessage,
       appEmail,
       configurations,
-      useMobileVerification,
+      useMobileVerification = true,
       loginType = 'email',
       canRegister = true,
       firebaseConfig,
@@ -195,7 +196,11 @@ class App extends Foundation {
                     }}
                   />
                 ) : null}
-                {AppStore.token && useMobileVerification && UserStore.logged && !UserStore.logged.mobileVerified ? (
+                {AppStore.token &&
+                useMobileVerification &&
+                (!RealmStore.customFlags || !RealmStore.customFlags.disableMobileVerification) &&
+                UserStore.logged &&
+                !UserStore.logged.mobileVerified ? (
                   <>
                     <Route
                       path="/confirm-phone"
