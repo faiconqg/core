@@ -223,15 +223,30 @@ class AppStore {
   }
 
   sendSmsApp = (phoneNumber, callback, callbackCode) => {
+    this.callbackCalled = false
+
     cfaSignInPhoneOnCodeReceived().subscribe((event: { verificationId: string, verificationCode: string }) => callbackCode(event.verificationCode))
 
     cfaSignInPhoneOnCodeSent().subscribe(verificationId => {
       this.verificationId = verificationId
-      callback()
+      if (!this.callbackCalled) {
+        callback()
+      }
+      this.callbackCalled = true
     })
     cfaSignIn('phone', { phone: phoneNumber }).subscribe(user => {
-      callback()
+      if (!this.callbackCalled) {
+        callback()
+      }
+      this.callbackCalled = true
     })
+
+    setTimeout(() => {
+      if (!this.callbackCalled) {
+        callback('Muitas tentativas, aguarde um pouco e tente novamente')
+      }
+      this.callbackCalled = true
+    }, 10000)
   }
 
   confirmCodeApp = (code, callback) => {
