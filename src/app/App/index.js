@@ -34,7 +34,7 @@ class App extends Foundation {
       RealmStore.fetch().then(realms => {
         const hostname = window.location.hostname
         let subdomain = hostname.split('.')[0]
-        subdomain = 'incentiveme'
+        // subdomain = 'incentiveme'
         // subdomain = 'gndi'
         // let subdomain = 'positivo'
         // let subdomain = 'oi'
