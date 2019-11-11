@@ -1,6 +1,6 @@
 {
   "name": "@faicon/core",
-  "version": "0.0.80",
+  "version": "0.0.81",
   "description": "Faicon core API for react. https://github.com/faiconqg/core",
   "main": "dist/index.js",
   "files": [
@@ -60,13 +60,13 @@
     "@material-ui/core": "^4.3.3",
     "@material-ui/icons": "^4.2.1",
     "@material-ui/pickers": "^3.2.4",
+    "firebase": "^7.3.0",
     "mobx": "5.9.4",
     "mobx-react": "5.4.3",
     "react": "16.8.6",
     "react-dom": "16.8.6",
     "react-router": "5.0.1",
-    "react-router-dom": "5.0.1",
-    "firebase": "^7.3.0"
+    "react-router-dom": "5.0.1"
   },
   "dependencies": {
     "ag-grid-community": "21.2.1",
