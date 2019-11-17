@@ -1,5 +1,5 @@
-import { Collection, observable, computed, Model } from './../api'
-import { AccountStore, AppStore, UserDetailStore, RealmStore, ContactDataStore } from 'stores'
+import {Collection, observable, computed, Model} from './../api'
+import {AccountStore, AppStore, UserDetailStore, RealmStore, ContactDataStore} from 'stores'
 import platform from 'platform'
 
 class User extends Model {
@@ -23,7 +23,7 @@ class User extends Model {
       return contactData
     } else {
       ContactDataStore.current()
-      ContactDataStore.add({ id: contactDataId })
+      ContactDataStore.add({id: contactDataId})
       return ContactDataStore.get(contactDataId)
     }
   }
@@ -67,7 +67,7 @@ class Users extends Collection {
   }
 
   current = memorizeName =>
-    this.rpcGet('current', { details: platform })
+    this.rpcGet('current', {details: platform})
       .then(res => {
         this.loggedInstance = this.build(res)
         if (this.notificationToken) {
@@ -77,7 +77,7 @@ class Users extends Collection {
         }
         // this.loggedUserInstance = this.build(res)
         if (memorizeName) {
-          AppStore.setUser({ name: res.name, username: memorizeName })
+          AppStore.setUser({name: res.name, username: memorizeName})
         }
         AppStore.onLogin && AppStore.onLogin()
         if (this.logged.emailVerified && this.logged.mobile) {
@@ -85,11 +85,13 @@ class Users extends Collection {
         } else {
           this.dataConfirmed = false
         }
-        if (res.realm === 'incentiveme' && (res.seller && res.seller.store && res.seller.store.merchant && res.seller.store.merchant.color)) {
-          RealmStore.primaryColor = res.seller.store.merchant.color
-        }
-        if (res.realm === 'incentiveme' && (res.seller && res.seller.store && res.seller.store.merchant && res.seller.store.merchant.appbarColor)) {
-          RealmStore.appbarColor = res.seller.store.merchant.appbarColor
+        if (res.realm === 'incentiveme') {
+          if (res.primaryColor) {
+            RealmStore.primaryColor = res.primaryColor
+          }
+          if (res.appbarColor) {
+            RealmStore.appbarColor = res.appbarColor
+          }
         }
         if (res.notifications) {
           this.notifications = res.notifications
@@ -104,23 +106,23 @@ class Users extends Collection {
   requestReset = email =>
     this.rpc('reset', {
       realm: this.realm,
-      email
+      email,
     })
 
   check = username =>
     this.rpc('check', {
       realm: this.realm,
-      username
+      username,
     })
 
   sendVerification = () => this.rpc('send-verification')
 
   updateToken = notificationToken =>
     this.rpc('update-token', {
-      notificationToken
+      notificationToken,
     })
 
-  completeValidation = password => this.rpc('complete-validation', { password })
+  completeValidation = password => this.rpc('complete-validation', {password})
 
   testify = (username, motherName, birthdate, phone, emailConfirm, allowSendEmail, validationKey, noTestify, confirmationMethod) =>
     this.rpc('testify', {
@@ -133,20 +135,20 @@ class Users extends Collection {
       allowSendEmail,
       validationKey,
       noTestify,
-      confirmationMethod
+      confirmationMethod,
     })
 
   changePassword = (oldPassword, newPassword) =>
     this.rpc('change-password', {
       oldPassword,
-      newPassword
+      newPassword,
     })
 
   login = (username, password, memorizeName) =>
     this.rpc('login', {
       realm: this.realm,
       username,
-      password
+      password,
     }).then(res => {
       AppStore.setToken(res.id)
       this.current(memorizeName)
