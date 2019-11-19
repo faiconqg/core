@@ -1,9 +1,9 @@
 import React from 'react'
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core'
-import { darken, lighten, getContrastRatio } from '@material-ui/core/styles/colorManipulator'
-import { observer } from './../api'
-import { withRouter } from 'react-router-dom'
-import { RealmStore } from 'stores'
+import {MuiThemeProvider, createMuiTheme} from '@material-ui/core'
+import {darken, lighten, getContrastRatio} from '@material-ui/core/styles/colorManipulator'
+import {observer} from './../api'
+import {withRouter} from 'react-router-dom'
+import {RealmStore} from 'stores'
 
 export default
 @withRouter
@@ -14,21 +14,23 @@ class MasterLayout extends React.Component {
 
     const theme = createMuiTheme({
       typography: {
-        useNextVariants: true
+        useNextVariants: true,
       },
       background: {
-        menu: RealmStore.menuBackground
+        menu: RealmStore.menuBackground,
       },
       palette: {
         primary: {
           main: RealmStore.primaryColor || '#F6DA4A',
           custom: rate => lighten(RealmStore.primaryColor || '#F6DA4A', rate),
-          transparency: lighten(RealmStore.primaryColor || '#F6DA4A', 0.95)
+          transparency: lighten(RealmStore.primaryColor || '#F6DA4A', 0.95),
+          contrastText: getContrastRatio(RealmStore.primaryColor, 'rgba(0, 0, 0, 0.87)') >= 10 ? 'rgba(0, 0, 0, 0.87)' : 'rgba(255, 255, 255, 0.97)',
         },
         secondary: {
           main: RealmStore.secondaryColor || '#6D8345',
           transparency: lighten(RealmStore.secondaryColor || '#6D8345', 0.95),
-          custom: rate => lighten(RealmStore.secondaryColor || '#6D8345', rate)
+          custom: rate => lighten(RealmStore.secondaryColor || '#6D8345', rate),
+          contrastText: getContrastRatio(RealmStore.secondaryColor, 'rgba(0, 0, 0, 0.87)') >= 10 ? 'rgba(0, 0, 0, 0.87)' : 'rgba(255, 255, 255, 0.97)',
         },
         appbar: {
           light: lighten(defaultAppbar, 0.2),
@@ -36,10 +38,10 @@ class MasterLayout extends React.Component {
           custom: rate => lighten(defaultAppbar, rate),
           dark: darken(defaultAppbar, 0.3),
           // contrastText: 'black'
-          contrastText: getContrastRatio(defaultAppbar, 'rgba(0, 0, 0, 0.87)') >= 10 ? 'rgba(0, 0, 0, 0.87)' : 'rgba(255, 255, 255, 0.97)'
-        }
+          contrastText: getContrastRatio(defaultAppbar, 'rgba(0, 0, 0, 0.87)') >= 10 ? 'rgba(0, 0, 0, 0.87)' : 'rgba(255, 255, 255, 0.97)',
+        },
         // error: will use the default color
-      }
+      },
     })
 
     return <MuiThemeProvider theme={theme}>{this.props.children}</MuiThemeProvider>
