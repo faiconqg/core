@@ -56,6 +56,7 @@ export default class Collection extends BaseCollection {
       runInAction('fetch-export-error', () => {
         this.error = new ErrorObject(body)
         this.requestCount = null
+        this.requestExport = null
       })
 
       throw body
