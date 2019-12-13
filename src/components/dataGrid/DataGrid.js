@@ -9,6 +9,8 @@ import BooleanRenderer from './renderers/BooleanRenderer'
 import ImageRenderer from './renderers/ImageRenderer'
 import CurrencyFormatter from './formatters/CurrencyFormatter'
 import DateFormatter from './formatters/DateFormatter'
+import CpfFormatter from './formatters/CpfFormatter'
+import CnpjFormatter from './formatters/CnpjFormatter'
 import DateTimeFormatter from './formatters/DateTimeFormatter'
 import PercentageFormatter from './formatters/PercentageFormatter'
 import 'ag-grid-community/dist/styles/ag-grid.css'
@@ -16,6 +18,8 @@ import 'ag-grid-community/dist/styles/ag-theme-material.css'
 import cs from 'classnames'
 
 const formatters = {
+  cpf: CpfFormatter,
+  cnpj: CnpjFormatter,
   currency: CurrencyFormatter,
   date: DateFormatter,
   dateTime: DateTimeFormatter,
