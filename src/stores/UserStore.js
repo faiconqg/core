@@ -80,6 +80,7 @@ class Users extends Collection {
           AppStore.setUser({name: res.name, username: memorizeName})
         }
         AppStore.onLogin && AppStore.onLogin()
+        AppStore.logGa('login', {method: 'CPF', id: res.id, name: res.name})
         if (this.logged.emailVerified && this.logged.mobile) {
           this.dataConfirmed = true
         } else {

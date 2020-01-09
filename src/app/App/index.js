@@ -20,6 +20,7 @@ import moment from 'moment'
 import firebase from 'firebase/app'
 import { HelmetProvider } from 'react-helmet-async'
 import 'firebase/auth'
+import 'firebase/analytics'
 
 // import DevTools from 'mobx-react-devtools'
 
@@ -140,6 +141,7 @@ class App extends Foundation {
     AppStore.configurations = configurations
     if (firebaseConfig && !AppStore.firebase) {
       AppStore.firebase = firebase.initializeApp(firebaseConfig)
+      AppStore.analytics = AppStore.firebase.analytics()
     }
 
     apiSetup(api, AppStore.token, { platform: AppStore.platform, version: process.env.REACT_APP_VERSION })

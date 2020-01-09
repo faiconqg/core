@@ -44,6 +44,7 @@ class AppStore {
   windowWidth = 0
   configurations = null
   firebase = null
+  analytics = null
   @observable messages = {
     userBlocked: 'Sua conta está desabilitada, em caso de dúvidas, envie um e-mail para <b>${email}</b>.',
     userBlockedWithoutEmail: 'Sua conta está desabilitada, em caso de dúvidas, entre em contato.',
@@ -77,6 +78,11 @@ class AppStore {
   get menuWidth() {
     // return !this.inSubPage && (this.menuFixed || this.menuOver)
     return this.windowWidth < 960 ? 0 : this.menuFixed ? 250 : 69
+  }
+
+  @action
+  logGa(event, data) {
+    this.analytics.logEvent(event, data)
   }
 
   @action
@@ -148,10 +154,14 @@ class AppStore {
   }
 
   sendSms = (phoneNumber, callback, callbackCode) => {
-    if (this.device.isMobile) {
-      this.sendSmsApp(phoneNumber, callback, callbackCode)
-    } else {
-      this.sendSmsWeb(phoneNumber, callback)
+    let today = new Date()
+    if (!window.sendSmsCountTime || (window.sendSmsCountTime - today) > 10000) {
+        window.sendSmsCountTime = today
+      if (this.device.isMobile) {
+        this.sendSmsApp(phoneNumber, callback, callbackCode)
+      } else {
+        this.sendSmsWeb(phoneNumber, callback)
+      }
     }
   }
 
@@ -165,7 +175,7 @@ class AppStore {
         callback()
       },
       'error-callback': error => {
-        console.log(error)
+        console.log('recaptchaVerifier', error)
       }
     })
 
@@ -185,7 +195,7 @@ class AppStore {
       })
       .catch(error => {
         window.grecaptcha.reset(window.recaptchaWidgetId)
-        console.log(error)
+        console.log('sendSmsWeb', error)
         if (error.code === 'auth/too-many-requests') {
           callback('Muitas tentativas, aguarde um pouco e tente novamente')
         } else {
@@ -213,7 +223,7 @@ class AppStore {
         callback()
       })
       .catch(error => {
-        console.log(error)
+        console.log('confirmCodeWeb', error)
         if (error.code === 'auth/invalid-verification-code') {
           callback('Código de verificação incorreto')
         } else {
@@ -224,21 +234,27 @@ class AppStore {
 
   sendSmsApp = (phoneNumber, callback, callbackCode) => {
     this.callbackCalled = false
+    this.verificationId = null
 
-    cfaSignInPhoneOnCodeReceived().subscribe((event: { verificationId: string, verificationCode: string }) => callbackCode(event.verificationCode))
+    cfaSignInPhoneOnCodeReceived().subscribe((event: { verificationId: string, verificationCode: string }) => {
+      console.log('cfaSignInPhoneOnCodeReceived')
+      this.verificationId = event.verificationId
+      callbackCode(event.verificationCode)
+    })
 
     cfaSignInPhoneOnCodeSent().subscribe(verificationId => {
-      this.verificationId = verificationId
-      if (!this.callbackCalled) {
+      console.log('cfaSignInPhoneOnCodeSent')
+      if (!this.verificationId) {
+        this.verificationId = verificationId
         callback()
       }
-      this.callbackCalled = true
     })
+    
     cfaSignIn('phone', { phone: phoneNumber }).subscribe(user => {
-      if (!this.callbackCalled) {
+      console.log('cfaSignIn')
+      if (this.verificationId) {
         callback()
       }
-      this.callbackCalled = true
     })
 
     setTimeout(() => {
@@ -250,15 +266,18 @@ class AppStore {
   }
 
   confirmCodeApp = (code, callback) => {
+    console.log('verificationId', this.verificationId)
     const credential = firebase.auth.PhoneAuthProvider.credential(this.verificationId, code)
     firebase
       .auth()
       .signInWithCredential(credential)
       .then(result => callback())
       .catch(error => {
-        console.log(error)
+        console.log('confirmCodeApp', error)
         if (error.code === 'auth/invalid-verification-code') {
           callback('Código de verificação incorreto')
+        } else if (error.code === 'auth/code-expired') {
+          callback('O código expirou, solicite um novo código')
         } else {
           callback('Algo deu errado, tente novamente mais tarde')
         }
