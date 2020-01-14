@@ -73,6 +73,7 @@ class ConfirmPhone extends React.Component {
       phoneNumber,
       error => {
         if (error) {
+          console.log(5, error)
           this.setState({ errorCode: error })
         } else {
           this.setState({ smsSent: true })
@@ -93,6 +94,7 @@ class ConfirmPhone extends React.Component {
     const code = this.state.code.replace(/\D+/g, '')
     AppStore.confirmCode(code, error => {
       if (error) {
+        console.log(10, error)
         this.setState({ busy: false })
         this.setState({ errorCode: error })
       } else {

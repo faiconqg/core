@@ -72,7 +72,7 @@
     "ag-grid-community": "21.2.1",
     "ag-grid-react": "21.2.1",
     "axios": "0.18.1",
-    "capacitor-firebase-auth": "0.2.4",
+    "capacitor-firebase-auth": "0.3.0",
     "classnames": "2.2.6",
     "lodash": "4.17.15",
     "moment": "2.24.0",

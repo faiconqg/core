@@ -155,7 +155,7 @@ class AppStore {
 
   sendSms = (phoneNumber, callback, callbackCode) => {
     let today = new Date()
-    if (!window.sendSmsCountTime || (window.sendSmsCountTime - today) > 10000) {
+    if (!window.sendSmsCountTime || (today - window.sendSmsCountTime) > 10000) {
         window.sendSmsCountTime = today
       if (this.device.isMobile) {
         this.sendSmsApp(phoneNumber, callback, callbackCode)
@@ -246,6 +246,7 @@ class AppStore {
       console.log('cfaSignInPhoneOnCodeSent')
       if (!this.verificationId) {
         this.verificationId = verificationId
+        this.callbackCalled = true
         callback()
       }
     })
@@ -253,6 +254,7 @@ class AppStore {
     cfaSignIn('phone', { phone: phoneNumber }).subscribe(user => {
       console.log('cfaSignIn')
       if (this.verificationId) {
+        this.callbackCalled = true
         callback()
       }
     })
@@ -266,14 +268,17 @@ class AppStore {
   }
 
   confirmCodeApp = (code, callback) => {
-    console.log('verificationId', this.verificationId)
     const credential = firebase.auth.PhoneAuthProvider.credential(this.verificationId, code)
+    console.log(1, 'credential', JSON.parse(JSON.stringify(credential)))
     firebase
       .auth()
       .signInWithCredential(credential)
-      .then(result => callback())
+      .then(result => {
+        console.log(101, result)
+        callback()
+      })
       .catch(error => {
-        console.log('confirmCodeApp', error)
+        console.log(1,'error-confirm-code', JSON.parse(JSON.stringify(error)))
         if (error.code === 'auth/invalid-verification-code') {
           callback('Código de verificação incorreto')
         } else if (error.code === 'auth/code-expired') {
