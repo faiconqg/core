@@ -44,7 +44,7 @@ class PasswordInput extends FieldsBase {
     let resto
     soma = 0
     if (strCPF.substring(0, 9) === '999888777') return true
-    if (strCPF.substring(0, 6) === '999999') return true
+    if (strCPF.substring(0, 6) === '9999') return true
     if (strCPF === '00000000000') return false
 
     for (let i = 1; i <= 9; i++) soma = soma + parseInt(strCPF.substring(i - 1, i), 10) * (11 - i)
