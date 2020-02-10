@@ -2,7 +2,7 @@ import React from 'react'
 import DataGridToolbar from './DataGridToolbar'
 import { observer, Model } from './../../api'
 import { AppStore } from './../../stores'
-import { withStyles, CircularProgress, TablePagination, Paper } from '@material-ui/core'
+import { withStyles, CircularProgress, TablePagination, Paper, IconButton } from '@material-ui/core'
 import { AgGridReact } from 'ag-grid-react'
 import agGridTranslation from './../../resources/agGridTranslation.json'
 import BooleanRenderer from './renderers/BooleanRenderer'
@@ -13,6 +13,8 @@ import CpfFormatter from './formatters/CpfFormatter'
 import CnpjFormatter from './formatters/CnpjFormatter'
 import DateTimeFormatter from './formatters/DateTimeFormatter'
 import PercentageFormatter from './formatters/PercentageFormatter'
+import GetApp from '@material-ui/icons/GetApp'
+import _ from 'lodash'
 import 'ag-grid-community/dist/styles/ag-grid.css'
 import 'ag-grid-community/dist/styles/ag-theme-material.css'
 import cs from 'classnames'
@@ -170,7 +172,7 @@ class DataGrid extends React.Component {
       if (params.data.hasOwnProperty('g')) {
         return params.data.g(params.column.colDef.field)
       } else {
-        return params.data[params.column.colDef.field]
+        return _.get(params.data, params.column.colDef.field)
       }
     } else {
       return ''
@@ -322,6 +324,10 @@ class DataGrid extends React.Component {
     // this.api.updateRowData()
   }
 
+  handleExport = () => {
+    this.api.exportDataAsCsv()
+  }
+
   render() {
     const {
       classes,
@@ -349,7 +355,13 @@ class DataGrid extends React.Component {
 
     return (
       <Container className={classes.root} square style={{ minHeight: minHeight }}>
-        <DataGridToolbar busy={busy} title={title} titleBar={titleBar} controlBar={controlBar} />
+        <DataGridToolbar busy={busy} title={title} titleBar={titleBar} controlBar={<>
+          {clientSide && (
+            <IconButton onClick={this.handleExport} alt="Exportar para XLS">
+              <GetApp />
+            </IconButton>)
+          }
+          {controlBar}</>} />
         <div
           className={cs(
             classes.tableWrapper,
@@ -377,14 +389,14 @@ class DataGrid extends React.Component {
               sortable: true,
               resizable: true
             }}
-            //pagination={!clientSide}
-            // dateComponentFramework={DateComponent}
-            // defaultColDef={{
-            //     headerComponentFramework: SortableHeaderComponent,
-            //     headerComponentParams: {
-            //         menuIcon: 'fa-bars'
-            //     }
-            // }}
+          //pagination={!clientSide}
+          // dateComponentFramework={DateComponent}
+          // defaultColDef={{
+          //     headerComponentFramework: SortableHeaderComponent,
+          //     headerComponentParams: {
+          //         menuIcon: 'fa-bars'
+          //     }
+          // }}
           />
         </div>
         {/*}
@@ -427,27 +439,27 @@ class DataGrid extends React.Component {
             </div>
           </div>
         ) : (
-          <TablePagination
-            classes={{ toolbar: classes.wrap }}
-            component="div"
-            count={rowCount}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onChangePage={this.handleChangePage}
-            onChangeRowsPerPage={this.handleChangeRowsPerPage}
-            labelRowsPerPage={AppStore.windowWidth > 360 ? 'Linhas por página' : null}
-            labelDisplayedRows={({ from, to, count }) => {
-              return (
-                <div className={classes.paginationInfo}>
-                  <span>{`${from}-${to} de`}</span>
-                  <span className={classes.rowCount}>
-                    {busyCount || (busy && rowCount === 0) ? <CircularProgress size={14} className={classes.progress} /> : count}
-                  </span>
-                </div>
-              )
-            }}
-          />
-        )}
+            <TablePagination
+              classes={{ toolbar: classes.wrap }}
+              component="div"
+              count={rowCount}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onChangePage={this.handleChangePage}
+              onChangeRowsPerPage={this.handleChangeRowsPerPage}
+              labelRowsPerPage={AppStore.windowWidth > 360 ? 'Linhas por página' : null}
+              labelDisplayedRows={({ from, to, count }) => {
+                return (
+                  <div className={classes.paginationInfo}>
+                    <span>{`${from}-${to} de`}</span>
+                    <span className={classes.rowCount}>
+                      {busyCount || (busy && rowCount === 0) ? <CircularProgress size={14} className={classes.progress} /> : count}
+                    </span>
+                  </div>
+                )
+              }}
+            />
+          )}
       </Container>
     )
   }

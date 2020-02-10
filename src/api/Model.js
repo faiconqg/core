@@ -1,4 +1,5 @@
 import BaseModel from './mobxRest/Model'
+import _ from 'lodash'
 
 function secureGet(item, key) {
   if (item) {
@@ -69,8 +70,9 @@ export default class Model extends BaseModel {
   }
 
   g = key => {
-    let splitedKey = key.split('.')
-    return this.recursiveGet(splitedKey)
+    // let splitedKey = key.split('.')
+    // return this.recursiveGet(splitedKey)
+    return _.get(this.toJS(), key)
   }
 
   s = (key, value) => {
