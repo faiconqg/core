@@ -169,8 +169,8 @@ class DataGrid extends React.Component {
     if (params.column.colDef.label) {
       return params.column.colDef.label
     } else if (params.data) {
-      if (params.data.hasOwnProperty('g')) {
-        return params.data.g(params.column.colDef.field)
+      if (params.data.hasOwnProperty('gl')) {
+        return params.data.gl(params.column.colDef.field)
       } else {
         return _.get(params.data, params.column.colDef.field)
       }
@@ -286,7 +286,7 @@ class DataGrid extends React.Component {
         fields.forEach(column => {
           const { field, numeric } = column.props
           if (numeric) {
-            summary.set({ [field]: summary.get(field) + row.g(field) + 0 })
+            summary.set({ [field]: summary.get(field) + row.gl(field) + 0 })
           }
         })
       })
@@ -297,7 +297,7 @@ class DataGrid extends React.Component {
         }
         if (first) {
           summary.set({
-            [field]: this.props.rows.length ? this.props.rows[0].g(field) : ''
+            [field]: this.props.rows.length ? this.props.rows[0].gl(field) : ''
           })
         }
       })

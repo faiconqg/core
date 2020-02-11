@@ -70,8 +70,11 @@ export default class Model extends BaseModel {
   }
 
   g = key => {
-    // let splitedKey = key.split('.')
-    // return this.recursiveGet(splitedKey)
+    let splitedKey = key.split('.')
+    return this.recursiveGet(splitedKey)
+  }
+
+  gl = key => {
     return _.get(this.toJS(), key)
   }
 
