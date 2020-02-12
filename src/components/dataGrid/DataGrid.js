@@ -234,8 +234,8 @@ class DataGrid extends React.Component {
   getColumns = columns => {
     return columns
       .filter(column => {
-        const { visible = true } = column.props
-        return visible
+        const { visible = true, onlyExport = false } = column.props
+        return visible && !onlyExport
       })
       .map(column => {
         const { title, field, visible, formatter, numeric, render, children, renderer, replaceBlank, formula, format, ...props } = column.props
