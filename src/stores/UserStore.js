@@ -1,5 +1,5 @@
-import {Collection, observable, computed, Model} from './../api'
-import {AccountStore, AppStore, UserDetailStore, RealmStore, ContactDataStore} from 'stores'
+import { Collection, observable, computed, Model } from './../api'
+import { AccountStore, AppStore, UserDetailStore, RealmStore, ContactDataStore } from 'stores'
 import platform from 'platform'
 
 class User extends Model {
@@ -23,7 +23,7 @@ class User extends Model {
       return contactData
     } else {
       ContactDataStore.current()
-      ContactDataStore.add({id: contactDataId})
+      ContactDataStore.add({ id: contactDataId })
       return ContactDataStore.get(contactDataId)
     }
   }
@@ -67,7 +67,7 @@ class Users extends Collection {
   }
 
   current = memorizeName =>
-    this.rpcGet('current', {details: platform})
+    this.rpcGet('current', { details: platform })
       .then(res => {
         this.loggedInstance = this.build(res)
         if (this.notificationToken) {
@@ -77,10 +77,10 @@ class Users extends Collection {
         }
         // this.loggedUserInstance = this.build(res)
         if (memorizeName) {
-          AppStore.setUser({name: res.name, username: memorizeName})
+          AppStore.setUser({ name: res.name, username: memorizeName })
         }
         AppStore.onLogin && AppStore.onLogin()
-        AppStore.logGa('login', {method: 'CPF', id: res.id, name: res.name})
+        AppStore.logGa('login', { method: 'CPF', id: res.id, name: res.name })
         if (this.logged.emailVerified && this.logged.mobile) {
           this.dataConfirmed = true
         } else {
@@ -123,7 +123,7 @@ class Users extends Collection {
       notificationToken,
     })
 
-  completeValidation = password => this.rpc('complete-validation', {password})
+  completeValidation = password => this.rpc('complete-validation', { password })
 
   testify = (username, motherName, birthdate, phone, emailConfirm, allowSendEmail, validationKey, noTestify, confirmationMethod) =>
     this.rpc('testify', {
@@ -143,6 +143,12 @@ class Users extends Collection {
     this.rpc('change-password', {
       oldPassword,
       newPassword,
+    })
+
+  ssoLogin = () =>
+    this.rpc('renew-token').then(res => {
+      AppStore.setToken(res.id)
+      this.current()
     })
 
   login = (username, password, memorizeName) =>

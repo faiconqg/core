@@ -21,15 +21,20 @@ import firebase from 'firebase/app'
 import { HelmetProvider } from 'react-helmet-async'
 import 'firebase/auth'
 import 'firebase/analytics'
+import { PageLoading } from '../../../dist/components/containers/index'
 
 // import DevTools from 'mobx-react-devtools'
 
 const createBrowserHistory = require('history').createBrowserHistory
 const history = syncHistoryWithStore(createBrowserHistory(), RouterStore)
+let ssoToken = null
 
 export default
 @observer
 class App extends Foundation {
+  state = {
+    ssoError: false
+  }
   componentDidMount() {
     if (this.props.multitenant) {
       RealmStore.fetch().then(realms => {
@@ -56,9 +61,7 @@ class App extends Foundation {
           console.log('Usando realm padrão')
         }
         RealmStore.completeLoad(() => {
-          if (AppStore.token) {
-            UserStore.current()
-          }
+          this.resolveCurrent()
         })
         Capacitor.init()
       })
@@ -66,9 +69,7 @@ class App extends Foundation {
       RealmStore.realmResolved = true
       RealmStore.appName = this.props.appName
       Capacitor.init()
-      if (AppStore.token) {
-        UserStore.current()
-      }
+      this.resolveCurrent()
     }
     RealmStore.logos = this.props.logos
     RealmStore.remoteLogo = RealmStore.logos && RealmStore.logos.full
@@ -82,6 +83,20 @@ class App extends Foundation {
     RealmStore.menuBackground = this.props.menuBackground
     AppStore.menuFixed = !!this.props.menuFixed
     AppStore.startExpanded = !!this.props.startExpanded
+  }
+
+  resolveCurrent = () => {
+    if (ssoToken) {
+      AppStore.setToken(ssoToken)
+      UserStore.ssoLogin().then(() => {
+        history.replace('/login')
+      }).catch(e => this.setState({ssoError: true}))
+      ssoToken = null
+    } else {
+      if (AppStore.token) {
+        UserStore.current()
+      }
+    }
   }
 
   render() {
@@ -146,6 +161,17 @@ class App extends Foundation {
 
     apiSetup(api, AppStore.token, { platform: AppStore.platform, version: process.env.REACT_APP_VERSION })
 
+    const urlParams = new URLSearchParams(history.location.search)
+    ssoToken = urlParams.get('sso-login-token')
+
+    if (this.state.ssoError) {
+      return <div>Usuário não reconhecido</div>
+    }
+
+    if (ssoToken) {
+      return <PageLoading />
+    }
+
     return (
       <HelmetProvider>
         <Provider router={RouterStore}>
@@ -199,35 +225,35 @@ class App extends Foundation {
                   />
                 ) : null}
                 {AppStore.token &&
-                useMobileVerification &&
-                (!RealmStore.customFlags || !RealmStore.customFlags.disableMobileVerification) &&
-                UserStore.logged &&
-                !UserStore.logged.mobileVerified ? (
-                  <>
-                    <Route
-                      path="/confirm-phone"
-                      render={props => (
-                        <Login
-                          {...props}
-                          confirmPhone
-                          acceptMessage={acceptMessage}
-                          wellcomeMessage={wellcomeMessage}
-                          loginType={loginType}
-                          loginLabel={loginType === 'cpf' ? 'CPF' : 'e-mail'}
-                          multitenant={multitenant}
-                          canRegister={canRegister}
-                          appEmail={appEmail}
-                        />
-                      )}
-                    />
-                    <Redirect
-                      to={{
-                        pathname: '/confirm-phone',
-                        state: { from: history.location }
-                      }}
-                    />
-                  </>
-                ) : null}
+                  useMobileVerification &&
+                  (!RealmStore.customFlags || !RealmStore.customFlags.disableMobileVerification) &&
+                  UserStore.logged &&
+                  !UserStore.logged.mobileVerified ? (
+                    <>
+                      <Route
+                        path="/confirm-phone"
+                        render={props => (
+                          <Login
+                            {...props}
+                            confirmPhone
+                            acceptMessage={acceptMessage}
+                            wellcomeMessage={wellcomeMessage}
+                            loginType={loginType}
+                            loginLabel={loginType === 'cpf' ? 'CPF' : 'e-mail'}
+                            multitenant={multitenant}
+                            canRegister={canRegister}
+                            appEmail={appEmail}
+                          />
+                        )}
+                      />
+                      <Redirect
+                        to={{
+                          pathname: '/confirm-phone',
+                          state: { from: history.location }
+                        }}
+                      />
+                    </>
+                  ) : null}
                 {/*<Route
                 path="/register"
                 render={props => (
@@ -237,10 +263,10 @@ class App extends Foundation {
                 <Route path="/account-settings" render={props => <MyAccount {...props} loginType={loginType} />} />
                 {children
                   ? React.Children.map(children, child =>
-                      React.cloneElement(child, {
-                        prefix
-                      })
-                    )
+                    React.cloneElement(child, {
+                      prefix
+                    })
+                  )
                   : 'Propriedade children é obrigatória para o App'}
                 />
               </Switch>
