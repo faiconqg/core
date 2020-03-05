@@ -89,8 +89,9 @@ const styles = theme => ({
   bottomLogo: {
     opacity: 0.9,
     padding: 20,
-    marginBottom: 20,
-    maxWidth: 160,
+    // marginBottom: 10,
+    maxHeight: 40,
+    maxWidth: 'calc(100% - 40px)',
     alignSelf: 'flex-end',
     objectFit: 'contain'
     // width: '50%'

@@ -109,6 +109,7 @@ class PasswordInput extends FieldsBase {
         onChange={this.handleChange}
         margin="normal"
         fullWidth
+        placeholder={loginType === 'cpf' ? 'Apenas números' : null}
         helperText={!!error && (typeof error === 'string' ? error : message)}
         type={loginType === 'cpf' ? 'tel' : 'email'}
       />
