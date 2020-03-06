@@ -89,7 +89,9 @@ const styles = theme => ({
   bottomLogo: {
     opacity: 0.9,
     padding: 20,
-    // marginBottom: 10,
+    [theme.breakpoints.down('sm')]: {
+      marginBottom: 20,
+    },
     maxHeight: 40,
     maxWidth: 'calc(100% - 40px)',
     alignSelf: 'flex-end',
