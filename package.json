@@ -1,6 +1,6 @@
 {
   "name": "@faicon/core",
-  "version": "0.0.94",
+  "version": "0.0.95",
   "description": "Faicon core API for react. https://github.com/faiconqg/core",
   "main": "dist/index.js",
   "files": [
