@@ -7,6 +7,7 @@ import { AgGridReact } from 'ag-grid-react'
 import agGridTranslation from './../../resources/agGridTranslation.json'
 import BooleanRenderer from './renderers/BooleanRenderer'
 import ImageRenderer from './renderers/ImageRenderer'
+import JsonRenderer from './renderers/JsonRenderer'
 import CurrencyFormatter from './formatters/CurrencyFormatter'
 import DateFormatter from './formatters/DateFormatter'
 import CpfFormatter from './formatters/CpfFormatter'
@@ -215,6 +216,12 @@ class DataGrid extends React.Component {
             return (
               <div style={rendererContainerStyle}>
                 <ImageRenderer {...params} />
+              </div>
+            )
+          case 'json':
+            return (
+              <div style={rendererContainerStyle}>
+                <JsonRenderer {...params} />
               </div>
             )
           default:
