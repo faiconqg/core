@@ -32,7 +32,8 @@ const styles = theme => ({
     flex: '1 1 100%'
   },
   actions: {
-    color: theme.palette.text.secondary
+    color: theme.palette.text.secondary,
+    flexShrink: 0
   },
   title: {
     flex: '0 0 auto'

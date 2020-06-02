@@ -76,8 +76,8 @@ class DataGridFetch extends React.Component {
     this.props.store.export(
       props
         .filter(column => {
-          const { visible = true } = column.props
-          return visible
+          const { visible = true, noExport = false } = column.props
+          return visible && !noExport
         })
         .map(item => item.props),
       this.props.exportFile
