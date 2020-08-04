@@ -295,7 +295,7 @@ class Login extends React.Component {
           this.go('PasswordPage')
         } else if (result.code === 2 || result.code === 3) {
           // User invalid
-          if (AppStore.email || RealmStore.confirmationMethod === 'CPF') {
+          if (AppStore.email || RealmStore.confirmationMethod === 'CPF' || RealmStore.confirmationMethod === 'DISABLED') {
             this.go('FirstLoginPage')
             this.setState({ requireValidationKey: result.code === 3 }, () => this.go('FirstLoginPage'))
           } else {
@@ -423,7 +423,7 @@ class Login extends React.Component {
     e.preventDefault()
 
     if (
-      (this.state.noTestify ||
+      (this.state.noTestify || RealmStore.confirmationMethod === 'DISABLED' || 
         (RealmStore.confirmationMethod === 'EMAIL' && this.state.emailConfirmValid && this.state.phoneValid) ||
         ((this.props.loginType === 'cpf' && this.state.birthdateValid && this.state.motherNameValid) ||
           (this.state.birthdateValid && this.state.phoneValid))) &&
@@ -496,7 +496,7 @@ class Login extends React.Component {
   }
 
   render() {
-    const { classes, location, loginLabel, loginType, appEmail, wellcomeMessage, confirmPhone } = this.props
+    const { classes, location, loginLabel, loginMask, loginType, appEmail, wellcomeMessage, confirmPhone } = this.props
     const {
       page,
       username,
@@ -565,6 +565,7 @@ class Login extends React.Component {
                               username={username}
                               loginLabel={loginLabel}
                               loginType={loginType}
+                              loginMask={loginMask}
                               onChangeValidation={this.handleChangeValidation}
                               onChange={this.handleChange}
                             />
@@ -758,12 +759,13 @@ class Login extends React.Component {
   }
 }
 
-const LoginPage = ({ error, username, loginLabel, loginType, onChange, onChangeValidation }) => (
+const LoginPage = ({ error, username, loginLabel, loginType, loginMask, onChange, onChangeValidation }) => (
   <LoginInput
     error={error}
     value={username}
     loginLabel={loginLabel}
     loginType={loginType}
+    loginMask={loginMask}
     onChange={value => onChange(value, 'username')}
     onChangeValidation={value => onChangeValidation(value, 'username')}
   />

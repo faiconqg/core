@@ -34,11 +34,27 @@ class PasswordInput extends FieldsBase {
     )
   }
 
+  CustomMask = props => {
+    const { inputRef, ...other } = props
+
+    return (
+      <MaskedInput
+        {...other}
+        ref={ref => {
+          inputRef(ref ? ref.inputElement : null)
+        }}
+        guide={false}
+        mask={this.props.loginMask}
+      />
+    )
+  }
+
   checkEmail = strEmail => {
     // eslint-disable-next-line
     let re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     return re.test(String(strEmail).toLowerCase())
   }
+
   checkCPF = strCPF => {
     let soma
     let resto
@@ -81,18 +97,21 @@ class PasswordInput extends FieldsBase {
       } else {
         this.onChangeValidation(false, 'Preencha o campo ' + this.props.loginLabel + ' corretamente com 11 digitos')
       }
-    } else {
+    } else if (this.props.loginType === 'email') {
       if (this.checkEmail(value)) {
         this.onChangeValidation(true)
       } else {
         this.onChangeValidation(false, 'E-mail inválido, verifique o valor digitado')
       }
+    } else {
+      this.onChangeValidation(true)
     }
   }
 
   render() {
-    const { error, value, loginLabel, loginType } = this.props
+    const { error, value, loginLabel, loginType, loginMask } = this.props
     const { message } = this.state
+
     return (
       <TextField
         autoFocus
@@ -100,6 +119,9 @@ class PasswordInput extends FieldsBase {
           loginType === 'cpf'
             ? {
                 inputComponent: this.MaskCPF
+              }
+            : loginMask ? {
+                inputComponent: this.CustomMask
               }
             : {}
         }
@@ -111,7 +133,7 @@ class PasswordInput extends FieldsBase {
         fullWidth
         placeholder={loginType === 'cpf' ? 'Apenas números' : null}
         helperText={!!error && (typeof error === 'string' ? error : message)}
-        type={loginType === 'cpf' ? 'tel' : 'email'}
+        type={loginType === 'cpf' ? 'tel' : loginType === 'email' ? 'email' : 'text'}
       />
     )
   }

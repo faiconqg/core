@@ -121,7 +121,9 @@ class App extends Foundation {
       loginType = 'email',
       canRegister = true,
       firebaseConfig,
-      messages
+      messages,
+      loginLabel,
+      loginMask
     } = this.props
 
     RendererManager.renderer = renderer
@@ -209,7 +211,8 @@ class App extends Foundation {
                       acceptMessage={acceptMessage}
                       wellcomeMessage={wellcomeMessage}
                       loginType={loginType}
-                      loginLabel={loginType === 'cpf' ? 'CPF' : 'e-mail'}
+                      loginLabel={loginLabel ? loginLabel : loginType === 'cpf' ? 'CPF' : 'e-mail'}
+                      loginMask={loginMask}
                       multitenant={multitenant}
                       canRegister={canRegister}
                       appEmail={appEmail}
@@ -239,7 +242,8 @@ class App extends Foundation {
                             acceptMessage={acceptMessage}
                             wellcomeMessage={wellcomeMessage}
                             loginType={loginType}
-                            loginLabel={loginType === 'cpf' ? 'CPF' : 'e-mail'}
+                            loginLabel={loginLabel ? loginLabel : loginType === 'cpf' ? 'CPF' : 'e-mail'}
+                            loginMask={loginMask}
                             multitenant={multitenant}
                             canRegister={canRegister}
                             appEmail={appEmail}
