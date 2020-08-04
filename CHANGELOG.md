@@ -1,3 +1,7 @@
+## [0.0.101](https://github.com/faiconqg/core/compare/v0.0.100...v0.0.101) (2020-08-04)
+
+
+
 ## [0.0.100](https://github.com/faiconqg/core/compare/v0.0.99...v0.0.100) (2020-08-04)
 
 
