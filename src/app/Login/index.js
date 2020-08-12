@@ -3,8 +3,10 @@ import { Redirect } from 'react-router'
 import { UserStore, AppStore, RealmStore } from 'stores'
 import { Background, LinearLayout, PageLoading, PageError, UpgradeNeeded } from 'components'
 import { observer, inject } from './../../api'
-import { withStyles, Button, Card, CircularProgress } from '@material-ui/core'
+import { withStyles, Button, Card, CircularProgress, Typography } from '@material-ui/core'
 import Warning from '@material-ui/icons/Warning'
+import ComputerIcon from '@material-ui/icons/Computer'
+import PhoneAndroidIcon from '@material-ui/icons/PhoneAndroid'
 import CheckCircle from '@material-ui/icons/CheckCircle'
 import PasswordInput from './PasswordInput'
 import LoginInput from './LoginInput'
@@ -198,6 +200,10 @@ const styles = theme => ({
   marginBottom: {
     marginBottom: 20
   },
+  infoIcon: {
+    marginRight: 10,
+    color: theme.palette.secondary.light
+  },
   testifyErrorIcon: {
     marginRight: 10,
     color: theme.palette.error.light
@@ -211,6 +217,25 @@ const styles = theme => ({
   enabledFalse: {
     color: 'rgba(0, 0, 0, 0.54)',
     marginTop: 25
+  },
+  buttonQr: {
+    border: `2px solid ${theme.palette.secondary.main}`,
+    '&:hover': {
+      border: `2px solid ${theme.palette.secondary.main}`
+    },
+    textTransform: 'none',
+    borderRadius: 12,
+    padding: 15,
+    marginBottom: 20
+  },
+  message: {
+    color: theme.palette.secondary.main,
+    fontSize: 13,
+    padding: 6,
+    flex: 2
+  },
+  icon: {
+    height: 90
   }
 })
 export default
@@ -374,6 +399,31 @@ class Login extends React.Component {
     } else {
       return this.state.error
     }
+  }
+
+  handleQr = () => {
+    
+    window.cordova.plugins.barcodeScanner.scan(
+      result => {
+        if (result.cancelled) {
+          return
+        }
+        UserStore.qrLogin(result.text).then(result => {
+          this.setState({ error: false })
+        }).catch(e => this.setState({error: true}))
+      },
+      error => {
+        console.log(error)
+      },
+      {
+        showTorchButton: true, // iOS and Android
+        saveHistory: true, // Android, save scan history (default false)
+        prompt: 'Coloque o Código QR da nota na área especificada', // Android
+        resultDisplayDuration: 500, // Android, display scanned text for X ms. 0 suppresses it entirely, default 1500
+        disableAnimations: true, // iOS
+        disableSuccessBeep: true // iOS and Android
+      }
+    )
   }
 
   resolveSubmit = e => {
@@ -582,6 +632,22 @@ class Login extends React.Component {
                               onChange={this.handleChange}
                             />
                           )
+                        case 'AdminLogin':
+                          return (
+                            <AdminLogin
+                              classes={classes}
+                              error={this.resolveError()}
+                              username={username}
+                              loginLabel={loginLabel}
+                              loginType={loginType}
+                              loginMask={loginMask}
+                              onChangeValidation={this.handleChangeValidation}
+
+                              onClick={this.handleQr}
+                              onBack={() => this.go('LoginPage')}
+                              onChange={this.handleChange}
+                            />
+                          )
                         case 'FirstLoginPage':
                           return (
                             <FirstLoginPage
@@ -668,7 +734,7 @@ class Login extends React.Component {
                         />
                       </React.Fragment>
                     )}
-                    {page !== 'ConfirmPhonePage' ? (
+                    {page !== 'ConfirmPhonePage' && page !== 'AdminLogin' ? (
                       <Button id="sign-in-button" className={classes.button} type="submit" color="secondary" variant="contained" fullWidth>
                         Continuar
                       </Button>
@@ -711,6 +777,20 @@ class Login extends React.Component {
                         </button>
                       </div>
                     )}
+                    
+                    {page === 'LoginPage' && JSON.parse(localStorage.getItem('adminLogin')) && AppStore.device.isMobile ? (
+                      <div className={classes.forgotContainer}>
+                        <button
+                          className={classes.link}
+                          onClick={() => {
+                            AppStore.resetUser()
+                            this.go('AdminLogin')
+                          }}
+                        >
+                          Login administrativo
+                        </button>
+                      </div>
+                    ) : null}
                   </div>
                 ) : (
                   <div className={classes.formWrapper}>
@@ -1004,3 +1084,52 @@ const PasswordBlock = withStyles(styles)(({ classes }) => (
     </div>
   </React.Fragment>
 ))
+
+const AdminLogin = ({classes, onBack, onClick, error, username, loginLabel, loginType, loginMask, onChange, onChangeValidation }) => (
+  <React.Fragment>
+    <div className={classes.testifyError}>
+      <Button
+        variant="outlined"
+        component="span"
+        color="secondary"
+        className={classes.buttonQr}
+        fullWidth
+        onClick={onClick}
+      >
+        <img
+          alt="QR Code"
+          className={classes.icon}
+          src={require('resources/images/qrcode.png')}
+        />
+        <span className={classes.message}>
+          Escaneie aqui o QR Code para acessar
+        </span>
+      </Button>
+    </div>
+    {error && <div className={classes.testifyError}>
+      <Warning className={classes.testifyErrorIcon} />
+      <span className={classes.errorTitle}>QR Code Inválido, tente novamente</span>
+    </div>}
+    <div className={classes.testifyError}>
+      <ComputerIcon className={classes.infoIcon} />
+      <span className={classes.errorTitle}>Na versão web</span>
+    </div>
+    <ul>
+      <li>No menu, vá em "Relatórios > Acesso";</li>
+      <li>Procure um usuário na lista e clique no mesmo;</li>
+      <li>Clique em "Gerar QR Code de acesso";</li>
+    </ul>
+    <div className={classes.testifyError}>
+      <PhoneAndroidIcon className={classes.infoIcon} />
+      <span className={classes.errorTitle}>No APP</span>
+    </div>
+    <ul>
+      <li>Cique no botão acima para escanear o QR Code;</li>
+      <li>Aponte a câmera para o QR Code na tela;</li>
+    </ul>
+    <Typography variant="caption">* Você será desconectado após 5 minutos</Typography>
+    <Button  className={classes.button} color="secondary" variant="contained" fullWidth onClick={onBack}>
+      Cancelar
+    </Button>
+  </React.Fragment>
+)

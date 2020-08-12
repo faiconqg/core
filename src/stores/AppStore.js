@@ -107,6 +107,8 @@ class AppStore {
   @action
   resetAppicationState() {
     this.redirect = false
+    localStorage.setItem('adminLoginCache', false)
+    UserStore.adminLogin = false
     UserStore.error = null
     UserStore.loggedInstance = null
     AccessRoutesStore.reset([])

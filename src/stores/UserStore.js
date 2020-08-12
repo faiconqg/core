@@ -56,6 +56,9 @@ class Users extends Collection {
   @observable
   notifications = []
 
+  @observable
+  adminLogin = JSON.parse(localStorage.getItem('adminLoginCache'))
+
   notificationToken = null
 
   url = () => 'users'
@@ -145,6 +148,17 @@ class Users extends Collection {
       newPassword,
     })
 
+  generateQr = (id) =>
+    this.rpc('generate-qr', {id})
+
+  qrLogin = (qr) =>
+    this.rpc('qr-login', {realm: this.realm, qr}).then(res => {
+      AppStore.setToken(res.id)
+      localStorage.setItem('adminLoginCache', true)
+      this.adminLogin = true
+      this.current()
+    })
+
   ssoLogin = () =>
     this.rpc('renew-token').then(res => {
       AppStore.setToken(res.id)
@@ -157,6 +171,8 @@ class Users extends Collection {
       username,
       password,
     }).then(res => {
+      localStorage.setItem('adminLoginCache', false)
+      this.adminLogin = false
       AppStore.setToken(res.id)
       this.current(memorizeName)
     })
