@@ -75,7 +75,9 @@ class Users extends Collection {
         this.loggedInstance = this.build(res)
         if (this.notificationToken) {
           if (res.userDetail.notificationToken !== this.notificationToken) {
-            this.updateToken(this.notificationToken)
+            if (!this.adminLogin) {
+              this.updateToken(this.notificationToken)
+            }
           }
         }
         // this.loggedUserInstance = this.build(res)

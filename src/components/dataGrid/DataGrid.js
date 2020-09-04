@@ -332,7 +332,7 @@ class DataGrid extends React.Component {
   }
 
   handleExport = () => {
-    this.api.exportDataAsCsv()
+    this.api.exportDataAsCsv({columnSeparator: ';'})
   }
 
   render() {
