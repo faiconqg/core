@@ -1,2 +1,2 @@
 import moment from 'moment'
-export default value => (value ? moment(value).utc(new Date()).format('DD/MM/YYYY HH:mm') : '')
+export default value => (value ? moment(value).utc().format('DD/MM/YYYY HH:mm') : '')
