@@ -156,7 +156,7 @@ class DataGridFetch extends React.Component {
   }
 
   render() {
-    const { classes, onItemClick, store, fixedColumn, controlBar, titleBar, showExport = true, ...props } = this.props
+    const { classes, onItemClick, store, fixedColumn, controlBar, titleBar, noSearch = false, showExport = true, ...props } = this.props
 
     const { orderBy, rowsPerPage, search, page } = this.props.store.pagination
 
@@ -177,24 +177,28 @@ class DataGridFetch extends React.Component {
         busyCount={this.props.store.busyCount()}
         titleBar={
           <div className={classes.tollbars}>
-            <Search />
-            <FormControl>
-              <Input
-                placeholder="Pesquisa"
-                className={classes.textField}
-                value={search}
-                onChange={event => this.handleSearch(event.target.value)}
-                endAdornment={
-                  search && (
-                    <InputAdornment position="end">
-                      <IconButton onClick={() => this.handleSearch('')} alt="Limpar busca">
-                        <Clear />
-                      </IconButton>
-                    </InputAdornment>
-                  )
-                }
-              />
-            </FormControl>
+            {!noSearch ?
+              <>
+                <Search />
+                <FormControl>
+                  <Input
+                    placeholder="Pesquisa"
+                    className={classes.textField}
+                    value={search}
+                    onChange={event => this.handleSearch(event.target.value)}
+                    endAdornment={
+                      search && (
+                        <InputAdornment position="end">
+                          <IconButton onClick={() => this.handleSearch('')} alt="Limpar busca">
+                            <Clear />
+                          </IconButton>
+                        </InputAdornment>
+                      )
+                    }
+                  />
+                </FormControl>
+              </> : null
+            }
 
             {titleBar}
           </div>
@@ -207,15 +211,15 @@ class DataGridFetch extends React.Component {
                   <CircularProgress size={24} className={classes.progress} />
                 </div>
               ) : (
-                <>
-                  <IconButton onClick={this.handleExport} alt="Exportar para XLS">
-                    <GetApp />
-                  </IconButton>
-                  <IconButton onClick={this.handleRefresh} alt="Atualizar">
-                    <Sync />
-                  </IconButton>
-                </>
-              ))}
+                  <>
+                    <IconButton onClick={this.handleExport} alt="Exportar para XLS">
+                      <GetApp />
+                    </IconButton>
+                    <IconButton onClick={this.handleRefresh} alt="Atualizar">
+                      <Sync />
+                    </IconButton>
+                  </>
+                ))}
             {controlBar}
           </div>
         }
