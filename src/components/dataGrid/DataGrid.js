@@ -453,7 +453,7 @@ class DataGrid extends React.Component {
               count={rowCount}
               rowsPerPage={rowsPerPage}
               page={page}
-              rowsPerPageOptions={disablePerPage ? [100] : null}
+              rowsPerPageOptions={disablePerPage ? [100] : [10, 25, 50, 100, 200, 500]}
               onChangePage={this.handleChangePage}
               onChangeRowsPerPage={this.handleChangeRowsPerPage}
               labelRowsPerPage={AppStore.windowWidth > 360 ? 'Linhas por página' : null}
