@@ -20,6 +20,7 @@ import FooterBar from '../FooterBar'
 import AcceptTerms from './AcceptTerms'
 import ReceiveContact from './ReceiveContact'
 import ConfirmPhone from './ConfirmPhone'
+import ConfirmEmail from './ConfirmEmail'
 import PasswordRule from './PasswordRule'
 import cs from 'classnames'
 
@@ -245,7 +246,7 @@ export default
 class Login extends React.Component {
   state = {
     // page: 'FirstLoginPage',
-    page: this.props.confirmPhone ? 'ConfirmPhonePage' : AppStore.user ? 'PasswordPage' : 'LoginPage',
+    page: this.props.confirmEmail ? 'ConfirmEmailPage' : this.props.confirmPhone ? 'ConfirmPhonePage' : AppStore.user ? 'PasswordPage' : 'LoginPage',
     error: false,
     tokenExpired: false,
     requireValidationKey: false,
@@ -269,13 +270,15 @@ class Login extends React.Component {
     emailConfirmValid: false,
     terms: false,
     termsValid: false,
+    privacy: false,
+    privacyValid: false,
     newUser: false,
     allowSendEmail: true,
     userInconsistent: false,
     noTestify: false
   }
 
-  componentDidMount() {}
+  componentDidMount() { }
 
   login = e => {
     UserStore.error = null
@@ -402,7 +405,7 @@ class Login extends React.Component {
   }
 
   handleQr = () => {
-    
+
     window.cordova.plugins.barcodeScanner.scan(
       result => {
         if (result.cancelled) {
@@ -410,7 +413,7 @@ class Login extends React.Component {
         }
         UserStore.qrLogin(result.text).then(result => {
           this.setState({ error: false })
-        }).catch(e => this.setState({error: true}))
+        }).catch(e => this.setState({ error: true }))
       },
       error => {
         console.log(error)
@@ -473,11 +476,12 @@ class Login extends React.Component {
     e.preventDefault()
 
     if (
-      (this.state.noTestify || RealmStore.confirmationMethod === 'DISABLED' || 
+      (this.state.noTestify || RealmStore.confirmationMethod === 'DISABLED' ||
         (RealmStore.confirmationMethod === 'EMAIL' && this.state.emailConfirmValid && this.state.phoneValid) ||
         ((this.props.loginType === 'cpf' && this.state.birthdateValid && this.state.motherNameValid) ||
           (this.state.birthdateValid && this.state.phoneValid))) &&
       (this.state.termsValid || !RealmStore.termsOfUse) &&
+      (this.state.privacyValid || !RealmStore.privacyUrl) &&
       (this.state.validationKeyValid || !this.state.requireValidationKey)
     ) {
       this.testify()
@@ -546,7 +550,7 @@ class Login extends React.Component {
   }
 
   render() {
-    const { classes, location, loginLabel, loginMask, loginType, appEmail, wellcomeMessage, confirmPhone } = this.props
+    const { classes, location, loginLabel, loginMask, loginType, appEmail, wellcomeMessage, confirmPhone, confirmEmail } = this.props
     const {
       page,
       username,
@@ -563,13 +567,14 @@ class Login extends React.Component {
       allowSendEmail,
       acceptMessage,
       terms,
+      privacy,
       userInconsistent,
       newUser,
       noTestify
     } = this.state
     const { full, bottom } = RealmStore.logos || {}
 
-    if (UserStore.logged && UserStore.logged.enabled && !confirmPhone) {
+    if (UserStore.logged && UserStore.logged.enabled && !confirmPhone && !confirmEmail) {
       return <Redirect to={(AppStore.redirect && location.state && location.state.from) || '/'} />
     } else if (!AppStore.redirect && tokenExpired) {
       // Se o usuário não estiver logado e o "AppStore.redirect" estiver false, significa que o botão "Token expirado"
@@ -602,8 +607,8 @@ class Login extends React.Component {
                     <img src={full} alt="Logo" className={classes.logo} />
                   </div>
                 ) : (
-                  <span className={classes.appName}>{RealmStore.appName || 'Nome do sistema'}</span>
-                )}
+                    <span className={classes.appName}>{RealmStore.appName || 'Nome do sistema'}</span>
+                  )}
                 {!UserStore.logged || UserStore.logged.enabled ? (
                   <div className={classes.formWrapper}>
                     {(() => {
@@ -670,6 +675,8 @@ class Login extends React.Component {
                           )
                         case 'ConfirmPhonePage':
                           return <ConfirmPhone />
+                        case 'ConfirmEmailPage':
+                          return <ConfirmEmail />
                         case 'TestifyErrorPage':
                           return <TestifyErrorPage />
                         case 'ErrorPage':
@@ -723,6 +730,31 @@ class Login extends React.Component {
                             error={this.resolveError()}
                             onChangeValidation={value => this.handleChangeValidation(value, 'terms')}
                             onChange={value => this.handleChange(value, 'terms')}
+                            text={
+                              <div>
+                                Li e aceito os{' '}
+                                <a href={RealmStore.termsOfUse} target="_system" rel="noopener noreferrer">
+                                  termos de uso
+                                </a>{' '}
+                                do aplicativo e declaro ser maior de 18 anos
+                              </div>
+                            }
+                          />
+                        )}
+                        {RealmStore.privacyUrl && (
+                          <AcceptTerms
+                            value={privacy}
+                            error={this.resolveError()}
+                            onChangeValidation={value => this.handleChangeValidation(value, 'privacy')}
+                            onChange={value => this.handleChange(value, 'privacy')}
+                            text={
+                              <div>
+                                Li e concordo com a{' '}
+                                <a href={RealmStore.privacyUrl} target="_system" rel="noopener noreferrer">
+                                  política de privacidade
+                                </a>{' '}
+                              </div>
+                            }
                           />
                         )}
                         <ReceiveContact
@@ -734,7 +766,7 @@ class Login extends React.Component {
                         />
                       </React.Fragment>
                     )}
-                    {page !== 'ConfirmPhonePage' && page !== 'AdminLogin' ? (
+                    {page !== 'ConfirmEmailPage' && page !== 'ConfirmPhonePage' && page !== 'AdminLogin' ? (
                       <Button id="sign-in-button" className={classes.button} type="submit" color="secondary" variant="contained" fullWidth>
                         Continuar
                       </Button>
@@ -777,7 +809,7 @@ class Login extends React.Component {
                         </button>
                       </div>
                     )}
-                    
+
                     {page === 'LoginPage' && JSON.parse(localStorage.getItem('adminLogin')) && AppStore.device.isMobile ? (
                       <div className={classes.forgotContainer}>
                         <button
@@ -793,21 +825,21 @@ class Login extends React.Component {
                     ) : null}
                   </div>
                 ) : (
-                  <div className={classes.formWrapper}>
-                    <div className={classes.enabledFalse}>
-                      {appEmail ? (
-                        <>
-                          <span dangerouslySetInnerHTML={{ __html: AppStore.messages.userBlocked.replace('${email}', appEmail) }}></span>
-                        </>
-                      ) : (
-                        <span>{AppStore.messages.userBlockedWithoutEmail}</span>
-                      )}
-                    </div>
-                    <Button className={classes.button} onClick={this.logout} color="secondary" variant="contained" fullWidth>
-                      Continuar
+                    <div className={classes.formWrapper}>
+                      <div className={classes.enabledFalse}>
+                        {appEmail ? (
+                          <>
+                            <span dangerouslySetInnerHTML={{ __html: AppStore.messages.userBlocked.replace('${email}', appEmail) }}></span>
+                          </>
+                        ) : (
+                            <span>{AppStore.messages.userBlockedWithoutEmail}</span>
+                          )}
+                      </div>
+                      <Button className={classes.button} onClick={this.logout} color="secondary" variant="contained" fullWidth>
+                        Continuar
                     </Button>
-                  </div>
-                )}
+                    </div>
+                  )}
                 {/*<div className={classes.forgotContainer}>
                   <button
                     className={classes.link}
@@ -882,63 +914,63 @@ const FirstLoginPage = withStyles(styles)(
     newUser,
     noTestify
   }) => (
-    <>
-      <UserIndicator username={username} onBack={onBack} />
-      {!newUser && <span className={classes.wellcome}>{AppStore.messages.wellcome} </span>}
-      <span>{AppStore.messages.firstAccess}</span>
-      {!noTestify &&
-        (RealmStore.confirmationMethod === 'CPF' ? (
-          <>
-            <BirthdateInput
-              error={error}
-              value={birthdate}
-              loginType={loginType}
-              onChange={value => onChange(value, 'birthdate')}
-              onChangeValidation={value => onChangeValidation(value, 'birthdate')}
-            />
-            {loginType === 'cpf' ? (
-              <MotherNameInput
+      <>
+        <UserIndicator username={username} onBack={onBack} />
+        {!newUser && <span className={classes.wellcome}>{AppStore.messages.wellcome} </span>}
+        <span>{AppStore.messages.firstAccess}</span>
+        {!noTestify &&
+          (RealmStore.confirmationMethod === 'CPF' ? (
+            <>
+              <BirthdateInput
                 error={error}
-                value={motherName}
-                onChange={value => onChange(value, 'motherName')}
-                onChangeValidation={value => onChangeValidation(value, 'motherName')}
+                value={birthdate}
+                loginType={loginType}
+                onChange={value => onChange(value, 'birthdate')}
+                onChangeValidation={value => onChangeValidation(value, 'birthdate')}
               />
-            ) : (
+              {loginType === 'cpf' ? (
+                <MotherNameInput
+                  error={error}
+                  value={motherName}
+                  onChange={value => onChange(value, 'motherName')}
+                  onChangeValidation={value => onChangeValidation(value, 'motherName')}
+                />
+              ) : (
+                  <PhoneInput
+                    error={error}
+                    value={phone}
+                    onChange={value => onChange(value, 'phone')}
+                    onChangeValidation={value => onChangeValidation(value, 'phone')}
+                  />
+                )}
+            </>
+          ) : RealmStore.confirmationMethod === 'EMAIL' ? (
+            <>
+              <EmailInput
+                emailDomain={'@' + email.split('@')[1]}
+                error={error}
+                value={emailConfirm}
+                onChange={value => onChange(value, 'emailConfirm')}
+                onChangeValidation={value => onChangeValidation(value, 'emailConfirm')}
+              />
               <PhoneInput
                 error={error}
                 value={phone}
                 onChange={value => onChange(value, 'phone')}
                 onChangeValidation={value => onChangeValidation(value, 'phone')}
               />
-            )}
-          </>
-        ) : RealmStore.confirmationMethod === 'EMAIL' ? (
-          <>
-            <EmailInput
-              emailDomain={'@' + email.split('@')[1]}
-              error={error}
-              value={emailConfirm}
-              onChange={value => onChange(value, 'emailConfirm')}
-              onChangeValidation={value => onChangeValidation(value, 'emailConfirm')}
-            />
-            <PhoneInput
-              error={error}
-              value={phone}
-              onChange={value => onChange(value, 'phone')}
-              onChangeValidation={value => onChangeValidation(value, 'phone')}
-            />
-          </>
-        ) : null)}
-      {requireValidationKey && (
-        <ValidationKeyInput
-          error={error}
-          value={validationKey}
-          onChange={value => onChange(value, 'validationKey')}
-          onChangeValidation={value => onChangeValidation(value, 'validationKey')}
-        />
-      )}
-    </>
-  )
+            </>
+          ) : null)}
+        {requireValidationKey && (
+          <ValidationKeyInput
+            error={error}
+            value={validationKey}
+            onChange={value => onChange(value, 'validationKey')}
+            onChangeValidation={value => onChangeValidation(value, 'validationKey')}
+          />
+        )}
+      </>
+    )
 )
 
 const RecoverPasswordPage = withStyles(styles)(({ classes, error, username, emailConfirm, email, appEmail, onChange, onChangeValidation, onBack }) => (
@@ -964,8 +996,8 @@ const RecoverPasswordPage = withStyles(styles)(({ classes, error, username, emai
     ) : appEmail ? (
       <span dangerouslySetInnerHTML={{ __html: AppStore.messages.noEmail.replace('${email}', appEmail) }}></span>
     ) : (
-      <span dangerouslySetInnerHTML={{ __html: AppStore.messages.noEmailWithoutEmail }}></span>
-    )}
+          <span dangerouslySetInnerHTML={{ __html: AppStore.messages.noEmailWithoutEmail }}></span>
+        )}
   </React.Fragment>
 ))
 
@@ -1037,11 +1069,11 @@ const TestifyErrorPage = withStyles(styles)(({ classes }) => (
         <li>Você deve escrever apenas o primeiro nome da sua mãe, exatamente como consta em sua identidade;</li>
       </ul>
     ) : (
-      <ul>
-        <li>Confira se o e-mail informado está correto;</li>
-        <li>Você precisa informar o e-mail utilizado no seu pré-cadastro;</li>
-      </ul>
-    )}
+        <ul>
+          <li>Confira se o e-mail informado está correto;</li>
+          <li>Você precisa informar o e-mail utilizado no seu pré-cadastro;</li>
+        </ul>
+      )}
     <div className={classes.marginBottom}>
       <span>Clique em continuar para tentar novamente.</span>
     </div>
@@ -1055,8 +1087,8 @@ const ErrorPage = withStyles(styles)(({ classes, userInconsistent }) => (
       {userInconsistent ? (
         <span className={classes.errorTitle}>Usuário com cadastro incompleto!</span>
       ) : (
-        <span className={classes.errorTitle}>Usuário não encontrado!</span>
-      )}
+          <span className={classes.errorTitle}>Usuário não encontrado!</span>
+        )}
     </div>
     <ul>
       <li>Confira se o login informado está correto;</li>
@@ -1085,7 +1117,7 @@ const PasswordBlock = withStyles(styles)(({ classes }) => (
   </React.Fragment>
 ))
 
-const AdminLogin = ({classes, onBack, onClick, error, username, loginLabel, loginType, loginMask, onChange, onChangeValidation }) => (
+const AdminLogin = ({ classes, onBack, onClick, error, username, loginLabel, loginType, loginMask, onChange, onChangeValidation }) => (
   <React.Fragment>
     <div className={classes.testifyError}>
       <Button
@@ -1128,7 +1160,7 @@ const AdminLogin = ({classes, onBack, onClick, error, username, loginLabel, logi
       <li>Aponte a câmera para o QR Code na tela;</li>
     </ul>
     <Typography variant="caption">* Você será desconectado após 5 minutos</Typography>
-    <Button  className={classes.button} color="secondary" variant="contained" fullWidth onClick={onBack}>
+    <Button className={classes.button} color="secondary" variant="contained" fullWidth onClick={onBack}>
       Cancelar
     </Button>
   </React.Fragment>

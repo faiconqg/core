@@ -90,7 +90,7 @@ class App extends Foundation {
       AppStore.setToken(ssoToken)
       UserStore.ssoLogin().then(() => {
         history.replace('/login')
-      }).catch(e => this.setState({ssoError: true}))
+      }).catch(e => this.setState({ ssoError: true }))
       ssoToken = null
     } else {
       if (AppStore.token) {
@@ -227,7 +227,8 @@ class App extends Foundation {
                     }}
                   />
                 ) : null}
-                {AppStore.token &&
+                {!UserStore.adminLogin &&
+                  AppStore.token &&
                   useMobileVerification &&
                   (!RealmStore.customFlags || !RealmStore.customFlags.disableMobileVerification) &&
                   UserStore.logged &&
@@ -253,6 +254,36 @@ class App extends Foundation {
                       <Redirect
                         to={{
                           pathname: '/confirm-phone',
+                          state: { from: history.location }
+                        }}
+                      />
+                    </>
+                  ) : null}
+                {!UserStore.adminLogin &&
+                  AppStore.token &&
+                  UserStore.logged &&
+                  !UserStore.logged.emailVerified ? (
+                    <>
+                      <Route
+                        path="/confirm-email"
+                        render={props => (
+                          <Login
+                            {...props}
+                            confirmEmail
+                            acceptMessage={acceptMessage}
+                            wellcomeMessage={wellcomeMessage}
+                            loginType={loginType}
+                            loginLabel={loginLabel ? loginLabel : loginType === 'cpf' ? 'CPF' : 'e-mail'}
+                            loginMask={loginMask}
+                            multitenant={multitenant}
+                            canRegister={canRegister}
+                            appEmail={appEmail}
+                          />
+                        )}
+                      />
+                      <Redirect
+                        to={{
+                          pathname: '/confirm-email',
                           state: { from: history.location }
                         }}
                       />

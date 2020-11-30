@@ -28,7 +28,7 @@ class EmailInput extends FieldsBase {
     if (value.length === 0) {
       this.onChangeValidation(false, 'Você precisa confirmar o email para receber seu link')
     } else {
-      if (value.indexOf('@') > -1) {
+      if (this.props.emailDomain && value.indexOf('@') > -1) {
         const splited = value.split('@')
         this.props.onChange(splited[0])
       }
@@ -42,7 +42,7 @@ class EmailInput extends FieldsBase {
     return (
       <TextField
         autoFocus
-        label="Seu email"
+        label="Seu e-mail"
         error={!!error && (typeof error === 'string' || !!message)}
         value={value}
         onChange={this.handleChange}
@@ -50,14 +50,14 @@ class EmailInput extends FieldsBase {
         fullWidth
         helperText={!!error && (typeof error === 'string' ? error : message)}
         type="email"
-        InputProps={{
+        InputProps={emailDomain ? {
           endAdornment: (
             <InputAdornment className={classes.adornment} position="end">
               {emailDomain}
             </InputAdornment>
           ),
           classes: { input: classes.input }
-        }}
+        } : null}
       />
     )
   }

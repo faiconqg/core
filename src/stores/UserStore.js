@@ -48,6 +48,9 @@ class Users extends Collection {
   realm = 'app'
 
   @observable
+  customFlags = {}
+
+  @observable
   loggingOut = false
 
   @observable
@@ -73,6 +76,7 @@ class Users extends Collection {
     this.rpcGet('current', { details: platform })
       .then(res => {
         this.loggedInstance = this.build(res)
+        this.customFlags = res.customFlags
         if (this.notificationToken) {
           if (res.userDetail.notificationToken !== this.notificationToken) {
             if (!this.adminLogin) {
