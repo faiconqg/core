@@ -37,7 +37,7 @@ class BirthdateInput extends FieldsBase {
   }
 
   render() {
-    const { error, value, loginType } = this.props
+    const { error, value } = this.props
     const { message } = this.state
     return (
       <TextField
