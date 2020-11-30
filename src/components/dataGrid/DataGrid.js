@@ -332,7 +332,7 @@ class DataGrid extends React.Component {
   }
 
   handleExport = () => {
-    this.api.exportDataAsCsv({columnSeparator: ';'})
+    this.api.exportDataAsCsv({ columnSeparator: ';' })
   }
 
   render() {
@@ -352,6 +352,7 @@ class DataGrid extends React.Component {
       disablePaper,
       disableSummary,
       onSortChanged,
+      disablePerPage = false,
       minHeight = 'auto'
     } = this.props
     const { rowsPerPage, page } = this.state /* Fiz isso pra tirar os warnings... Espero não ferir ninguém */
@@ -452,6 +453,7 @@ class DataGrid extends React.Component {
               count={rowCount}
               rowsPerPage={rowsPerPage}
               page={page}
+              rowsPerPageOptions={disablePerPage ? [100] : null}
               onChangePage={this.handleChangePage}
               onChangeRowsPerPage={this.handleChangeRowsPerPage}
               labelRowsPerPage={AppStore.windowWidth > 360 ? 'Linhas por página' : null}

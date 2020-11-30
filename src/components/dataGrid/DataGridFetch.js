@@ -156,7 +156,7 @@ class DataGridFetch extends React.Component {
   }
 
   render() {
-    const { classes, onItemClick, store, fixedColumn, controlBar, titleBar, noSearch = false, showExport = true, ...props } = this.props
+    const { classes, onItemClick, store, fixedColumn, controlBar, titleBar, disablePerPage, noSearch = false, showExport = true, ...props } = this.props
 
     const { orderBy, rowsPerPage, search, page } = this.props.store.pagination
 
@@ -168,6 +168,7 @@ class DataGridFetch extends React.Component {
         onItemClick={onItemClick}
         rowCount={store.count}
         rowsPerPage={rowsPerPage}
+        disablePerPage={disablePerPage}
         fixedColumn={fixedColumn}
         orderBy={orderBy}
         rows={store.models}
