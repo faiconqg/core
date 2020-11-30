@@ -749,9 +749,9 @@ class Login extends React.Component {
                             onChange={value => this.handleChange(value, 'privacy')}
                             text={
                               <div>
-                                Li e concordo com a{' '}
+                                Li e concordo com o{' '}
                                 <a href={RealmStore.privacyUrl} target="_system" rel="noopener noreferrer">
-                                  política de privacidade
+                                  termo de privacidade de dados
                                 </a>{' '}
                               </div>
                             }
