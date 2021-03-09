@@ -57,6 +57,7 @@ class ConfirmEmail extends React.Component {
 
   dismiss = () => {
     UserStore.current().then(() => {
+      UserStore.loggedInstance.s('originalEmailVerified', UserStore.loggedInstance.g('emailVerified'))
       UserStore.loggedInstance.s('emailVerified', true)
       this.props.router.push('/')
     })
