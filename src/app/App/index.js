@@ -262,7 +262,8 @@ class App extends Foundation {
                 {!UserStore.adminLogin &&
                   AppStore.token &&
                   UserStore.logged &&
-                  !UserStore.logged.emailVerified ? (
+                  !UserStore.logged.emailVerified && 
+                  !UserStore.dismissEmailVerified ? (
                     <>
                       <Route
                         path="/confirm-email"

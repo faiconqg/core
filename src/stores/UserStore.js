@@ -57,6 +57,9 @@ class Users extends Collection {
   dataConfirmed = false
 
   @observable
+  dismissEmailVerified = false
+
+  @observable
   notifications = []
 
   @observable
@@ -74,7 +77,7 @@ class Users extends Collection {
 
   current = memorizeName =>
     this.rpcGet('current', { details: platform })
-      .then(res => {
+      .then(res => {      
         this.loggedInstance = this.build(res)
         this.customFlags = res.customFlags
         if (this.notificationToken) {
@@ -90,6 +93,11 @@ class Users extends Collection {
         }
         AppStore.onLogin && AppStore.onLogin()
         AppStore.logGa('login', { method: 'CPF', id: res.id, name: res.name })
+        
+        if(!this.dismissEmailVerified) {
+          this.dismissEmailVerified = this.logged.emailVerified
+        }
+
         if (this.logged.emailVerified && this.logged.mobile) {
           this.dataConfirmed = true
         } else {

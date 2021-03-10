@@ -13,13 +13,13 @@ const styles = theme => ({
     paddingBottom: 10
   },
   resend: {
-    marginTop: 20
+    marginTop: 25
   },
   link: {
     textDecoration: 'none',
     color: theme.palette.secondary.main
   },
-  button: { marginTop: 25 },
+  button: { marginTop: 20 },
   container: {
     display: 'flex',
     flexDirection: 'column',
@@ -30,6 +30,9 @@ const styles = theme => ({
     paddingRight: 30,
     paddingLeft: 30,
     color: theme.palette.text.secondary
+  },
+  span: {
+    paddingBottom: 10
   }
 })
 
@@ -57,8 +60,7 @@ class ConfirmEmail extends React.Component {
 
   dismiss = () => {
     UserStore.current().then(() => {
-      UserStore.loggedInstance.s('originalEmailVerified', UserStore.loggedInstance.g('emailVerified'))
-      UserStore.loggedInstance.s('emailVerified', true)
+      UserStore.dismissEmailVerified = true      
       this.props.router.push('/')
     })
   }
@@ -95,22 +97,24 @@ class ConfirmEmail extends React.Component {
           <>
             <UserIndicator username={username} onForgotUser={() => UserStore.logout()} />
             <span className={classes.wellcome}>Para sua segurança, precisamos validar seu e-mail.</span>
-            <span>
+            <span className={classes.span}>
               Enviamos um link de confirmação para o e-mail{' '}
               <b>
                 {email}
               </b>
-              .{' '}
+              .              
+            </span>            
+            <span>
               <a className={classes.link} onClick={() => this.setState({ emailSet: '', email: emailSet || '' })}>
                 O e-mail está errado?
               </a>
-            </span>
+            </span>            
             <Button
               id="recaptcha-button"
-              className={classes.button}
-              color="secondary"
-              variant="contained"
+              variant="contained" 
               fullWidth
+              className={classes.button}
+              color="secondary"                            
               onClick={this.dismiss}
             >
               Continuar
@@ -118,6 +122,7 @@ class ConfirmEmail extends React.Component {
             <Button color="secondary" onClick={this.sendEmail} className={classes.resend} disabled={sended}>
               {sended ? 'Enviado' : 'Reenviar e-mail'}
             </Button>
+            
           </>
         ) : (
             <>
