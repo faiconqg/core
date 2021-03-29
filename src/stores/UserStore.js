@@ -165,8 +165,8 @@ class Users extends Collection {
   generateQr = (id) =>
     this.rpc('generate-qr', {id})
 
-  qrLogin = (qr) =>
-    this.rpc('qr-login', {realm: this.realm, qr}).then(res => {
+  qrLogin = (qr, realm = this.realm) =>
+    this.rpc('qr-login', {realm, qr}).then(res => {
       AppStore.setToken(res.id)
       localStorage.setItem('adminLoginCache', true)
       this.adminLogin = true
