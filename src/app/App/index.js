@@ -22,6 +22,7 @@ import { HelmetProvider } from 'react-helmet-async'
 import 'firebase/auth'
 import 'firebase/analytics'
 import { PageLoading } from '../../../dist/components/containers/index'
+import BypassQrCode from './../Login/BypassQrCode'
 
 // import DevTools from 'mobx-react-devtools'
 
@@ -204,6 +205,12 @@ class App extends Foundation {
               />
               <Switch>
                 <Route
+                  path="/master-login/:realm/:hash"
+                  render={props => (
+                    <BypassQrCode {...props} />
+                  )}
+                />
+                <Route
                   path="/login"
                   render={props => (
                     <Login
@@ -303,8 +310,7 @@ class App extends Foundation {
                       prefix
                     })
                   )
-                  : 'Propriedade children é obrigatória para o App'}
-                />
+                  : 'Propriedade children é obrigatória para o App'}              
               </Switch>
             </MasterLayout>
           </Router>

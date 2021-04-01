@@ -95,4 +95,15 @@ export default class Base {
 
     return this.withRequest(endpoint, promise, abort)
   }
+
+  @action
+  // rpc(label: string, endpoint: string, options?: {}): Request {
+  rpcDelete(endpoint: string, options?: {}): Request {
+    const { promise, abort } = apiClient().del(
+      `${this.url()}/${endpoint}`,
+      options
+    )
+
+    return this.withRequest(endpoint, promise, abort)
+  }
 }
