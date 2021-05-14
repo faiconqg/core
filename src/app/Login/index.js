@@ -23,6 +23,10 @@ import ConfirmPhone from './ConfirmPhone'
 import ConfirmEmail from './ConfirmEmail'
 import PasswordRule from './PasswordRule'
 import cs from 'classnames'
+// import { loadReCaptcha } from 'react-recaptcha-v3'
+import { ReCaptcha } from 'react-recaptcha-v3'
+import { loadReCaptcha } from 'react-recaptcha-v3'
+
 
 const styles = theme => ({
   root: {
@@ -237,6 +241,10 @@ const styles = theme => ({
   },
   icon: {
     height: 90
+  },
+  centered: {
+    margin: 'auto',
+    marginTop: '20px',
   }
 })
 export default
@@ -275,10 +283,23 @@ class Login extends React.Component {
     newUser: false,
     allowSendEmail: true,
     userInconsistent: false,
-    noTestify: false
+    noTestify: false,
+    recaptchaSate: ''
   }
 
-  componentDidMount() { }
+  componentDidMount() {    
+    loadReCaptcha(process.env.REACT_APP_RECAPTCHA_SITE_KEY)
+  }
+
+   verifyCallback = (recaptchaToken) => {
+     if(recaptchaToken){
+       this.setState({recaptchaSate: recaptchaToken})    
+     }    
+  }
+
+  updateToken = () => {    
+    this.recaptcha.execute();
+  }
 
   login = e => {
     UserStore.error = null
@@ -314,16 +335,20 @@ class Login extends React.Component {
   }
 
   check = e => {
-    UserStore.error = null
-    UserStore.check(this.props.loginType === 'cpf' ? this.state.username.replace(/\./g, '').replace(/-/g, '') : this.state.username).then(result => {
-      if (result) {
+    UserStore.error = null    
+    UserStore.check(this.props.loginType === 'cpf' ? this.state.username.replace(/\./g, '').replace(/-/g, '') : this.state.username, this.state.recaptchaSate).then(result => {
+      if (result) {        
         AppStore.setEmail(result.email)
-        if (result.code === 1) {
+        if (result.code === 6) {
+          // Invalid recaptcha response
+          this.setState({error: 'Por favor, tente novamente.'}, this.updateToken())          
+        } else if (result.code === 1) {
           // Common valid user
           this.go('PasswordPage')
         } else if (result.code === 2 || result.code === 3) {
           // User invalid
           if (AppStore.email || RealmStore.confirmationMethod === 'CPF' || RealmStore.confirmationMethod === 'DISABLED') {
+            console.log(result)
             this.go('FirstLoginPage')
             this.setState({ requireValidationKey: result.code === 3 }, () => this.go('FirstLoginPage'))
           } else {
@@ -428,8 +453,7 @@ class Login extends React.Component {
       }
     )
   }
-
-  resolveSubmit = e => {
+  resolveSubmit = e => {    
     switch (this.state.page) {
       default:
         return this.handleSubmitLoginPage
@@ -454,10 +478,11 @@ class Login extends React.Component {
     }
   }
 
-  handleSubmitLoginPage = e => {
-    e.preventDefault()
-    if (this.state.usernameValid) {
-      this.check()
+  handleSubmitLoginPage = e => {    
+    e.preventDefault()    
+    if (this.state.usernameValid) {      
+      this.setState({ error: false }, this.check())
+      
     } else {
       this.setState({ error: true })
     }
@@ -570,7 +595,8 @@ class Login extends React.Component {
       privacy,
       userInconsistent,
       newUser,
-      noTestify
+      noTestify,
+      recaptchaSate
     } = this.state
     const { full, bottom } = RealmStore.logos || {}
 
@@ -594,13 +620,19 @@ class Login extends React.Component {
       return <PageLoading />
     }
 
-    let mainTenant = UserStore.realm === 'incentiveme'
+    let mainTenant = UserStore.realm === 'incentiveme'    
 
     return (
-      <Background>
+      <Background>         
         <div className={classes.root}>
           <Card className={classes.card}>
-            <form className={classes.flex} onSubmit={this.resolveSubmit()} noValidate>
+            <form className={classes.flex} onSubmit={this.resolveSubmit()} noValidate>       
+            <ReCaptcha
+              ref={ref => this.recaptcha = ref}
+              sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+              action='submit'
+              verifyCallback={this.verifyCallback}
+            />     
               <LinearLayout visible={!UserStore.busy() || !!UserStore.error} flex={1}>
                 {full ? (
                   <div className={cs(classes.logoContainer, AppStore.device.hasNotch ? classes.logoContainerIos : classes.logoContainerDefault)}>
@@ -611,6 +643,7 @@ class Login extends React.Component {
                   )}
                 {!UserStore.logged || UserStore.logged.enabled ? (
                   <div className={classes.formWrapper}>
+
                     {(() => {
                       switch (page) {
                         default:
@@ -767,9 +800,14 @@ class Login extends React.Component {
                       </React.Fragment>
                     )}
                     {page !== 'ConfirmEmailPage' && page !== 'ConfirmPhonePage' && page !== 'AdminLogin' ? (
-                      <Button id="sign-in-button" className={classes.button} type="submit" color="secondary" variant="contained" fullWidth>
-                        Continuar
-                      </Button>
+                      recaptchaSate === '' ?
+                      <div className={classes.centered}>
+                        <CircularProgress /> 
+                      </div>                  
+                        : 
+                        <Button id="sign-in-button" className={classes.button} type="submit" color="secondary" variant="contained" fullWidth>
+                          Continuar
+                        </Button>                      
                     ) : null}
 
                     {/*page === 'LoginPage' && (
@@ -834,7 +872,7 @@ class Login extends React.Component {
                         ) : (
                             <span>{AppStore.messages.userBlockedWithoutEmail}</span>
                           )}
-                      </div>
+                      </div>                      
                       <Button className={classes.button} onClick={this.logout} color="secondary" variant="contained" fullWidth>
                         Continuar
                     </Button>
