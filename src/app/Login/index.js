@@ -284,7 +284,8 @@ class Login extends React.Component {
     allowSendEmail: true,
     userInconsistent: false,
     noTestify: false,
-    recaptchaSate: ''
+    recaptchaSate: '',
+    verificationData: {}
   }
 
   componentDidMount() {    
@@ -298,7 +299,7 @@ class Login extends React.Component {
   }
 
   updateToken = () => {    
-    this.recaptcha.execute();
+    this.recaptcha.execute()
   }
 
   login = e => {
@@ -310,6 +311,8 @@ class Login extends React.Component {
     ).catch(err => {
       if (err.error.code === 'PASSWORD_BLOCK') {
         this.go('PasswordBlock')
+      } else if (err.error.code === 'RESET_PASSWORD_REQUIRED') {
+        this.setState({verificationData: err.error.verification}, this.go('VerificationLoginPage'))
       } else {
         throw err
       }
@@ -337,30 +340,37 @@ class Login extends React.Component {
   check = e => {
     UserStore.error = null    
     UserStore.check(this.props.loginType === 'cpf' ? this.state.username.replace(/\./g, '').replace(/-/g, '') : this.state.username, this.state.recaptchaSate).then(result => {
-      if (result) {        
+      if (result) {
         AppStore.setEmail(result.email)
-        if (result.code === 6) {
-          // Invalid recaptcha response
-          this.setState({error: 'Por favor, tente novamente.'}, this.updateToken())          
-        } else if (result.code === 1) {
-          // Common valid user
-          this.go('PasswordPage')
-        } else if (result.code === 2 || result.code === 3) {
-          // User invalid
-          if (AppStore.email || RealmStore.confirmationMethod === 'CPF' || RealmStore.confirmationMethod === 'DISABLED') {
-            console.log(result)
-            this.go('FirstLoginPage')
-            this.setState({ requireValidationKey: result.code === 3 }, () => this.go('FirstLoginPage'))
-          } else {
-            this.setState({ userInconsistent: true }, () => this.go('ErrorPage'))
+
+        
+        // } else {
+          if (result.code === 6) {
+            // Invalid recaptcha response
+            this.setState({error: 'Por favor, tente novamente.'}, this.updateToken())          
+          } else if (result.verification && !result.verification.date) {
+            console.log(result.verification)
+            this.setState({verificationData: result.verification}, this.go('VerificationLoginPage'))
+          } else if (result.code === 1) {
+            // Common valid user
+            this.go('PasswordPage')
+          } else if (result.code === 2 || result.code === 3) {
+            // User invalid
+            if (AppStore.email || RealmStore.confirmationMethod === 'CPF' || RealmStore.confirmationMethod === 'DISABLED') {
+              console.log(result)
+              this.go('FirstLoginPage')
+              this.setState({ requireValidationKey: result.code === 3 }, () => this.go('FirstLoginPage'))
+            } else {
+              this.setState({ userInconsistent: true }, () => this.go('ErrorPage'))
+            }
+          } else if (result.code === 4) {
+            // Disable confirmation
+            this.setState({ noTestify: true, newUser: true }, () => this.go('FirstLoginPage'))
+          } else if (result.code === 5) {
+            // Invited user
+            this.setState({ newUser: true }, () => this.go('FirstLoginPage'))
           }
-        } else if (result.code === 4) {
-          // Disable confirmation
-          this.setState({ noTestify: true, newUser: true }, () => this.go('FirstLoginPage'))
-        } else if (result.code === 5) {
-          // Invited user
-          this.setState({ newUser: true }, () => this.go('FirstLoginPage'))
-        }
+        // }
       } else {
         if (RealmStore.currentRealm ? RealmStore.currentRealm.registerEnabled : this.props.canRegister) {
           this.setState({ newUser: true }, () => this.go('FirstLoginPage'))
@@ -463,8 +473,8 @@ class Login extends React.Component {
         return this.handleSubmitFirstLoginPage
       case 'TestifyErrorPage':
         return this.handleSubmitTestifyErrorPage
-      case 'RecoverPasswordPage':
-        return this.handleSubmitRecoverPasswordPage
+      case 'RecoverPasswordPage':        
+        return this.handleSubmitRecoverPasswordPage                          
       case 'SetPasswordPage':
         return this.handleSubmitSetPasswordPage
       case 'ConfirmSetPasswordPage':
@@ -475,7 +485,14 @@ class Login extends React.Component {
         return this.handleSubmitErrorPage
       case 'PasswordBlock':
         return this.handleSubmitPasswordBlock
+      case 'VerificationLoginPage':
+        return this.handleSubmitVerificationLogin
     }
+  }
+
+  handleSubmitVerificationLogin = e => {
+    e.preventDefault()  
+    console.log(e)
   }
 
   handleSubmitLoginPage = e => {    
@@ -535,7 +552,7 @@ class Login extends React.Component {
   }
 
   handleSubmitRecoverPasswordPage = e => {
-    e.preventDefault()
+    e.preventDefault()    
     if (this.state.emailConfirmValid) {
       this.requestReset()
     } else {
@@ -596,7 +613,8 @@ class Login extends React.Component {
       userInconsistent,
       newUser,
       noTestify,
-      recaptchaSate
+      recaptchaSate,
+      verificationData
     } = this.state
     const { full, bottom } = RealmStore.logos || {}
 
@@ -621,6 +639,9 @@ class Login extends React.Component {
     }
 
     let mainTenant = UserStore.realm === 'incentiveme'    
+
+    console.log(page, verificationData)
+    // console.log(process.env.REACT_APP_RECAPTCHA_SITE_KEY)
 
     return (
       <Background>         
@@ -753,6 +774,8 @@ class Login extends React.Component {
                           return <ConfirmSetPasswordPage error={this.resolveError()} onChangeValidation={this.handleChangeValidation} />
                         case 'RegisterPage':
                           return <RegisterPage username={username} onRegister={() => this.props.router.push('/register')} />
+                        case 'VerificationLoginPage':
+                          return <VerificationLoginPage verificationData={verificationData} go={this.go} />
                       }
                     })()}
                     {page === 'FirstLoginPage' && (
@@ -799,7 +822,7 @@ class Login extends React.Component {
                         />
                       </React.Fragment>
                     )}
-                    {page !== 'ConfirmEmailPage' && page !== 'ConfirmPhonePage' && page !== 'AdminLogin' ? (
+                    {page !== 'ConfirmEmailPage' && page !== 'ConfirmPhonePage' && page !== 'AdminLogin' && page !== 'VerificationLoginPage' ? (
                       recaptchaSate === '' ?
                       <div className={classes.centered}>
                         <CircularProgress /> 
@@ -1154,6 +1177,34 @@ const PasswordBlock = withStyles(styles)(({ classes }) => (
     </div>
   </React.Fragment>
 ))
+
+const VerificationLoginPage = withStyles(styles)(({ classes, verificationData, go }) => (  
+  <React.Fragment>
+    <div className={classes.testifyError}>
+      <Warning className={classes.testifyErrorIcon} />
+      <span className={classes.errorTitle}>Confirmação de dados de acesso</span>
+    </div>
+    <ul>
+      <li>{verificationData.message}</li>      
+    </ul>
+    {/* <div className={classes.marginBottom}>
+      <span>Clique em continuar para confirmar seus dados.</span>
+    </div> */}
+    {verificationData.link === 'RESET_PASSWORD' ? 
+    <Button className={classes.button} color="secondary" variant="contained" fullWidth onClick={() => go('RecoverPasswordPage')}>
+      Resetar Senha
+    </Button>
+    : verificationData.link === 'RESET_EMAIL' ? 
+    <Button className={classes.button} color="secondary" variant="contained" fullWidth onClick={() => go('RecoverPasswordPage')}>
+      Confirmar E-mail
+    </Button> : (
+    <Button className={classes.button} color="secondary" variant="contained" fullWidth onClick={() => window.open(verificationData.link, '_blank')}>
+      Continuar
+    </Button> 
+    )}
+  </React.Fragment>
+))
+
 
 const AdminLogin = ({ classes, onBack, onClick, error, username, loginLabel, loginType, loginMask, onChange, onChangeValidation }) => (
   <React.Fragment>
