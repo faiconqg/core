@@ -396,6 +396,8 @@ class Login extends React.Component {
         return 'A confirmação de email está incorreta.'
       } else if (UserStore.error && UserStore.error.code === 'PASSWORD_RULE') {
         return ''
+      } else if (UserStore.error && UserStore.error.displayMessage) {
+        return UserStore.error.displayMessage
       } else {
         return 'Ops! Algo deu errado, tente novamente'
       }
