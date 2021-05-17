@@ -23,9 +23,8 @@ import ConfirmPhone from './ConfirmPhone'
 import ConfirmEmail from './ConfirmEmail'
 import PasswordRule from './PasswordRule'
 import cs from 'classnames'
-// import { loadReCaptcha } from 'react-recaptcha-v3'
-import { ReCaptcha } from 'react-recaptcha-v3'
-import { loadReCaptcha } from 'react-recaptcha-v3'
+import Reaptcha from '@panalbish/reaptcha-enterprise'
+
 
 
 const styles = theme => ({
@@ -284,22 +283,14 @@ class Login extends React.Component {
     allowSendEmail: true,
     userInconsistent: false,
     noTestify: false,
-    recaptchaSate: '',
+    recaptchaSate: localStorage.getItem('recaptchaSate') || '',
     verificationData: {}
   }
 
-  componentDidMount() {    
-    loadReCaptcha(process.env.REACT_APP_RECAPTCHA_SITE_KEY)
-  }
-
-   verifyCallback = (recaptchaToken) => {
-     if(recaptchaToken){
-       this.setState({recaptchaSate: recaptchaToken})    
-     }    
-  }
-
-  updateToken = () => {    
-    this.recaptcha.execute()
+  verifyCallback = (recaptchaToken) => {
+    if (recaptchaToken) {
+      this.setState({ recaptchaSate: recaptchaToken })
+    }
   }
 
   login = e => {
@@ -307,12 +298,13 @@ class Login extends React.Component {
     UserStore.login(
       this.props.loginType === 'cpf' ? this.state.username.replace(/\./g, '').replace(/-/g, '') : this.state.username,
       this.state.password,
-      this.state.username
+      this.state.username,
+      this.state.recaptchaSate
     ).catch(err => {
       if (err.error.code === 'PASSWORD_BLOCK') {
         this.go('PasswordBlock')
       } else if (err.error.code === 'RESET_PASSWORD_REQUIRED') {
-        this.setState({verificationData: err.error.verification}, this.go('VerificationLoginPage'))
+        this.setState({ verificationData: err.error.verification }, this.go('VerificationLoginPage'))
       } else {
         throw err
       }
@@ -338,38 +330,41 @@ class Login extends React.Component {
   }
 
   check = e => {
-    UserStore.error = null    
+    UserStore.error = null
     UserStore.check(this.props.loginType === 'cpf' ? this.state.username.replace(/\./g, '').replace(/-/g, '') : this.state.username, this.state.recaptchaSate).then(result => {
       if (result) {
         AppStore.setEmail(result.email)
 
-        
+
         // } else {
-          if (result.code === 6) {
-            // Invalid recaptcha response
-            this.setState({error: 'Por favor, tente novamente.'}, this.updateToken())          
-          } else if (result.verification && !result.verification.date) {
-            console.log(result.verification)
-            this.setState({verificationData: result.verification}, this.go('VerificationLoginPage'))
-          } else if (result.code === 1) {
-            // Common valid user
-            this.go('PasswordPage')
-          } else if (result.code === 2 || result.code === 3) {
-            // User invalid
-            if (AppStore.email || RealmStore.confirmationMethod === 'CPF' || RealmStore.confirmationMethod === 'DISABLED') {
-              console.log(result)
-              this.go('FirstLoginPage')
-              this.setState({ requireValidationKey: result.code === 3 }, () => this.go('FirstLoginPage'))
-            } else {
-              this.setState({ userInconsistent: true }, () => this.go('ErrorPage'))
-            }
-          } else if (result.code === 4) {
-            // Disable confirmation
-            this.setState({ noTestify: true, newUser: true }, () => this.go('FirstLoginPage'))
-          } else if (result.code === 5) {
-            // Invited user
-            this.setState({ newUser: true }, () => this.go('FirstLoginPage'))
+        if (result.code === 6) {
+          // Invalid recaptcha response
+          this.setState({ error: 'Por favor, tente novamente.' }, () => {
+            this.captcha.reset()
+            this.setState({ recaptchaSate: '' })
+          })
+        } else if (result.verification && !result.verification.date) {
+          // console.log(result.verification)
+          this.setState({ verificationData: result.verification }, this.go('VerificationLoginPage'))
+        } else if (result.code === 1) {
+          // Common valid user
+          this.go('PasswordPage')
+        } else if (result.code === 2 || result.code === 3) {
+          // User invalid
+          if (AppStore.email || RealmStore.confirmationMethod === 'CPF' || RealmStore.confirmationMethod === 'DISABLED') {
+            // console.log(result)
+            this.go('FirstLoginPage')
+            this.setState({ requireValidationKey: result.code === 3 }, () => this.go('FirstLoginPage'))
+          } else {
+            this.setState({ userInconsistent: true }, () => this.go('ErrorPage'))
           }
+        } else if (result.code === 4) {
+          // Disable confirmation
+          this.setState({ noTestify: true, newUser: true }, () => this.go('FirstLoginPage'))
+        } else if (result.code === 5) {
+          // Invited user
+          this.setState({ newUser: true }, () => this.go('FirstLoginPage'))
+        }
         // }
       } else {
         if (RealmStore.currentRealm ? RealmStore.currentRealm.registerEnabled : this.props.canRegister) {
@@ -465,7 +460,7 @@ class Login extends React.Component {
       }
     )
   }
-  resolveSubmit = e => {    
+  resolveSubmit = e => {
     switch (this.state.page) {
       default:
         return this.handleSubmitLoginPage
@@ -475,8 +470,8 @@ class Login extends React.Component {
         return this.handleSubmitFirstLoginPage
       case 'TestifyErrorPage':
         return this.handleSubmitTestifyErrorPage
-      case 'RecoverPasswordPage':        
-        return this.handleSubmitRecoverPasswordPage                          
+      case 'RecoverPasswordPage':
+        return this.handleSubmitRecoverPasswordPage
       case 'SetPasswordPage':
         return this.handleSubmitSetPasswordPage
       case 'ConfirmSetPasswordPage':
@@ -493,15 +488,15 @@ class Login extends React.Component {
   }
 
   handleSubmitVerificationLogin = e => {
-    e.preventDefault()  
+    e.preventDefault()
     console.log(e)
   }
 
-  handleSubmitLoginPage = e => {    
-    e.preventDefault()    
-    if (this.state.usernameValid) {      
+  handleSubmitLoginPage = e => {
+    e.preventDefault()
+    if (this.state.usernameValid) {
       this.setState({ error: false }, this.check())
-      
+
     } else {
       this.setState({ error: true })
     }
@@ -554,7 +549,7 @@ class Login extends React.Component {
   }
 
   handleSubmitRecoverPasswordPage = e => {
-    e.preventDefault()    
+    e.preventDefault()
     if (this.state.emailConfirmValid) {
       this.requestReset()
     } else {
@@ -612,10 +607,10 @@ class Login extends React.Component {
       acceptMessage,
       terms,
       privacy,
+      recaptchaSate,
       userInconsistent,
       newUser,
       noTestify,
-      recaptchaSate,
       verificationData
     } = this.state
     const { full, bottom } = RealmStore.logos || {}
@@ -640,33 +635,26 @@ class Login extends React.Component {
       return <PageLoading />
     }
 
-    let mainTenant = UserStore.realm === 'incentiveme'    
+    let mainTenant = UserStore.realm === 'incentiveme'
 
-    console.log(page, verificationData)
+    // console.log(page, verificationData)
     // console.log(process.env.REACT_APP_RECAPTCHA_SITE_KEY)
 
     return (
-      <Background>         
+      <Background>
         <div className={classes.root}>
           <Card className={classes.card}>
-            <form className={classes.flex} onSubmit={this.resolveSubmit()} noValidate>       
-            <ReCaptcha
-              ref={ref => this.recaptcha = ref}
-              sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
-              action='submit'
-              verifyCallback={this.verifyCallback}
-            />     
+            <form className={classes.flex} onSubmit={this.resolveSubmit()} noValidate>
               <LinearLayout visible={!UserStore.busy() || !!UserStore.error} flex={1}>
                 {full ? (
                   <div className={cs(classes.logoContainer, AppStore.device.hasNotch ? classes.logoContainerIos : classes.logoContainerDefault)}>
                     <img src={full} alt="Logo" className={classes.logo} />
                   </div>
                 ) : (
-                    <span className={classes.appName}>{RealmStore.appName || 'Nome do sistema'}</span>
-                  )}
+                  <span className={classes.appName}>{RealmStore.appName || 'Nome do sistema'}</span>
+                )}
                 {!UserStore.logged || UserStore.logged.enabled ? (
-                  <div className={classes.formWrapper}>
-
+                  <div className={classes.formWrapper} style={{ paddingBottom: 20 }}>
                     {(() => {
                       switch (page) {
                         default:
@@ -825,14 +813,9 @@ class Login extends React.Component {
                       </React.Fragment>
                     )}
                     {page !== 'ConfirmEmailPage' && page !== 'ConfirmPhonePage' && page !== 'AdminLogin' && page !== 'VerificationLoginPage' ? (
-                      recaptchaSate === '' ?
-                      <div className={classes.centered}>
-                        <CircularProgress /> 
-                      </div>                  
-                        : 
-                        <Button id="sign-in-button" className={classes.button} type="submit" color="secondary" variant="contained" fullWidth>
-                          Continuar
-                        </Button>                      
+                      <Button id="sign-in-button" className={classes.button} type="submit" color="secondary" variant="contained" fullWidth disabled={page == 'LoginPage' && !recaptchaSate}>
+                        Continuar
+                      </Button>
                     ) : null}
 
                     {/*page === 'LoginPage' && (
@@ -888,21 +871,49 @@ class Login extends React.Component {
                     ) : null}
                   </div>
                 ) : (
-                    <div className={classes.formWrapper}>
-                      <div className={classes.enabledFalse}>
-                        {appEmail ? (
-                          <>
-                            <span dangerouslySetInnerHTML={{ __html: AppStore.messages.userBlocked.replace('${email}', appEmail) }}></span>
-                          </>
-                        ) : (
-                            <span>{AppStore.messages.userBlockedWithoutEmail}</span>
-                          )}
-                      </div>                      
-                      <Button className={classes.button} onClick={this.logout} color="secondary" variant="contained" fullWidth>
-                        Continuar
-                    </Button>
+                  <div className={classes.formWrapper}>
+                    <div className={classes.enabledFalse}>
+                      {appEmail ? (
+                        <>
+                          <span dangerouslySetInnerHTML={{ __html: AppStore.messages.userBlocked.replace('${email}', appEmail) }}></span>
+                        </>
+                      ) : (
+                        <span>{AppStore.messages.userBlockedWithoutEmail}</span>
+                      )}
                     </div>
-                  )}
+                    <Button className={classes.button} onClick={this.logout} color="secondary" variant="contained" fullWidth>
+                      Continuar
+                    </Button>
+                  </div>
+                )}
+                <div style={{
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  paddingBottom: 50
+                }}>
+                  {page == 'LoginPage' && (
+                    <Reaptcha
+                      ref={e => (this.captcha = e)}
+                      sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+                      onVerify={this.verifyCallback}
+                      onError={() => {
+                        console.log('captcha error')
+                        // this.captcha.reset()
+                      }}
+                      onExpire={() => {
+                        console.log('captcha expired')
+                        this.captcha.reset()
+
+                      }}
+                      isolated={true}
+                      action="check"
+                      hl="pt-BR"
+                      badge="bottomleft"
+                    // size="invisible"
+                    />)
+                  }
+                </div>
                 {/*<div className={classes.forgotContainer}>
                   <button
                     className={classes.link}
@@ -977,63 +988,63 @@ const FirstLoginPage = withStyles(styles)(
     newUser,
     noTestify
   }) => (
-      <>
-        <UserIndicator username={username} onBack={onBack} />
-        {!newUser && <span className={classes.wellcome}>{AppStore.messages.wellcome} </span>}
-        <span>{AppStore.messages.firstAccess}</span>
-        {!noTestify &&
-          (RealmStore.confirmationMethod === 'CPF' ? (
-            <>
-              <BirthdateInput
+    <>
+      <UserIndicator username={username} onBack={onBack} />
+      {!newUser && <span className={classes.wellcome}>{AppStore.messages.wellcome} </span>}
+      <span>{AppStore.messages.firstAccess}</span>
+      {!noTestify &&
+        (RealmStore.confirmationMethod === 'CPF' ? (
+          <>
+            <BirthdateInput
+              error={error}
+              value={birthdate}
+              loginType={loginType}
+              onChange={value => onChange(value, 'birthdate')}
+              onChangeValidation={value => onChangeValidation(value, 'birthdate')}
+            />
+            {loginType === 'cpf' ? (
+              <MotherNameInput
                 error={error}
-                value={birthdate}
-                loginType={loginType}
-                onChange={value => onChange(value, 'birthdate')}
-                onChangeValidation={value => onChangeValidation(value, 'birthdate')}
+                value={motherName}
+                onChange={value => onChange(value, 'motherName')}
+                onChangeValidation={value => onChangeValidation(value, 'motherName')}
               />
-              {loginType === 'cpf' ? (
-                <MotherNameInput
-                  error={error}
-                  value={motherName}
-                  onChange={value => onChange(value, 'motherName')}
-                  onChangeValidation={value => onChangeValidation(value, 'motherName')}
-                />
-              ) : (
-                  <PhoneInput
-                    error={error}
-                    value={phone}
-                    onChange={value => onChange(value, 'phone')}
-                    onChangeValidation={value => onChangeValidation(value, 'phone')}
-                  />
-                )}
-            </>
-          ) : RealmStore.confirmationMethod === 'EMAIL' ? (
-            <>
-              <EmailInput
-                emailDomain={'@' + email.split('@')[1]}
-                error={error}
-                value={emailConfirm}
-                onChange={value => onChange(value, 'emailConfirm')}
-                onChangeValidation={value => onChangeValidation(value, 'emailConfirm')}
-              />
+            ) : (
               <PhoneInput
                 error={error}
                 value={phone}
                 onChange={value => onChange(value, 'phone')}
                 onChangeValidation={value => onChangeValidation(value, 'phone')}
               />
-            </>
-          ) : null)}
-        {requireValidationKey && (
-          <ValidationKeyInput
-            error={error}
-            value={validationKey}
-            onChange={value => onChange(value, 'validationKey')}
-            onChangeValidation={value => onChangeValidation(value, 'validationKey')}
-          />
-        )}
-      </>
-    )
+            )}
+          </>
+        ) : RealmStore.confirmationMethod === 'EMAIL' ? (
+          <>
+            <EmailInput
+              emailDomain={'@' + email.split('@')[1]}
+              error={error}
+              value={emailConfirm}
+              onChange={value => onChange(value, 'emailConfirm')}
+              onChangeValidation={value => onChangeValidation(value, 'emailConfirm')}
+            />
+            <PhoneInput
+              error={error}
+              value={phone}
+              onChange={value => onChange(value, 'phone')}
+              onChangeValidation={value => onChangeValidation(value, 'phone')}
+            />
+          </>
+        ) : null)}
+      {requireValidationKey && (
+        <ValidationKeyInput
+          error={error}
+          value={validationKey}
+          onChange={value => onChange(value, 'validationKey')}
+          onChangeValidation={value => onChangeValidation(value, 'validationKey')}
+        />
+      )}
+    </>
+  )
 )
 
 const RecoverPasswordPage = withStyles(styles)(({ classes, error, username, emailConfirm, email, appEmail, onChange, onChangeValidation, onBack }) => (
@@ -1059,8 +1070,8 @@ const RecoverPasswordPage = withStyles(styles)(({ classes, error, username, emai
     ) : appEmail ? (
       <span dangerouslySetInnerHTML={{ __html: AppStore.messages.noEmail.replace('${email}', appEmail) }}></span>
     ) : (
-          <span dangerouslySetInnerHTML={{ __html: AppStore.messages.noEmailWithoutEmail }}></span>
-        )}
+      <span dangerouslySetInnerHTML={{ __html: AppStore.messages.noEmailWithoutEmail }}></span>
+    )}
   </React.Fragment>
 ))
 
@@ -1132,11 +1143,11 @@ const TestifyErrorPage = withStyles(styles)(({ classes }) => (
         <li>Você deve escrever apenas o primeiro nome da sua mãe, exatamente como consta em sua identidade;</li>
       </ul>
     ) : (
-        <ul>
-          <li>Confira se o e-mail informado está correto;</li>
-          <li>Você precisa informar o e-mail utilizado no seu pré-cadastro;</li>
-        </ul>
-      )}
+      <ul>
+        <li>Confira se o e-mail informado está correto;</li>
+        <li>Você precisa informar o e-mail utilizado no seu pré-cadastro;</li>
+      </ul>
+    )}
     <div className={classes.marginBottom}>
       <span>Clique em continuar para tentar novamente.</span>
     </div>
@@ -1150,8 +1161,8 @@ const ErrorPage = withStyles(styles)(({ classes, userInconsistent }) => (
       {userInconsistent ? (
         <span className={classes.errorTitle}>Usuário com cadastro incompleto!</span>
       ) : (
-          <span className={classes.errorTitle}>Usuário não encontrado!</span>
-        )}
+        <span className={classes.errorTitle}>Usuário não encontrado!</span>
+      )}
     </div>
     <ul>
       <li>Confira se o login informado está correto;</li>
@@ -1180,30 +1191,30 @@ const PasswordBlock = withStyles(styles)(({ classes }) => (
   </React.Fragment>
 ))
 
-const VerificationLoginPage = withStyles(styles)(({ classes, verificationData, go }) => (  
+const VerificationLoginPage = withStyles(styles)(({ classes, verificationData, go }) => (
   <React.Fragment>
     <div className={classes.testifyError}>
       <Warning className={classes.testifyErrorIcon} />
       <span className={classes.errorTitle}>Confirmação de dados de acesso</span>
     </div>
     <ul>
-      <li>{verificationData.message}</li>      
+      <li>{verificationData.message}</li>
     </ul>
     {/* <div className={classes.marginBottom}>
       <span>Clique em continuar para confirmar seus dados.</span>
     </div> */}
-    {verificationData.link === 'RESET_PASSWORD' ? 
-    <Button className={classes.button} color="secondary" variant="contained" fullWidth onClick={() => go('RecoverPasswordPage')}>
-      Resetar Senha
+    {verificationData.link === 'RESET_PASSWORD' ?
+      <Button className={classes.button} color="secondary" variant="contained" fullWidth onClick={() => go('RecoverPasswordPage')}>
+        Resetar Senha
     </Button>
-    : verificationData.link === 'RESET_EMAIL' ? 
-    <Button className={classes.button} color="secondary" variant="contained" fullWidth onClick={() => go('RecoverPasswordPage')}>
-      Confirmar E-mail
+      : verificationData.link === 'RESET_EMAIL' ?
+        <Button className={classes.button} color="secondary" variant="contained" fullWidth onClick={() => go('RecoverPasswordPage')}>
+          Confirmar E-mail
     </Button> : (
-    <Button className={classes.button} color="secondary" variant="contained" fullWidth onClick={() => window.open(verificationData.link, '_blank')}>
-      Continuar
-    </Button> 
-    )}
+          <Button className={classes.button} color="secondary" variant="contained" fullWidth onClick={() => window.open(verificationData.link, '_blank')}>
+            Continuar
+          </Button>
+        )}
   </React.Fragment>
 ))
 

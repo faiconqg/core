@@ -127,11 +127,11 @@ class Users extends Collection {
       email,
     })
 
-  check = (username, recaptchaToken) =>
+  check = (username, token) =>
     this.rpc('check', {
       realm: this.realm,
       username,
-      recaptchaToken
+      token
     })
 
   sendVerification = () => this.rpc('send-verification')
@@ -180,12 +180,14 @@ class Users extends Collection {
       this.current()
     })
 
-  login = (username, password, memorizeName) =>
+  login = (username, password, memorizeName, recaptchaSate) =>
     this.rpc('login', {
       realm: this.realm,
       username,
       password,
+      token: recaptchaSate
     }).then(res => {
+      localStorage.setItem('recaptchaSate', recaptchaSate)
       localStorage.setItem('adminLoginCache', false)
       this.adminLogin = false
       AppStore.setToken(res.id)

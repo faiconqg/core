@@ -70,6 +70,7 @@
   },
   "dependencies": {
     "@material-ui/lab": "^4.0.0-alpha.28",
+    "@panalbish/reaptcha-enterprise": "2.1.0",
     "ag-grid-community": "21.2.1",
     "ag-grid-react": "21.2.1",
     "axios": "0.18.1",
@@ -82,7 +83,6 @@
     "react-google-recaptcha-v3": "1.9.4",
     "react-helmet-async": "1.0.3",
     "react-i18nify": "1.11.18",
-    "react-recaptcha-v3": "2.0.1",
     "react-text-mask": "5.4.3",
     "text-mask-addons": "3.8.0"
   }

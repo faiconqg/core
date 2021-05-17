@@ -1219,6 +1219,11 @@
     prop-types "^15.7.2"
     react-is "^16.8.0"
 
+"@panalbish/reaptcha-enterprise@2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@panalbish/reaptcha-enterprise/-/reaptcha-enterprise-2.1.0.tgz#d2844b56bc3a3f4c6584ccd459796e7593d5a318"
+  integrity sha512-gtDX1PvU+c2mHzComySw6QWuOEPXRNeKpwvm46D3oTRy1d3dY4xwtX7ihDpjux1bXaBoWbq+EOAZLi9faeXDiQ==
+
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@samverschueren/stream-to-observable/-/stream-to-observable-0.3.0.tgz#ecdf48d532c58ea477acfcab80348424f8d0662f"
@@ -6237,11 +6242,6 @@ react-is@^16.8.1, react-is@^16.8.4:
   version "16.8.6"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.8.6.tgz#5bbc1e2d29141c9fbdfed456343fe2bc430a6a16"
   integrity sha512-aUk3bHfZ2bRSVFFbbeVS4i+lNPZr3/WM5jT2J5omUVV1zzcs1nAaf3l51ctA5FFvCRbhrH0bdAsRRQddFJZPtA==
-
-react-recaptcha-v3@2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/react-recaptcha-v3/-/react-recaptcha-v3-2.0.1.tgz#b8dd391e9e36785f250d5e01aad235dd2fea2285"
-  integrity sha512-ZQ+auotgu+E/6YAbPqk53sf9xgcp8TFvVVfL4bVR7PXj98nQmdaONugdLJEA7g1iTZ4yQqC4mZbcVUGZmwb25Q==
 
 react-text-mask@5.4.3:
   version "5.4.3"
