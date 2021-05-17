@@ -127,10 +127,11 @@ class Users extends Collection {
       email,
     })
 
-  check = username =>
+  check = (username, recaptchaToken) =>
     this.rpc('check', {
       realm: this.realm,
       username,
+      recaptchaToken
     })
 
   sendVerification = () => this.rpc('send-verification')

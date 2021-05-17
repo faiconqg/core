@@ -37,6 +37,7 @@ class App extends Foundation {
     ssoError: false
   }
   componentDidMount() {
+    
     if (this.props.multitenant) {
       RealmStore.fetch().then(realms => {
         const hostname = window.location.hostname
@@ -84,6 +85,7 @@ class App extends Foundation {
     RealmStore.menuBackground = this.props.menuBackground
     AppStore.menuFixed = !!this.props.menuFixed
     AppStore.startExpanded = !!this.props.startExpanded
+    
   }
 
   resolveCurrent = () => {
