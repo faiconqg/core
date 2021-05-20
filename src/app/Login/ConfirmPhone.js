@@ -53,7 +53,9 @@ class ConfirmPhone extends React.Component {
     errorCode: null,
     delay: 0,
     smsSent: false,
-    busy: false
+    busy: false,
+    sendedSms: false,
+    recaptchaSate: localStorage.getItem('recaptchaSate') || ''
   }
 
   showTime = () => {
@@ -68,21 +70,14 @@ class ConfirmPhone extends React.Component {
     clearInterval(this.timer)
     this.setState({ delay: 120 })
     this.timer = setInterval(this.showTime, 1000)
-    const phoneNumber = '+55' + this.state.mobile.replace(/\D+/g, '')
-    AppStore.sendSms(
-      phoneNumber,
-      error => {
-        if (error) {
-          console.log(5, error)
-          this.setState({ errorCode: error })
-        } else {
-          this.setState({ smsSent: true })
-        }
-      },
-      code => {
-        this.setState({ code }, this.confirmCode)
+    UserStore.sendPin(this.state.recaptchaSate).catch(e => {
+      if (e.error.code == 'INVALID_TOKEN') {
+        UserStore.logout()
+      } else {
+        this.setState({ errorCode: e.error.message })
       }
-    )
+    })
+    this.setState({ smsSent: true })
   }
 
   changeCode = e => {
@@ -92,19 +87,20 @@ class ConfirmPhone extends React.Component {
   confirmCode = () => {
     this.setState({ busy: true })
     const code = this.state.code.replace(/\D+/g, '')
-    AppStore.confirmCode(code, error => {
-      if (error) {
-        console.log(10, error)
-        this.setState({ busy: false })
-        this.setState({ errorCode: error })
-      } else {
-        UserStore.rpc('confirm-mobile').then(() => {
-          UserStore.current().then(() => {
-            clearInterval(this.timer)
-            this.props.router.push('/')
-          })
-        })
+    UserStore.verifyPin(code, this.state.recaptchaSate).then(result => {
+      if (result.success) {
+        clearInterval(this.timer)
+        this.props.router.push('/')
+        window.location.reload()
       }
+    }).catch(e => {
+      if (e.error.code == 'INVALID_TOKEN') {
+        UserStore.logout()
+      } else {
+        this.setState({ errorCode: e.error.message })
+      }
+    }).finally(() => {
+      this.setState({ busy: false })
     })
   }
 
@@ -114,7 +110,10 @@ class ConfirmPhone extends React.Component {
 
   confirmPhone = () => {
     if (this.state.valid) {
-      UserStore.rpc('update-data', { mobile: this.state.mobileSet }).then(() => this.setMobile(this.state.mobileSet))
+      UserStore.rpc('update-data', { mobile: this.state.mobileSet }).then(() => {
+        this.setMobile(this.state.mobileSet)
+        this.sendSms()
+      })
     } else {
       this.setState({ error: true })
     }
@@ -124,7 +123,7 @@ class ConfirmPhone extends React.Component {
     const mobile = String(value || '').replace(/\D+/g, '')
     this.setState({ mobile }, () => {
       if (mobile.length === 11) {
-        this.sendSms()
+        this.setState({ sendedSms: true })
       }
     })
   }
@@ -135,15 +134,22 @@ class ConfirmPhone extends React.Component {
 
   render() {
     const { classes, username } = this.props
-    let { mobile, code, mobileSet, error, errorCode, delay, smsSent, busy } = this.state
+    let { sendedSms, mobile, code, mobileSet, error, errorCode, delay, smsSent, busy } = this.state
 
     mobile = String(mobile).replace(/\D+/g, '')
 
     return (
       <>
-        <Listener value={UserStore.logged} onChange={() => this.setMobile(UserStore.logged && UserStore.logged.mobile)} />
+        <Listener value={UserStore.logged} onChange={() => {
+          if (UserStore.logged) {
+            this.setState({ mobileSet: String(UserStore.logged.mobile || '').replace(/\D+/g, '') }, () => {
+              this.handleChangeValidation(String(UserStore.logged.mobile).replace(/\D+/g, '').length >= 11)
+            }
+            )
+          }
+        }} />
 
-        {mobile.length === 11 ? (
+        {sendedSms ? (
           <>
             <UserIndicator username={username} onForgotUser={() => UserStore.logout()} />
             <span className={classes.wellcome}>Para sua segurança, precisamos validar o número do seu celular.</span>
@@ -153,7 +159,10 @@ class ConfirmPhone extends React.Component {
                 ({mobile.slice(0, 2)}) {mobile.slice(2, 7)}-{mobile.slice(7, 11)}
               </b>
               .{' '}
-              <a className={classes.link} onClick={() => this.setState({ mobileSet: null, mobile: mobileSet || '' })}>
+              <a className={classes.link} onClick={() => {
+                clearInterval(this.timer)
+                this.setState({ mobileSet: null, mobile: mobileSet || '', sendedSms: false, smsSent: false })
+              }}>
                 Número errado?
               </a>
             </span>

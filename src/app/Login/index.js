@@ -253,10 +253,12 @@ export default
 class Login extends React.Component {
   state = {
     // page: 'FirstLoginPage',
-    page: this.props.confirmEmail ? 'ConfirmEmailPage' : this.props.confirmPhone ? 'ConfirmPhonePage' : AppStore.user ? 'PasswordPage' : 'LoginPage',
+    // page: this.props.confirmEmail ? 'ConfirmEmailPage' : this.props.confirmPhone ? 'ConfirmPhonePage' : AppStore.user ? 'PasswordPage' : 'LoginPage',
+    page: this.props.confirmEmail ? 'ConfirmEmailPage' : this.props.confirmPhone ? 'ConfirmPhonePage' : 'LoginPage',
     error: false,
     tokenExpired: false,
     requireValidationKey: false,
+    // username: '',
     username: AppStore.user ? AppStore.user.username : '',
     usernameValid: false,
     password: '',
@@ -669,6 +671,8 @@ class Login extends React.Component {
                               onChange={this.handleChange}
                             />
                           )
+                        case 'ConfirmPhonePage':
+                          return <ConfirmPhone />
                         case 'PasswordPage':
                           return (
                             <PasswordPage
@@ -717,8 +721,6 @@ class Login extends React.Component {
                               noTestify={noTestify}
                             />
                           )
-                        case 'ConfirmPhonePage':
-                          return <ConfirmPhone />
                         case 'ConfirmEmailPage':
                           return <ConfirmEmail />
                         case 'TestifyErrorPage':

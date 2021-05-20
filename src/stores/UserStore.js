@@ -77,7 +77,7 @@ class Users extends Collection {
 
   current = memorizeName =>
     this.rpcGet('current', { details: platform })
-      .then(res => {      
+      .then(res => {
         this.loggedInstance = this.build(res)
         this.customFlags = res.customFlags
         if (this.notificationToken) {
@@ -93,8 +93,8 @@ class Users extends Collection {
         }
         AppStore.onLogin && AppStore.onLogin()
         AppStore.logGa('login', { method: 'CPF', id: res.id, name: res.name })
-        
-        if(!this.dismissEmailVerified) {
+
+        if (!this.dismissEmailVerified) {
           this.dismissEmailVerified = this.logged.emailVerified
         }
 
@@ -164,10 +164,10 @@ class Users extends Collection {
     })
 
   generateQr = (id) =>
-    this.rpc('generate-qr', {id})
+    this.rpc('generate-qr', { id })
 
   qrLogin = (qr, realm = this.realm) =>
-    this.rpc('qr-login', {realm, qr}).then(res => {
+    this.rpc('qr-login', { realm, qr }).then(res => {
       AppStore.setToken(res.id)
       localStorage.setItem('adminLoginCache', true)
       this.adminLogin = true
@@ -179,6 +179,12 @@ class Users extends Collection {
       AppStore.setToken(res.id)
       this.current()
     })
+
+  sendPin = (recaptchaSate) => this.rpc('send-pin', { token: recaptchaSate })
+
+
+  verifyPin = (pin, recaptchaSate) => this.rpc('verify-pin', { pin, token: recaptchaSate })
+
 
   login = (username, password, memorizeName, recaptchaSate) =>
     this.rpc('login', {
@@ -194,7 +200,7 @@ class Users extends Collection {
       this.current(memorizeName)
     })
 
-  logout = (username, password) => {
+  logout = () => {
     this.loggingOut = true
     return this.rpc('logout').finally(res => {
       this.loggingOut = false

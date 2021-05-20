@@ -262,8 +262,8 @@ class App extends Foundation {
                       />
                       <Redirect
                         to={{
-                          pathname: '/confirm-phone',
-                          state: { from: history.location }
+                          pathname: '/confirm-phone'
+                          // state: { from: history.location }
                         }}
                       />
                     </>
