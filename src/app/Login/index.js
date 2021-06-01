@@ -12,6 +12,7 @@ import PasswordInput from './PasswordInput'
 import LoginInput from './LoginInput'
 import MotherNameInput from './MotherNameInput'
 import BirthdateInput from './BirthdateInput'
+import DocumentNameInput from './DocumentNameInput'
 import PhoneInput from './PhoneInput'
 import EmailInput from './EmailInput'
 import UserIndicator from './UserIndicator'
@@ -267,6 +268,8 @@ class Login extends React.Component {
     birthdateValid: false,
     motherName: '',
     motherNameValid: false,
+    documentName: '',
+    documentNameValid: false,
     validationKey: '',
     validationKeyValid: false,
     phoneKey: '',
@@ -281,6 +284,8 @@ class Login extends React.Component {
     termsValid: false,
     privacy: false,
     privacyValid: false,
+    personalData: false,
+    personalDataValid: false,
     newUser: false,
     allowSendEmail: true,
     userInconsistent: false,
@@ -379,10 +384,11 @@ class Login extends React.Component {
   }
 
   testify = e => {
-    UserStore.error = null
+    UserStore.error = null    
     UserStore.testify(
       this.props.loginType === 'cpf' ? this.state.username.replace(/\./g, '').replace(/-/g, '') : this.state.username,
       this.state.motherName,
+      this.state.documentName,
       this.state.birthdate,
       this.state.phone || '',
       this.state.emailConfirm ? this.state.emailConfirm + '@' + AppStore.email.split('@')[1] : '',
@@ -519,10 +525,11 @@ class Login extends React.Component {
     if (
       (this.state.noTestify || RealmStore.confirmationMethod === 'DISABLED' ||
         (RealmStore.confirmationMethod === 'EMAIL' && this.state.emailConfirmValid && this.state.phoneValid) ||
-        ((this.props.loginType === 'cpf' && this.state.birthdateValid && this.state.motherNameValid) ||
+        ((this.props.loginType === 'cpf' && this.state.birthdateValid && this.state.motherNameValid && this.state.documentNameValid) ||
           (this.state.birthdateValid && this.state.phoneValid))) &&
       (this.state.termsValid || !RealmStore.termsOfUse) &&
       (this.state.privacyValid || !RealmStore.privacyUrl) &&
+      (this.state.personalData || !RealmStore.usePersonalData) &&
       (this.state.validationKeyValid || !this.state.requireValidationKey)
     ) {
       this.testify()
@@ -599,6 +606,7 @@ class Login extends React.Component {
       requireValidationKey,
       birthdate,
       motherName,
+      documentName,
       phone,
       newPassword,
       emailConfirm,
@@ -609,6 +617,7 @@ class Login extends React.Component {
       acceptMessage,
       terms,
       privacy,
+      personalData,
       recaptchaSate,
       userInconsistent,
       newUser,
@@ -638,7 +647,7 @@ class Login extends React.Component {
     }
 
     let mainTenant = UserStore.realm === 'incentiveme'
-
+    
     // console.log(page, verificationData)
     // console.log(process.env.REACT_APP_RECAPTCHA_SITE_KEY)
 
@@ -708,6 +717,7 @@ class Login extends React.Component {
                               newUser={newUser}
                               birthdate={birthdate}
                               motherName={motherName}
+                              documentName={documentName}
                               phone={phone}
                               email={AppStore.email}
                               emailConfirm={emailConfirm}
@@ -804,6 +814,21 @@ class Login extends React.Component {
                               </div>
                             }
                           />
+                        )}
+                        {RealmStore.usePersonalData && (
+                          <AcceptTerms
+                              value={personalData}
+                              error={this.resolveError()}
+                              onChangeValidation={value => this.handleChangeValidation(value, 'personalData')}
+                              onChange={value => this.handleChange(value, 'personalData')}
+                              text={
+                                <div>
+                                  Autorizo que os meus dados pessoais sejam verificados junto a 
+                                  serviços terceiros com a finalidade de validar a minha identidade 
+                                  para criação do meu cadastro.
+                                </div>
+                              }
+                            />
                         )}
                         <ReceiveContact
                           value={allowSendEmail}
@@ -977,6 +1002,7 @@ const FirstLoginPage = withStyles(styles)(
     error,
     birthdate,
     motherName,
+    documentName,
     validationKey,
     username,
     phone,
@@ -992,7 +1018,7 @@ const FirstLoginPage = withStyles(styles)(
   }) => (
     <>
       <UserIndicator username={username} onBack={onBack} />
-      {!newUser && <span className={classes.wellcome}>{AppStore.messages.wellcome} </span>}
+      {!newUser && <span className={classes.wellcome}>{AppStore.messages.wellcome}</span>}
       <span>{AppStore.messages.firstAccess}</span>
       {!noTestify &&
         (RealmStore.confirmationMethod === 'CPF' ? (
@@ -1005,12 +1031,20 @@ const FirstLoginPage = withStyles(styles)(
               onChangeValidation={value => onChangeValidation(value, 'birthdate')}
             />
             {loginType === 'cpf' ? (
+              <>
+              <DocumentNameInput
+                error={error}
+                value={documentName}
+                onChange={value => onChange(value, 'documentName')}
+                onChangeValidation={value => onChangeValidation(value, 'documentName')}
+              />
               <MotherNameInput
                 error={error}
                 value={motherName}
                 onChange={value => onChange(value, 'motherName')}
                 onChangeValidation={value => onChangeValidation(value, 'motherName')}
               />
+              </>
             ) : (
               <PhoneInput
                 error={error}
@@ -1141,8 +1175,8 @@ const TestifyErrorPage = withStyles(styles)(({ classes }) => (
     {RealmStore.confirmationMethod === 'CPF' ? (
       <ul>
         <li>Confira se o CPF informado está correto;</li>
-        <li>Confira se você digitou sua data de nascimento corretamente;</li>
-        <li>Você deve escrever apenas o primeiro nome da sua mãe, exatamente como consta em sua identidade;</li>
+        <li>Confira se você digitou sua data de nascimento corretamente;</li>        
+        <li>Você deve escrever o seu nome completo e apenas o primeiro nome da sua mãe, exatamente como consta em sua identidade;</li>
       </ul>
     ) : (
       <ul>
