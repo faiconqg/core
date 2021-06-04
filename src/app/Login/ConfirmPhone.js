@@ -1,7 +1,6 @@
 import React from 'react'
 import { withStyles, TextField, Button, CircularProgress, Dialog, DialogContent } from '@material-ui/core'
 import MaskedInput from 'react-text-mask'
-import { AppStore } from 'stores'
 import { UserStore } from 'stores'
 import { observer, Listener, inject } from './../../api'
 import PhoneInput from './PhoneInput'

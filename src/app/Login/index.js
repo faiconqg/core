@@ -240,10 +240,6 @@ const styles = theme => ({
   },
   icon: {
     height: 90
-  },
-  centered: {
-    margin: 'auto',
-    marginTop: '20px',
   }
 })
 export default
