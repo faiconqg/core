@@ -181,7 +181,7 @@ class Users extends Collection {
       this.current()
     })
 
-  sendPin = (recaptchaSate) => this.rpc('send-pin', { token: recaptchaSate })
+  sendPin = (recaptchaSate, call) => this.rpc('send-pin', { token: recaptchaSate, call })
 
 
   verifyPin = (pin, recaptchaSate) => this.rpc('verify-pin', { pin, token: recaptchaSate })

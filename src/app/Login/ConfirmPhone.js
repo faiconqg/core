@@ -54,7 +54,8 @@ class ConfirmPhone extends React.Component {
     smsSent: false,
     busy: false,
     sendedSms: false,
-    recaptchaSate: localStorage.getItem('recaptchaSate') || ''
+    recaptchaSate: localStorage.getItem('recaptchaSate') || '',
+    call: false
   }
 
   showTime = () => {
@@ -65,11 +66,11 @@ class ConfirmPhone extends React.Component {
     }
   }
 
-  sendSms = () => {
+  sendSms = (call = false) => {
     clearInterval(this.timer)
     this.setState({ delay: 120 })
     this.timer = setInterval(this.showTime, 1000)
-    UserStore.sendPin(this.state.recaptchaSate).catch(e => {
+    UserStore.sendPin(this.state.recaptchaSate, call).catch(e => {
       if (e.error.code == 'INVALID_TOKEN') {
         UserStore.logout()
       } else {
@@ -107,11 +108,20 @@ class ConfirmPhone extends React.Component {
     this.setState({ mobileSet: value })
   }
 
+  call = () => {
+    this.sendSms(true)
+    this.setState({ call: false })
+  }
+
   confirmPhone = () => {
     if (this.state.valid) {
       UserStore.rpc('update-data', { mobile: this.state.mobileSet }).then(() => {
         this.setMobile(this.state.mobileSet)
         this.sendSms()
+      }).catch(e => {
+        if (e.error) {
+          this.setState({ error: e.error.message })
+        }
       })
     } else {
       this.setState({ error: true })
@@ -133,7 +143,7 @@ class ConfirmPhone extends React.Component {
 
   render() {
     const { classes, username } = this.props
-    let { sendedSms, mobile, code, mobileSet, error, errorCode, delay, smsSent, busy } = this.state
+    let { sendedSms, mobile, code, mobileSet, error, errorCode, delay, smsSent, busy, call } = this.state
 
     mobile = String(mobile).replace(/\D+/g, '')
 
@@ -148,53 +158,83 @@ class ConfirmPhone extends React.Component {
           }
         }} />
 
+
         {sendedSms ? (
-          <>
-            <UserIndicator username={username} onForgotUser={() => UserStore.logout()} />
-            <span className={classes.wellcome}>Para sua segurança, precisamos validar o número do seu celular.</span>
-            <span>
-              Enviamos um código de confirmação para o número{' '}
-              <b>
-                ({mobile.slice(0, 2)}) {mobile.slice(2, 7)}-{mobile.slice(7, 11)}
-              </b>
-              .{' '}
-              <a className={classes.link} onClick={() => {
-                clearInterval(this.timer)
-                this.setState({ mobileSet: null, mobile: mobileSet || '', sendedSms: false, smsSent: false })
-              }}>
-                Número errado?
-              </a>
-            </span>
-            <TextField
-              className={classes.code}
-              placeholder="-   -   -   -   -   -"
-              type="tel"
-              InputProps={{
-                inputComponent: MaskNumber
-              }}
-              inputProps={{
-                className: classes.codeInput
-              }}
-              value={code}
-              onChange={this.changeCode}
-              error={!!errorCode}
-              helperText={errorCode}
-            />
-            <Button color="secondary" onClick={this.sendSms} disabled={delay > 0}>
-              Reenviar SMS {delay > 0 && delay}
-            </Button>
-            <Button
-              id="recaptcha-button"
-              className={classes.button}
-              color="secondary"
-              variant="contained"
-              fullWidth
-              onClick={this.confirmCode}
-              disabled={!smsSent}
-            >
-              Continuar
-            </Button>
-          </>
+          call ?
+            (<>
+              <UserIndicator username={username} onForgotUser={() => UserStore.logout()} />
+              <span className={classes.wellcome}>Siga as etapas abaixo para verificar seu número:</span>
+              <ul style={{paddingInlineStart: 20}}>
+                <li>Verifique se você digitou corretamente o número de telefone e o código da sua cidade <b>
+                  ({mobile.slice(0, 2)}) {mobile.slice(2, 7)}-{mobile.slice(7, 11)}.
+                </b></li>
+                <li>O modo avião precisa estar desativado.</li>
+                <li>Vá para um local onde haja uma conexão melhor. O ícone dos dados móveis precisa ter pelo menos uma barra.</li>
+                <li>Verifique se seu smartphone está funcionando: peça para um amigo enviar uma mensagem de texto a você.</li>
+                <li>Se ainda assim você não receber o SMS, solicite uma chamada tocando em Ligar para mim.</li>
+                <li>Se nada disso resolver, abra um chamado em <a href="https://ajuda.incentive.me/ticket" target="blank" className={classes.link}>ajuda.incentive.me/ticket</a> com
+                uma foto da Identidade ou CNH e uma selfie segurando esse documento. Atenção à qualidade das fotos que devem estar legíveis.</li>
+              </ul>
+              <Button color="secondary" onClick={this.call}>
+                Ligar para mim
+              </Button>
+              <Button className={classes.button} color="secondary" variant="contained" fullWidth onClick={() => this.setState({ call: false })}>
+                Continuar
+              </Button>
+            </>
+            )
+            :
+            (
+              <>
+                <UserIndicator username={username} onForgotUser={() => UserStore.logout()} />
+                <span className={classes.wellcome}>Para sua segurança, precisamos validar o número do seu celular.</span>
+                <span>
+                  Enviamos um código de confirmação para o número{' '}
+                  <b>
+                    ({mobile.slice(0, 2)}) {mobile.slice(2, 7)}-{mobile.slice(7, 11)}
+                  </b>
+                  .{' '}
+                  <a className={classes.link} onClick={() => {
+                    clearInterval(this.timer)
+                    this.setState({ mobileSet: null, mobile: mobileSet || '', sendedSms: false, smsSent: false })
+                  }}>
+                    Número errado?
+                  </a>
+                </span>
+                <TextField
+                  className={classes.code}
+                  placeholder="-   -   -   -   -   -"
+                  type="tel"
+                  InputProps={{
+                    inputComponent: MaskNumber
+                  }}
+                  inputProps={{
+                    className: classes.codeInput
+                  }}
+                  value={code}
+                  onChange={this.changeCode}
+                  error={!!errorCode}
+                  helperText={errorCode}
+                />
+                <Button color="secondary" onClick={this.sendSms} disabled={delay > 0}>
+                  Reenviar SMS {delay > 0 && delay}
+                </Button>
+                <Button
+                  id="recaptcha-button"
+                  className={classes.button}
+                  color="secondary"
+                  variant="contained"
+                  fullWidth
+                  onClick={this.confirmCode}
+                  disabled={!smsSent}
+                >
+                  Continuar
+                </Button>
+                <Button color="secondary" onClick={() => this.setState({ call: true })} style={{ marginTop: 16 }}>
+                  Problemas para receber o SMS?
+                </Button>
+              </>
+            )
         ) : (
           <>
             <UserIndicator username={username} onForgotUser={() => UserStore.logout()} />
@@ -205,7 +245,8 @@ class ConfirmPhone extends React.Component {
               Continuar
             </Button>
           </>
-        )}
+        )
+        }
         <Dialog open={busy} fullScreen={false} maxWidth="lg">
           <DialogContent>
             <div className={classes.container}>
