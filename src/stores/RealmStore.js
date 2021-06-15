@@ -13,6 +13,7 @@ class Realms extends Collection {
   realmResolved = false
 
   @observable logos = null
+  @observable name = null
   @observable banner = null
   @observable appName = null
   @observable appUrl = null
@@ -88,6 +89,10 @@ class Realms extends Collection {
       if (this.currentRealm.confirmationMethod) {
         this.confirmationMethod = this.currentRealm.confirmationMethod
       }
+      if (this.currentRealm.name) {
+        this.name = this.currentRealm.name
+      }
+
       this.useBankAccount = this.currentRealm.useBankAccount
       this.customFlags = this.currentRealm.customFlags
     }

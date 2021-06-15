@@ -1,7 +1,6 @@
 import React from 'react'
 import { withStyles, Button, CircularProgress, Dialog, DialogContent } from '@material-ui/core'
-// import { AppStore } from 'stores'
-import { UserStore } from 'stores'
+import { UserStore, RealmStore } from 'stores'
 import { observer, Listener, inject } from './../../api'
 import EmailInput from './EmailInput'
 import UserIndicator from './UserIndicator'
@@ -86,6 +85,7 @@ class ConfirmEmail extends React.Component {
   }
 
   render() {
+    console.log(RealmStore)
     const { classes, username } = this.props
     let { email, emailSet, error, sended, busy } = this.state
 
@@ -128,7 +128,17 @@ class ConfirmEmail extends React.Component {
             <>
               <UserIndicator username={username} onForgotUser={() => UserStore.logout()} />
               <span className={classes.wellcome}>Confirme seu e-mail</span>
-              <span>Enviaremos um e-mail com um link para endereço informado. Abra este e-mail e clique no link para confirmação.</span>
+              
+              {RealmStore.name === 'motorola' ? 
+                <>
+                  <span>Olá usuário (a)! </span>
+                  <span>
+                    Não esqueça de utilizar o mesmo endereço de e-mail cadastrado no Motorola Insiders.
+                    Assim você ficará por dentro de todas as novidades da Motorola.
+                  </span>
+                </> : 
+                <span>Enviaremos um e-mail com um link para endereço informado. Abra este e-mail e clique no link para confirmação.</span>
+              }
               <EmailInput error={UserStore.error ? UserStore.error.message : error} value={emailSet}
                 onChange={this.changeEmail} onChangeValidation={this.handleChangeValidation} />
               <Button className={classes.button} color="secondary" variant="contained" fullWidth onClick={this.confirmEmail}>
