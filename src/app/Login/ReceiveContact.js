@@ -22,7 +22,7 @@ const styles = theme => ({
 
 export default
 @withStyles(styles)
-class AcceptTerms extends FieldsBase {
+class ReceiveContact extends FieldsBase {
   state = {
     message: null
   }

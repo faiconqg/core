@@ -284,6 +284,7 @@ class Login extends React.Component {
     personalDataValid: false,
     newUser: false,
     allowSendEmail: true,
+    allowSendSms: true,
     userInconsistent: false,
     noTestify: false,
     recaptchaSate: localStorage.getItem('recaptchaSate') || '',
@@ -391,7 +392,8 @@ class Login extends React.Component {
       this.state.allowSendEmail,
       this.state.requireValidationKey ? this.state.validationKey : 'icv',
       this.state.noTestify,
-      RealmStore.confirmationMethod
+      RealmStore.confirmationMethod,
+      this.state.allowSendSms,
     )
       .then(res => {
         AppStore.setToken(res.id)
@@ -610,6 +612,7 @@ class Login extends React.Component {
       validationKey,
       tokenExpired,
       allowSendEmail,
+      allowSendSms,
       acceptMessage,
       terms,
       privacy,
@@ -833,6 +836,15 @@ class Login extends React.Component {
                           onChangeValidation={value => this.handleChangeValidation(value, 'receiveContact')}
                           onChange={value => this.handleChange(value, 'allowSendEmail')}
                         />
+                        {RealmStore.useSmsContact && (
+                          <ReceiveContact
+                            value={allowSendSms}
+                            error={this.resolveError()}
+                            acceptMessage={`Desejo receber SMS com informações importantes sobre o ${RealmStore.appName}`}
+                            onChangeValidation={value => this.handleChangeValidation(value, 'receiveContact')}
+                            onChange={value => this.handleChange(value, 'allowSendSms')}
+                          />
+                        )}
                       </React.Fragment>
                     )}
                     {page !== 'ConfirmEmailPage' && page !== 'ConfirmPhonePage' && page !== 'AdminLogin' && page !== 'VerificationLoginPage' ? (
