@@ -25,6 +25,7 @@ class Realms extends Collection {
   @observable secondaryColor = null
   @observable appbarColor = null
   @observable termsOfUse = null
+  @observable useConsent = null
   @observable usePersonalData = null
   @observable useSmsContact = null
   @observable useBankAccount = null
@@ -73,6 +74,9 @@ class Realms extends Collection {
       }      
       if (this.currentRealm.usePersonalData) {
         this.usePersonalData = this.currentRealm.usePersonalData
+      }
+      if (this.currentRealm.useConsent) {
+        this.useConsent = this.currentRealm.useConsent
       }
       if (this.currentRealm.useSmsContact) {
         this.useSmsContact = this.currentRealm.useSmsContact

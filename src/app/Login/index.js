@@ -840,7 +840,7 @@ class Login extends React.Component {
                           <ReceiveContact
                             value={allowSendSms}
                             error={this.resolveError()}
-                            acceptMessage={`Desejo receber SMS com informações importantes sobre o ${RealmStore.appName}`}
+                            acceptMessage={`Desejo receber SMS ou outros meios de comunicação com informações importantes sobre o ${RealmStore.appName}`}
                             onChangeValidation={value => this.handleChangeValidation(value, 'receiveContact')}
                             onChange={value => this.handleChange(value, 'allowSendSms')}
                           />
