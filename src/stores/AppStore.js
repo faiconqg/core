@@ -2,7 +2,7 @@ import { observable, action, computed } from './../api'
 import { AccessRoutesStore, UserStore } from './../'
 import debounce from 'lodash/debounce'
 import firebase from 'firebase/app'
-import { cfaSignIn, cfaSignInPhoneOnCodeSent, cfaSignInPhoneOnCodeReceived } from 'capacitor-firebase-auth'
+// import { cfaSignIn, cfaSignInPhoneOnCodeSent, cfaSignInPhoneOnCodeReceived } from 'capacitor-firebase-auth'
 
 class AppStore {
   @observable
@@ -234,40 +234,40 @@ class AppStore {
       })
   }
 
-  sendSmsApp = (phoneNumber, callback, callbackCode) => {
-    this.callbackCalled = false
-    this.verificationId = null
+  // sendSmsApp = (phoneNumber, callback, callbackCode) => {
+  //   this.callbackCalled = false
+  //   this.verificationId = null
 
-    cfaSignInPhoneOnCodeReceived().subscribe((event: { verificationId: string, verificationCode: string }) => {
-      console.log('cfaSignInPhoneOnCodeReceived')
-      this.verificationId = event.verificationId
-      callbackCode(event.verificationCode)
-    })
+  //   cfaSignInPhoneOnCodeReceived().subscribe((event: { verificationId: string, verificationCode: string }) => {
+  //     console.log('cfaSignInPhoneOnCodeReceived')
+  //     this.verificationId = event.verificationId
+  //     callbackCode(event.verificationCode)
+  //   })
 
-    cfaSignInPhoneOnCodeSent().subscribe(verificationId => {
-      console.log('cfaSignInPhoneOnCodeSent')
-      if (!this.verificationId) {
-        this.verificationId = verificationId
-        this.callbackCalled = true
-        callback()
-      }
-    })
+  //   cfaSignInPhoneOnCodeSent().subscribe(verificationId => {
+  //     console.log('cfaSignInPhoneOnCodeSent')
+  //     if (!this.verificationId) {
+  //       this.verificationId = verificationId
+  //       this.callbackCalled = true
+  //       callback()
+  //     }
+  //   })
     
-    cfaSignIn('phone', { phone: phoneNumber }).subscribe(user => {
-      console.log('cfaSignIn')
-      if (this.verificationId) {
-        this.callbackCalled = true
-        callback()
-      }
-    })
+  //   cfaSignIn('phone', { phone: phoneNumber }).subscribe(user => {
+  //     console.log('cfaSignIn')
+  //     if (this.verificationId) {
+  //       this.callbackCalled = true
+  //       callback()
+  //     }
+  //   })
 
-    setTimeout(() => {
-      if (!this.callbackCalled) {
-        callback('Muitas tentativas, aguarde um pouco e tente novamente')
-      }
-      this.callbackCalled = true
-    }, 10000)
-  }
+  //   setTimeout(() => {
+  //     if (!this.callbackCalled) {
+  //       callback('Muitas tentativas, aguarde um pouco e tente novamente')
+  //     }
+  //     this.callbackCalled = true
+  //   }, 10000)
+  // }
 
   confirmCodeApp = (code, callback) => {
     const credential = firebase.auth.PhoneAuthProvider.credential(this.verificationId, code)
