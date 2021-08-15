@@ -583,9 +583,9 @@ class Login extends React.Component {
     this.go('LoginPage')
   }
 
-  forgotUser = () => {
+  forgotUser = () => {    
     this.setState({ username: null }, () => {
-      AppStore.resetUser()
+      AppStore.resetUser()      
       this.go('LoginPage')
     })
   }
@@ -723,6 +723,7 @@ class Login extends React.Component {
                               validationKey={validationKey}
                               requireValidationKey={requireValidationKey}
                               error={this.resolveError()}
+                              onForgotUser={this.forgotUser}
                               onBack={() => this.go('LoginPage')}
                               onChangeValidation={this.handleChangeValidation}
                               loginType={loginType}
@@ -1018,6 +1019,7 @@ const FirstLoginPage = withStyles(styles)(
     emailConfirm,
     onChange,
     onBack,
+    onForgotUser,
     onChangeValidation,
     loginType,
     requireValidationKey,
@@ -1025,7 +1027,7 @@ const FirstLoginPage = withStyles(styles)(
     noTestify
   }) => (
     <>
-      <UserIndicator username={username} onBack={onBack} />
+      <UserIndicator username={username} onBack={onBack} onForgotUser={onForgotUser} />
       {!newUser && <span className={classes.wellcome}>{AppStore.messages.wellcome}</span>}
       <span>{AppStore.messages.firstAccess}</span>
       {!noTestify &&
