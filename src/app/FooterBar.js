@@ -61,7 +61,7 @@ class FooterBar extends React.Component {
         <span className={classes.footerLabel}>{process.env.REACT_APP_VERSION}</span>
         <span className={classes.flex} />
         <span className={classes.footerLabel}>
-          © 2020{' '}
+          © 2021{' '}
           <a href={RealmStore.appUrl || 'https://www.faicon.com'} target="blank" className={classes.footerLink}>
             {RealmStore.appName || 'faicon.com'}
           </a>
