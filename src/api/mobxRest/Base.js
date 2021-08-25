@@ -76,10 +76,11 @@ export default class Base {
    */
   @action
   // rpc(label: string, endpoint: string, options?: {}): Request {
-  rpc(endpoint: string, options?: {}): Request {
+  rpc(endpoint: string, options?: {},customOptions = {}): Request {
     const { promise, abort } = apiClient().post(
       `${this.url()}/${endpoint}`,
-      options
+      options,
+      customOptions
     )
 
     return this.withRequest(endpoint, promise, abort)
@@ -87,10 +88,11 @@ export default class Base {
 
   @action
   // rpc(label: string, endpoint: string, options?: {}): Request {
-  rpcGet(endpoint: string, options?: {}): Request {
+  rpcGet(endpoint: string, options = {}, customOptions = {}): Request {
     const { promise, abort } = apiClient().get(
       `${this.url()}/${endpoint}`,
-      options
+      options,
+      customOptions
     )
 
     return this.withRequest(endpoint, promise, abort)
@@ -98,10 +100,11 @@ export default class Base {
 
   @action
   // rpc(label: string, endpoint: string, options?: {}): Request {
-  rpcDelete(endpoint: string, options?: {}): Request {
+  rpcDelete(endpoint: string, options?: {}, customOptions = {}): Request {
     const { promise, abort } = apiClient().del(
       `${this.url()}/${endpoint}`,
-      options
+      options,
+      customOptions
     )
 
     return this.withRequest(endpoint, promise, abort)
