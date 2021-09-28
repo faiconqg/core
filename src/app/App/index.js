@@ -115,7 +115,7 @@ class App extends Foundation {
       multitenant,
       onLogout,
       onLogin,
-      wellcomeMessage,
+      welcomeMessage,
       onPushNotificationReceived,
       acceptMessage,
       appEmail,
@@ -218,7 +218,7 @@ class App extends Foundation {
                     <Login
                       {...props}
                       acceptMessage={acceptMessage}
-                      wellcomeMessage={wellcomeMessage}
+                      welcomeMessage={welcomeMessage}
                       loginType={loginType}
                       loginLabel={loginLabel ? loginLabel : loginType === 'cpf' ? 'CPF' : 'e-mail'}
                       loginMask={loginMask}
@@ -250,7 +250,7 @@ class App extends Foundation {
                             {...props}
                             confirmPhone
                             acceptMessage={acceptMessage}
-                            wellcomeMessage={wellcomeMessage}
+                            welcomeMessage={welcomeMessage}
                             loginType={loginType}
                             loginLabel={loginLabel ? loginLabel : loginType === 'cpf' ? 'CPF' : 'e-mail'}
                             loginMask={loginMask}
@@ -281,7 +281,7 @@ class App extends Foundation {
                             {...props}
                             confirmEmail
                             acceptMessage={acceptMessage}
-                            wellcomeMessage={wellcomeMessage}
+                            welcomeMessage={welcomeMessage}
                             loginType={loginType}
                             loginLabel={loginLabel ? loginLabel : loginType === 'cpf' ? 'CPF' : 'e-mail'}
                             loginMask={loginMask}

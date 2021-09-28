@@ -109,7 +109,7 @@ const styles = theme => ({
     fontWeight: 400,
     fontSize: 17
   },
-  wellcome: {
+  welcome: {
     fontWeight: 500,
     fontSize: 16,
     paddingBottom: 10
@@ -596,7 +596,7 @@ class Login extends React.Component {
   }
 
   render() {
-    const { classes, location, loginLabel, loginMask, loginType, appEmail, wellcomeMessage, confirmPhone, confirmEmail } = this.props
+    const { classes, location, loginLabel, loginMask, loginType, appEmail, welcomeMessage, confirmPhone, confirmEmail } = this.props
     const {
       page,
       username,
@@ -765,7 +765,7 @@ class Login extends React.Component {
                                 newPasswordConfirm={newPasswordConfirm}
                                 error={this.resolveError()}
                                 onBack={() => this.go('LoginPage')}
-                                wellcomeMessage={wellcomeMessage}
+                                welcomeMessage={welcomeMessage}
                                 onChangeValidation={this.handleChangeValidation}
                                 onChange={this.handleChange}
                               />
@@ -1028,7 +1028,7 @@ const FirstLoginPage = withStyles(styles)(
   }) => (
     <>
       <UserIndicator username={username} onBack={onBack} onForgotUser={onForgotUser} />
-      {!newUser && <span className={classes.wellcome}>{AppStore.messages.wellcome}</span>}
+      {!newUser && <span className={classes.welcome}>{AppStore.messages.welcome}</span>}
       <span>{AppStore.messages.firstAccess}</span>
       {!noTestify &&
         (RealmStore.confirmationMethod === 'CPF' ? (
@@ -1095,7 +1095,7 @@ const FirstLoginPage = withStyles(styles)(
 
 const RecoverPasswordPage = withStyles(styles)(({ classes, error, username, emailConfirm, email, appEmail, onChange, onChangeValidation, onBack }) => (
   <React.Fragment>
-    <UserIndicator username={username} onBack={onBack} />
+    <UserIndicator username={username} onBack={onBack} onForgotUser={onBack}/>
     {email ? (
       <>
         <p>
@@ -1122,11 +1122,11 @@ const RecoverPasswordPage = withStyles(styles)(({ classes, error, username, emai
 ))
 
 const SetPasswordPage = withStyles(styles)(
-  ({ classes, error, username, newPassword, newPasswordConfirm, onChange, onChangeValidation, wellcomeMessage, onBack }) => (
+  ({ classes, error, username, newPassword, newPasswordConfirm, onChange, onChangeValidation, welcomeMessage, onBack }) => (
     <React.Fragment>
       <UserIndicator username={username} onBack={onBack} />
-      <span className={classes.wellcome}>Tudo certo! Confirmamos seus dados.</span>
-      {wellcomeMessage && <span>{wellcomeMessage}</span>}
+      <span className={classes.welcome}>Tudo certo! Confirmamos seus dados.</span>
+      {welcomeMessage && <span>{welcomeMessage}</span>}
       <PasswordInput
         label="Escolha uma senha"
         error={error}
@@ -1154,7 +1154,7 @@ const ConfirmSetPasswordPage = withStyles(styles)(({ classes }) => (
   <React.Fragment>
     <div className={classes.testifyError}>
       <CheckCircle className={classes.emailSuccess} />
-      <span className={classes.wellcome}>Email enviado com sucesso!</span>
+      <span className={classes.welcome}>Email enviado com sucesso!</span>
     </div>
     <p>Siga as instruções para redefinir sua senha no email.</p>
     <div className={classes.marginBottom}>
