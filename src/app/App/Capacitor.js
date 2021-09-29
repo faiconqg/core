@@ -1,6 +1,7 @@
-import { Plugins } from '@capacitor/core'
 import { AppStore, UserStore } from 'stores'
-const { SplashScreen, Device, PushNotifications } = Plugins
+import { SplashScreen } from '@capacitor/splash-screen'
+import { Device }from '@capacitor/device'
+import { PushNotifications } from '@capacitor/push-notifications'
 
 const defaultError = err => {
   console.log('Disponível apenas de forma nativa')
@@ -32,27 +33,33 @@ class Capacitor {
       pushNotificationReceived.catch && pushNotificationReceived.catch(defaultError)
 
       Device.getInfo()
-        .then(result => {
+      .then(result => {
           AppStore.platform = result.platform
+          AppStore.operatingSystem = result.operatingSystem
           AppStore.device.isIos = result.platform === 'ios'
           AppStore.device.isAndroid = result.platform === 'android'
           AppStore.device.isMobile = result.platform === 'ios' || result.platform === 'android' || window.screen.width === 360
-          if (
-            window.screen.height === 812 ||
-            window.screen.height === 896 ||
-            window.screen.height === 2436 ||
-            window.screen.height === 2688 ||
-            window.screen.height === 1792
-          ) {
-            AppStore.device.hasNotch = true
+          if (AppStore.device.isIos) {
+            if (
+              window.screen.height === 812 ||
+              window.screen.height === 844 ||
+              window.screen.height === 896 ||
+              window.screen.height === 926 ||
+              window.screen.height === 2436 ||
+              window.screen.height === 2688 ||
+              window.screen.height === 1792
+            ) {
+              AppStore.device.hasNotch = true
+            }
           }
+          alert(window.screen.height)
           // this.user.pnToken = token.value
           // this.user.devUUID = data.uuid
           // this.user.platform = data.platform
           // this.auth.saveUser(this.user)
           SplashScreen.hide().catch(defaultError)
         })
-        .catch(() => {
+        .catch((e) => {
           SplashScreen.hide().catch(defaultError)
         })
 
