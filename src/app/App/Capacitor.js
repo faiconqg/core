@@ -52,7 +52,6 @@ class Capacitor {
               AppStore.device.hasNotch = true
             }
           }
-          alert(window.screen.height)
           // this.user.pnToken = token.value
           // this.user.devUUID = data.uuid
           // this.user.platform = data.platform
