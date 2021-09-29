@@ -50,7 +50,7 @@ class AppStore {
     userBlockedWithoutEmail: 'Sua conta está desabilitada, em caso de dúvidas, entre em contato.',
     recoverPasswordA: 'Para atualizar o seu e-mail de cadastrado, envie um email para ',
     recoverPasswordB: ' com o novo endereço de e-mail, uma foto da Identidade ou CNH e uma selfie segurando esse documento. Atenção à qualidade das fotos que devem estar legíveis.',
-    wellcome: 'Parabéns! Você foi convidado para fazer parte da maior plataforma de incentivos do Brasil!',
+    welcome: 'Parabéns! Você foi convidado para fazer parte da maior plataforma de incentivos do Brasil!',
     firstAccess: 'Verificamos que esse é seu primeiro acesso, confirme seus dados para configurarmos seu ambiente.',
     emailConfirmation: 'Confirme seu email e clique em "Continuar" para receber o seu link de redefinição de senha.',
     noEmailWithoutEmail:

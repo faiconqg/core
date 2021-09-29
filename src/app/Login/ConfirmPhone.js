@@ -7,7 +7,7 @@ import PhoneInput from './PhoneInput'
 import UserIndicator from './UserIndicator'
 
 const styles = theme => ({
-  wellcome: {
+  welcome: {
     fontWeight: 500,
     fontSize: 16,
     paddingBottom: 10
@@ -163,7 +163,7 @@ class ConfirmPhone extends React.Component {
           call ?
             (<>
               <UserIndicator username={username} onForgotUser={() => UserStore.logout()} />
-              <span className={classes.wellcome}>Siga as etapas abaixo para verificar seu número:</span>
+              <span className={classes.welcome}>Siga as etapas abaixo para verificar seu número:</span>
               <ul style={{paddingInlineStart: 20}}>
                 <li>Verifique se você digitou corretamente o número de telefone e o código da sua cidade <b>
                   ({mobile.slice(0, 2)}) {mobile.slice(2, 7)}-{mobile.slice(7, 11)}.
@@ -187,7 +187,7 @@ class ConfirmPhone extends React.Component {
             (
               <>
                 <UserIndicator username={username} onForgotUser={() => UserStore.logout()} />
-                <span className={classes.wellcome}>Para sua segurança, precisamos validar o número do seu celular.</span>
+                <span className={classes.welcome}>Para sua segurança, precisamos validar o número do seu celular.</span>
                 <span>
                   Enviamos um código de confirmação para o número{' '}
                   <b>
@@ -238,7 +238,7 @@ class ConfirmPhone extends React.Component {
         ) : (
           <>
             <UserIndicator username={username} onForgotUser={() => UserStore.logout()} />
-            <span className={classes.wellcome}>Confirme seu número</span>
+            <span className={classes.welcome}>Confirme seu número</span>
             <span>Enviaremos um SMS para confirmar seu número. Insira o código DDD da sua cidade e o número do seu celular.</span>
             <PhoneInput error={error} value={mobileSet} onChange={this.changeMobile} onChangeValidation={this.handleChangeValidation} />
             <Button className={classes.button} color="secondary" variant="contained" fullWidth onClick={this.confirmPhone}>

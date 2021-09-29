@@ -6,7 +6,7 @@ import EmailInput from './EmailInput'
 import UserIndicator from './UserIndicator'
 
 const styles = theme => ({
-  wellcome: {
+  welcome: {
     fontWeight: 500,
     fontSize: 16,
     paddingBottom: 10
@@ -96,7 +96,7 @@ class ConfirmEmail extends React.Component {
         {email.length > 3 ? (
           <>
             <UserIndicator username={username} onForgotUser={() => UserStore.logout()} />
-            <span className={classes.wellcome}>Para sua segurança, precisamos validar seu e-mail.</span>
+            <span className={classes.welcome}>Para sua segurança, precisamos validar seu e-mail.</span>
             <span className={classes.span}>
               Enviamos um link de confirmação para o e-mail{' '}
               <b>
@@ -127,7 +127,7 @@ class ConfirmEmail extends React.Component {
         ) : (
             <>
               <UserIndicator username={username} onForgotUser={() => UserStore.logout()} />
-              <span className={classes.wellcome}>Confirme seu e-mail</span>
+              <span className={classes.welcome}>Confirme seu e-mail</span>
               
               {RealmStore.name === 'motorola' ? 
                 <>
