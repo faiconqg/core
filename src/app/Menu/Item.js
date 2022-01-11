@@ -98,39 +98,43 @@ class Item extends Page {
   render() {
     const { accessRoute, classes, router, level } = this.props
     const isActive = router.isActive(this.props)
-    const shouldShowActive = isActive && (!this.hasChildren() || !this.state.open)
-    return (
-      <LinearLayout direction="cols">
-        <ListItem
-          button
-          onClick={() => this.props.onItemClick(this)}
-          className={cs(classes.item, {
-            [classes.itemHover]: !shouldShowActive,
-            [classes.itemActive]: shouldShowActive
-          })}
-          classes={{ button: this.props.classes.button, focusVisible: '' }}
-        >
-          <ListItemIcon>
-            {accessRoute.icon ? (
-              <Icon className={classes.drawerIcons}>{accessRoute.icon}</Icon>
-            ) : (
-              <span className={cs(classes.label, classes.initials)}>{accessRoute.initials}</span>
-            )}
-          </ListItemIcon>
-          <Fade in={!this.props.hideMenu}>
-            <div className={classes.fade}>
-              <ListItemText primary={accessRoute.label} disableTypography={true} className={cs(classes.label, { [classes.label2]: level > 0 })} />
-
-              <div>
-                {this.hasChildren() ? this.state.open ? <ExpandLess className={classes.drawerIcons} /> : <ExpandMore className={classes.drawerIcons} /> : ''}
+    const shouldShowActive = isActive && (!this.hasChildren() || !this.state.open)    
+    if(accessRoute.visible) {
+      return (
+        <LinearLayout direction="cols">
+          <ListItem
+            button
+            onClick={() => this.props.onItemClick(this)}
+            className={cs(classes.item, {
+              [classes.itemHover]: !shouldShowActive,
+              [classes.itemActive]: shouldShowActive
+            })}
+            classes={{ button: this.props.classes.button, focusVisible: '' }}
+          >
+            <ListItemIcon>
+              {accessRoute.icon ? (
+                <Icon className={classes.drawerIcons}>{accessRoute.icon}</Icon>
+              ) : (
+                <span className={cs(classes.label, classes.initials)}>{accessRoute.initials}</span>
+              )}
+            </ListItemIcon>
+            <Fade in={!this.props.hideMenu}>
+              <div className={classes.fade}>
+                <ListItemText primary={accessRoute.label} disableTypography={true} className={cs(classes.label, { [classes.label2]: level > 0 })} />
+  
+                <div>
+                  {this.hasChildren() ? this.state.open ? <ExpandLess className={classes.drawerIcons} /> : <ExpandMore className={classes.drawerIcons} /> : ''}
+                </div>
               </div>
-            </div>
-          </Fade>
-        </ListItem>
-        <Collapse in={this.state.open} timeout="auto" unmountOnExit className={classes.borderList}>
-          <MenuList parent={this.props} items={accessRoute.accessRoutes} level={this.props.level + 1} onItemClick={this.props.onItemClick} />
-        </Collapse>
-      </LinearLayout>
-    )
+            </Fade>
+          </ListItem>
+          <Collapse in={this.state.open} timeout="auto" unmountOnExit className={classes.borderList}>
+            <MenuList parent={this.props} items={accessRoute.accessRoutes} level={this.props.level + 1} onItemClick={this.props.onItemClick} />
+          </Collapse>
+        </LinearLayout>
+      )
+    } else {
+      return null
+    }
   }
 }
