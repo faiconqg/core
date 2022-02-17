@@ -34,7 +34,7 @@ class Footer extends Page {
     return (
       <div className={classes.container}>
         <span className={classes.label}>
-          © 2021{' '}
+          © 2022{' '}
           <a href={RealmStore.appUrl || 'https://www.faicon.com'} target="blank" className={classes.link}>
             {RealmStore.appName || 'faicon.com'}
           </a>
