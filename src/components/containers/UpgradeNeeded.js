@@ -7,7 +7,7 @@ export default class UpgradeNeeded extends React.Component {
     return (
       <PageError
         title="Atualização necessária"
-        message="Você está usando uma versão desatualizada, para ter acesso a sua conta e novos recursos, atualize seu aplicativo."
+        message="Você está usando uma versão desatualizada, para ter acesso a sua conta e novos recursos, atualize seu aplicativo. Caso a atualização ainda não esteja disponível, tente novamente mais tarde."
         label="Atualizar agora"
         action={
           AppStore.device.isMobile
