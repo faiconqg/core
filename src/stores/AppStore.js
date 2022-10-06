@@ -86,6 +86,11 @@ class AppStore {
   }
 
   @action
+  setGaProperty(data) {
+    this.analytics.setUserProperties(data)
+  }
+
+  @action
   setUser(user) {
     this.user = user
     localStorage.setItem('user', JSON.stringify(user))

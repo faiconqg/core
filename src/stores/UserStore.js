@@ -79,6 +79,7 @@ class Users extends Collection {
     this.rpcGet('current', { details: platform })
       .then(res => {
         this.loggedInstance = this.build(res)
+        AppStore.setGaProperty({intent: res.isOfficeUser ? 'admin' : 'app'}, {isInternalUser: !!res.onlyTest})
         this.customFlags = res.customFlags
         if (this.notificationToken) {
           if (res.userDetail.notificationToken !== this.notificationToken) {
