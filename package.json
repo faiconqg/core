@@ -73,7 +73,7 @@
     "@panalbish/reaptcha-enterprise": "2.1.0",
     "ag-grid-community": "21.2.1",
     "ag-grid-react": "21.2.1",
-    "axios": "0.18.1",
+    "axios": "0.21.2",
     "classnames": "2.2.6",
     "lodash": "4.17.15",
     "moment": "2.24.0",
