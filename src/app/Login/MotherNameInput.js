@@ -21,7 +21,9 @@ class MotherNameInput extends FieldsBase {
 
   handleValidation = value => {
     if (value.length === 0) {
-      this.onChangeValidation(false, 'Você precisa informar o nome da sua mãe para confirmarmos sua identidade')
+      this.onChangeValidation(false, 'Você precisa informar o nome completo da sua mãe para confirmarmos sua identidade')
+    } else if (value.split(' ').length < 2) {
+      this.onChangeValidation(false, 'Atenção! Você precisa preencher o nome da sua mãe COMPLETO!')
     } else {
       this.onChangeValidation(true)
     }
@@ -33,7 +35,7 @@ class MotherNameInput extends FieldsBase {
 
     return (
       <TextField
-        label={AppStore.windowWidth < 360 ? 'Primeiro nome da mãe' : 'Qual o primeiro nome da sua mãe?'}
+        label={AppStore.windowWidth < 360 ? 'Nome completo da mãe' : 'Qual o nome completo da sua mãe?'}
         error={!!error && (typeof error === 'string' || !!message)}
         value={value}
         onChange={this.handleChange}

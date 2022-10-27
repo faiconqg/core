@@ -22,6 +22,8 @@ class DocumentNameInput extends FieldsBase {
   handleValidation = value => {
     if (value.length === 0) {
       this.onChangeValidation(false, 'Você precisa informar seu nome completo para confirmarmos sua identidade')
+    } else if (value.split(' ').length < 2) {
+      this.onChangeValidation(false, 'Atenção! Você precisa preencher seu nome COMPLETO!')
     } else {
       this.onChangeValidation(true)
     }

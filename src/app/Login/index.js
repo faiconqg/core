@@ -162,7 +162,9 @@ const styles = theme => ({
     flex: 1,
     marginTop: -40,
     display: 'flex',
-    justifyContent: 'center'
+    justifyContent: 'left',
+    paddingLeft: 40,
+    width: '100%'
   },
   // footerBar: {
   //   position: 'fixed',
@@ -344,7 +346,7 @@ class Login extends React.Component {
         if (result.code === 6) {
           // Invalid recaptcha response
           this.setState({ error: 'Por favor, tente novamente.' }, () => {
-            this.captcha.reset()
+            this.captcha && this.captcha.reset()
             this.setState({ recaptchaSate: '' })
           })
         } else if (result.verification && !result.verification.date) {
@@ -381,7 +383,7 @@ class Login extends React.Component {
   }
 
   testify = e => {
-    UserStore.error = null    
+    UserStore.error = null
     UserStore.testify(
       this.props.loginType === 'cpf' ? this.state.username.replace(/\./g, '').replace(/-/g, '') : this.state.username,
       this.state.motherName,
@@ -583,9 +585,9 @@ class Login extends React.Component {
     this.go('LoginPage')
   }
 
-  forgotUser = () => {    
+  forgotUser = () => {
     this.setState({ username: null }, () => {
-      AppStore.resetUser()      
+      AppStore.resetUser()
       this.go('LoginPage')
     })
   }
@@ -623,7 +625,7 @@ class Login extends React.Component {
       noTestify,
       verificationData
     } = this.state
-    const { full, bottom } = RealmStore.logos || {}
+    const { full, bottom, alignLeft } = RealmStore.logos || {}
 
     if (UserStore.logged && UserStore.logged.enabled && !confirmPhone && !confirmEmail) {
       return <Redirect to={(AppStore.redirect && location.state && location.state.from) || '/'} />
@@ -646,7 +648,7 @@ class Login extends React.Component {
     }
 
     let mainTenant = UserStore.realm === 'incentiveme'
-    
+
     // console.log(page, verificationData)
     // console.log(process.env.REACT_APP_RECAPTCHA_SITE_KEY)
 
@@ -657,8 +659,8 @@ class Login extends React.Component {
             <form className={classes.flex} onSubmit={this.resolveSubmit()} noValidate>
               <LinearLayout visible={!UserStore.busy() || !!UserStore.error} flex={1}>
                 {full ? (
-                  <div className={cs(classes.logoContainer, AppStore.device.hasNotch ? classes.logoContainerIos : classes.logoContainerDefault)}>
-                    <img src={full} alt="Logo" className={classes.logo} />
+                  <div className={cs(classes.logoContainer, AppStore.device.hasNotch ? classes.logoContainerIos : classes.logoContainerDefault)} style={alignLeft?  {justifyContent: 'left'} : null}>
+                    <img src={full} alt="Logo" className={classes.logo}  style={alignLeft ? {width: 'auto'} : null}/>
                   </div>
                 ) : (
                   <span className={classes.appName}>{RealmStore.appName || 'Nome do sistema'}</span>
@@ -817,18 +819,18 @@ class Login extends React.Component {
                         )}
                         {RealmStore.usePersonalData && (
                           <AcceptTerms
-                              value={personalData}
-                              error={this.resolveError()}
-                              onChangeValidation={value => this.handleChangeValidation(value, 'personalData')}
-                              onChange={value => this.handleChange(value, 'personalData')}
-                              text={
-                                <div>
-                                  Autorizo que os meus dados pessoais sejam verificados junto a 
-                                  serviços terceiros com a finalidade de validar a minha identidade 
-                                  para criação do meu cadastro.
-                                </div>
-                              }
-                            />
+                            value={personalData}
+                            error={this.resolveError()}
+                            onChangeValidation={value => this.handleChangeValidation(value, 'personalData')}
+                            onChange={value => this.handleChange(value, 'personalData')}
+                            text={
+                              <div>
+                                Autorizo que os meus dados pessoais sejam verificados junto a
+                                serviços terceiros com a finalidade de validar a minha identidade
+                                para criação do meu cadastro.
+                              </div>
+                            }
+                          />
                         )}
                         <ReceiveContact
                           value={allowSendEmail}
@@ -849,10 +851,39 @@ class Login extends React.Component {
                       </React.Fragment>
                     )}
                     {page !== 'ConfirmEmailPage' && page !== 'ConfirmPhonePage' && page !== 'AdminLogin' && page !== 'VerificationLoginPage' ? (
-                      <Button id="sign-in-button" className={classes.button} type="submit" color="secondary" variant="contained" fullWidth disabled={page == 'LoginPage' && !recaptchaSate}>
+                      <Button id="sign-in-button" className={classes.button} type="submit" color="secondary" variant="contained" fullWidth disabled={page == 'LoginPage' && !recaptchaSate && process.env.NODE_ENV == 'production'}>
                         Continuar
                       </Button>
                     ) : null}
+
+
+                    {page === 'TestifyErrorPage' ? <>
+                      <div style={{
+                        marginTop: 30,
+                        fontSize: 14,
+                        textAlign: 'center'
+                      }}>
+                        <span>Se você já conferiu seus dados e tem certeza que estão corretos, peça ajuda.</span>
+                      </div>
+                      <div style={{
+                        marginTop: 16,
+                        fontSize: 14,
+                        textAlign: 'center'
+                      }}>
+                        <b>Data de nascimento: </b>
+                        <span>{birthdate && birthdate.format('DD/MM/YYYY')}</span><br/>
+                        <b>Seu nome: </b>
+                        <span>{documentName}</span><br/>
+                        <b>Nome da sua mãe: </b>
+                        <span>{motherName}</span><br/>
+                      </div>
+                      <Button className={classes.button} variant="contained" fullWidth onClick={() => {
+                        window.open(`https://wa.me/55${RealmStore.customFlags.whatsAppNumber}?text=Estou tentando me cadastrar no ${RealmStore.appName}, meus dados estão corretos mas o sistema está informando que preenchi algo errado. Meu CPF é ${username}. Poderia me ajudar?`, '_blank', 'location=no')
+                      }}>
+                        Pedir ajuda
+                      </Button>
+                    </>
+                      : null}
 
                     {/*page === 'LoginPage' && (
                     <div className={classes.forgotContainer}>
@@ -928,7 +959,7 @@ class Login extends React.Component {
                   justifyContent: 'center',
                   paddingBottom: 50
                 }}>
-                  {page == 'LoginPage' && (
+                  {page == 'LoginPage' && process.env.NODE_ENV == 'production' ? (
                     <Reaptcha
                       ref={e => (this.captcha = e)}
                       sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
@@ -939,7 +970,7 @@ class Login extends React.Component {
                       }}
                       onExpire={() => {
                         console.log('captcha expired')
-                        this.captcha.reset()
+                        this.captcha && this.captcha.reset()
 
                       }}
                       isolated={true}
@@ -947,7 +978,7 @@ class Login extends React.Component {
                       hl="pt-BR"
                       badge="bottomleft"
                     // size="invisible"
-                    />)
+                    />) : null
                   }
                 </div>
                 {/*<div className={classes.forgotContainer}>
@@ -1042,18 +1073,18 @@ const FirstLoginPage = withStyles(styles)(
             />
             {loginType === 'cpf' ? (
               <>
-              <DocumentNameInput
-                error={error}
-                value={documentName}
-                onChange={value => onChange(value, 'documentName')}
-                onChangeValidation={value => onChangeValidation(value, 'documentName')}
-              />
-              <MotherNameInput
-                error={error}
-                value={motherName}
-                onChange={value => onChange(value, 'motherName')}
-                onChangeValidation={value => onChangeValidation(value, 'motherName')}
-              />
+                <DocumentNameInput
+                  error={error}
+                  value={documentName}
+                  onChange={value => onChange(value, 'documentName')}
+                  onChangeValidation={value => onChangeValidation(value, 'documentName')}
+                />
+                <MotherNameInput
+                  error={error}
+                  value={motherName}
+                  onChange={value => onChange(value, 'motherName')}
+                  onChangeValidation={value => onChangeValidation(value, 'motherName')}
+                />
               </>
             ) : (
               <PhoneInput
@@ -1095,7 +1126,7 @@ const FirstLoginPage = withStyles(styles)(
 
 const RecoverPasswordPage = withStyles(styles)(({ classes, error, username, emailConfirm, email, appEmail, onChange, onChangeValidation, onBack }) => (
   <React.Fragment>
-    <UserIndicator username={username} onBack={onBack} onForgotUser={onBack}/>
+    <UserIndicator username={username} onBack={onBack} onForgotUser={onBack} />
     {email ? (
       <>
         <p>
@@ -1185,8 +1216,9 @@ const TestifyErrorPage = withStyles(styles)(({ classes }) => (
     {RealmStore.confirmationMethod === 'CPF' ? (
       <ul>
         <li>Confira se o CPF informado está correto;</li>
-        <li>Confira se você digitou sua data de nascimento corretamente;</li>        
-        <li>Você deve escrever o seu nome completo e apenas o primeiro nome da sua mãe, exatamente como consta em sua identidade;</li>
+        <li>Confira se você digitou sua data de nascimento corretamente;</li>
+        <li>Você deve escrever o seu nome completo,  verifique se não errou alguma letra;</li>
+        <li>Confira também se o nome completo da sua mãe está correto;</li>
       </ul>
     ) : (
       <ul>
@@ -1252,11 +1284,11 @@ const VerificationLoginPage = withStyles(styles)(({ classes, verificationData, g
     {verificationData.link === 'RESET_PASSWORD' ?
       <Button className={classes.button} color="secondary" variant="contained" fullWidth onClick={() => go('RecoverPasswordPage')}>
         Resetar Senha
-    </Button>
+      </Button>
       : verificationData.link === 'RESET_EMAIL' ?
         <Button className={classes.button} color="secondary" variant="contained" fullWidth onClick={() => go('RecoverPasswordPage')}>
           Confirmar E-mail
-    </Button> : (
+        </Button> : (
           <Button className={classes.button} color="secondary" variant="contained" fullWidth onClick={() => window.open(verificationData.link, '_blank')}>
             Continuar
           </Button>
