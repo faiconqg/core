@@ -879,7 +879,7 @@ class Login extends React.Component {
                       </div>
                       <Button className={classes.button} variant="contained" fullWidth onClick={() => {
                         if (RealmStore.customFlags.whatsAppNumber) {
-                          window.open(`https://wa.me/55${RealmStore.customFlags.whatsAppNumber}?text=Estou tentando me cadastrar no ${RealmStore.appName}, meus dados estão corretos mas o sistema está informando que preenchi algo errado. Meu CPF é ${username}. Poderia me ajudar?`, '_blank', 'location=no')
+                          return window.open(`https://wa.me/55${RealmStore.customFlags.whatsAppNumber}?text=Estou tentando me cadastrar no ${RealmStore.appName}, meus dados estão corretos mas o sistema está informando que preenchi algo errado. Meu CPF é ${username}. Poderia me ajudar?`, '_blank', 'location=no')
                         }
 
                         window.open(
